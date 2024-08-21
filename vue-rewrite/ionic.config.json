@@ -1,0 +1,7 @@
+{
+  "name": "vue-rewrite",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
