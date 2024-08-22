@@ -50,13 +50,6 @@ import "@ionic/vue/css/palettes/dark.system.css"
 import "./theme/variables.css"
 import "./theme/index.css"
 
-/* Font Awesome */
-import { library } from "@fortawesome/fontawesome-svg-core"
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
-import { faAngleDown, faAngleLeft, faAngleRight, faAngleUp } from "@fortawesome/free-solid-svg-icons"
-
-library.add(faAngleUp, faAngleDown, faAngleRight, faAngleLeft)
-
 /* Localization */
 import { createI18n } from "vue-i18n"
 import en from "./locales/en.json"
@@ -71,9 +64,29 @@ const i18n = createI18n({
   },
 })
 
-const app = createApp(App).use(IonicVue).use(router).use(i18n).use(pinia)
+/**
+ * Vuetify
+ */
+import "material-design-icons-iconfont/dist/material-design-icons.css"
+import { createVuetify } from "vuetify"
+import * as components from "vuetify/components"
+import * as directives from "vuetify/directives"
+import { aliases, md } from "vuetify/iconsets/md"
 
-app.component("FontAwesomeIcon", FontAwesomeIcon)
+const vuetify = createVuetify({
+  components,
+  directives,
+  icons: {
+    defaultSet: "md",
+    aliases,
+    sets: {
+      md,
+    },
+  },
+})
+
+const app = createApp(App).use(vuetify).use(IonicVue).use(router).use(i18n).use(pinia)
+
 /* Ionic Components */
 app.component("IonInfiniteScroll", IonInfiniteScroll)
 app.component("IonInfiniteScrollContent", IonInfiniteScrollContent)
