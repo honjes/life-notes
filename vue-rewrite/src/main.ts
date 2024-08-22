@@ -48,6 +48,14 @@ import "@ionic/vue/css/palettes/dark.system.css"
 
 /* Theme variables */
 import "./theme/variables.css"
+import "./theme/index.css"
+
+/* Font Awesome */
+import { library } from "@fortawesome/fontawesome-svg-core"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
+import { faAngleDown, faAngleLeft, faAngleRight, faAngleUp } from "@fortawesome/free-solid-svg-icons"
+
+library.add(faAngleUp, faAngleDown, faAngleRight, faAngleLeft)
 
 /* Localization */
 import { createI18n } from "vue-i18n"
@@ -65,6 +73,8 @@ const i18n = createI18n({
 
 const app = createApp(App).use(IonicVue).use(router).use(i18n).use(pinia)
 
+app.component("FontAwesomeIcon", FontAwesomeIcon)
+/* Ionic Components */
 app.component("IonInfiniteScroll", IonInfiniteScroll)
 app.component("IonInfiniteScrollContent", IonInfiniteScrollContent)
 app.component("IonHeader", IonHeader)
