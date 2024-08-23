@@ -3,9 +3,7 @@
     <IonContent :fullscreen="true">
       <IonList>
         <IonItem v-for="day in days" :key="day.date">
-          <div class="ion-text-wrap">
-            <h2>{{ day.date }}</h2>
-          </div>
+          <DayView :day="day" />
         </IonItem>
       </IonList>
       <IonInfiniteScroll @ionInfinite="getDayBatch">
@@ -18,6 +16,7 @@
 <script setup lang="ts">
 import { useDayStore } from "@/store/day"
 import { IDay } from "@/types/day"
+import DayView from "@/components/DayView.vue"
 import { IonItem, IonList, InfiniteScrollCustomEvent } from "@ionic/vue"
 import { ref } from "vue"
 
