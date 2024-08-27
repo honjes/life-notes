@@ -2,6 +2,7 @@
 import { IDay } from "@/types/day"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
+import AddASymptom from "@/components/Forms/AddASymptom.vue"
 
 const props = defineProps<{
   day: IDay
@@ -10,11 +11,13 @@ const props = defineProps<{
 const { t } = useI18n()
 
 const items = ref([
-  { title: t("ADD_SYMPTOM_BOTTOMSHEET"), props: { prependIcon: "spa" } },
-  { title: t("ADD_MEAL_BOTTOMSHEET"), props: { prependIcon: "dinner_dining" } },
-  { title: t("ADD_DRUG_BOTTOMSHEET"), props: { prependIcon: "medication" } },
-  { title: t("ADD_NOTE_BOTTOMSHEET"), props: { prependIcon: "event_note" } },
+  { title: t("ADD_SYMPTOM_BOTTOMSHEET"), type: "Symptom", props: { prependIcon: "spa" } },
+  { title: t("ADD_MEAL_BOTTOMSHEET"), type: "Meal", props: { prependIcon: "dinner_dining" } },
+  { title: t("ADD_DRUG_BOTTOMSHEET"), type: "Drug", props: { prependIcon: "medication" } },
+  { title: t("ADD_NOTE_BOTTOMSHEET"), type: "Note", props: { prependIcon: "event_note" } },
 ])
+const showDialog = ref(false)
+const dialogContent = ref<"Symptom">("Symptom")
 </script>
 
 <template>
@@ -31,7 +34,15 @@ const items = ref([
         <v-card>
           <v-list>
             <v-list-item v-for="item in items" :key="item.title">
-              <div class="flex flex-row justify-left gap-4 ml-4">
+              <div
+                class="flex flex-row justify-left gap-4 ml-4 hover:cursor-pointer"
+                @click="
+                  () => {
+                    showDialog = true
+                    dialogContent = item.type
+                  }
+                "
+              >
                 <div>
                   <v-icon>{{ item.props.prependIcon }}</v-icon>
                 </div>
@@ -46,6 +57,13 @@ const items = ref([
       <v-btn variant="text" icon="delete_sweep" />
     </div>
   </div>
+  <v-dialog v-model="showDialog" max-width="auto">
+    <template v-slot:default="{ isActive }">
+      <v-card>
+        <AddASymptom v-if="dialogContent === 'Symptom'" />
+      </v-card>
+    </template>
+  </v-dialog>
 </template>
 
 <style lang="scss" scoped>
