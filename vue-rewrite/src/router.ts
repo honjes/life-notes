@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "@ionic/vue-router"
 import { RouteRecordRaw } from "vue-router"
-import MainMenu from "../views/MainMenu.vue"
+import MainMenu from "@/views/MainMenu.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -18,14 +18,27 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "home",
         component: () => import("@/views/HomePage.vue"),
+        name: "Home",
       },
       {
-        path: "tab2",
-        component: () => import("@/views/Tab2Page.vue"),
+        path: "calendar",
+        component: () => import("@/views/Calendar.vue"),
+        name: "Calendar",
       },
       {
-        path: "tab3",
-        component: () => import("@/views/Tab3Page.vue"),
+        path: "symptoms",
+        component: () => import("@/views/Symptoms.vue"),
+        name: "Symptoms",
+      },
+      {
+        path: "help",
+        component: () => import("@/views/Help.vue"),
+        name: "Help",
+      },
+      {
+        path: "Settings",
+        component: () => import("@/views/Settings.vue"),
+        name: "Settings",
       },
     ],
   },
@@ -37,4 +50,3 @@ const router = createRouter({
 })
 
 export default router
-
