@@ -20,14 +20,14 @@ import DayView from "@/components/DayView.vue"
 import { IonItem, IonList, InfiniteScrollCustomEvent } from "@ionic/vue"
 import { ref } from "vue"
 
-const store = useDayStore()
+const dayStore = useDayStore()
 
 const days = ref<IDay[]>([])
 const batchSize = ref(10)
 const offset = ref(0)
 
 async function getDayBatch(ev?: InfiniteScrollCustomEvent) {
-  const dayBatch = await store.getDays(batchSize.value, offset.value)
+  const dayBatch = await dayStore.getDays(batchSize.value, offset.value)
 
   days.value = days.value.concat(dayBatch)
   offset.value += batchSize.value
@@ -38,4 +38,3 @@ async function getDayBatch(ev?: InfiniteScrollCustomEvent) {
 
 getDayBatch()
 </script>
-
