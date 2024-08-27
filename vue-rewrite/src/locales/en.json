@@ -179,6 +179,7 @@
   "TABLE_DOSAGE": "Dosage",
   "TABLE_OCCURRENCES": "Occurrences",
   "TABLE_LAST_ENTRY": "Last entry",
+  "EMPTY_SYMPTOMS_1": "There's no symptom registered here. They'll appear here when you've added some symptom from your timeline.",
   "EMPTY_MEDS_1": "There's no medication registered here. They'll appear here when you've added some note from your timeline.",
   "EMPTY_MEDS_2": "If you already have medication entries but not registered here, don't hesitate to refresh the list clicking the refresh button.",
   "EMPTY_NOTES_1": "There's no note registered here. They'll appear here when you've added some note from your timeline.",
