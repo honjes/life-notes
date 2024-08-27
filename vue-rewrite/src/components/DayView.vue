@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import { IDay } from "@/types/day"
 import { ref } from "vue"
+import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
   day: IDay
 }>()
 
+const { t } = useI18n()
+
 const items = ref([
-  { title: $t("ADD_SYMPTOM_BOTTOMSHEET"), props: { prependIcon: "spa" } },
-  { title: "Log", props: { prependIcon: "event_note" } },
-  { title: "Med", props: { prependIcon: "medication" } },
-  { title: "Meal", props: { prependIcon: "restaurant_menu" } },
+  { title: t("ADD_SYMPTOM_BOTTOMSHEET"), props: { prependIcon: "spa" } },
+  { title: t("ADD_MEAL_BOTTOMSHEET"), props: { prependIcon: "dinner_dining" } },
+  { title: t("ADD_DRUG_BOTTOMSHEET"), props: { prependIcon: "medication" } },
+  { title: t("ADD_NOTE_BOTTOMSHEET"), props: { prependIcon: "event_note" } },
 ])
 </script>
 
@@ -29,12 +32,12 @@ const items = ref([
           <v-list>
             <v-list-item v-for="item in items" :key="item.title">
               <div class="flex flex-row justify-left gap-4 ml-4">
-                <v-list-item-icon>
+                <div>
                   <v-icon>{{ item.props.prependIcon }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
+                </div>
+                <div>
                   <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item-content>
+                </div>
               </div>
             </v-list-item>
           </v-list>
