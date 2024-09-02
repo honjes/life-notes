@@ -18,6 +18,13 @@ export interface IDay extends IDayOverview {
   meals: IMeal[]
 }
 
+export enum DateValues {
+  symptoms = "symptoms",
+  meals = "meals",
+  meds = "meds",
+  note = "note",
+}
+
 export interface IDetailedDate {
   day: number
   month: number

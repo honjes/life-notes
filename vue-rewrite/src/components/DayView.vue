@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { IDay } from "@/types/day"
+import { DateValues, IDay } from "@/types/day"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import AddASymptom from "@/components/Forms/AddASymptom.vue"
@@ -10,14 +10,14 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const items = ref([
-  { title: t("ADD_SYMPTOM_BOTTOMSHEET"), type: "Symptom", props: { prependIcon: "spa" } },
-  { title: t("ADD_MEAL_BOTTOMSHEET"), type: "Meal", props: { prependIcon: "dinner_dining" } },
-  { title: t("ADD_DRUG_BOTTOMSHEET"), type: "Drug", props: { prependIcon: "medication" } },
-  { title: t("ADD_NOTE_BOTTOMSHEET"), type: "Note", props: { prependIcon: "event_note" } },
+const items = ref<{ title: string; type: DateValues; props: any }[]>([
+  { title: t("ADD_SYMPTOM_BOTTOMSHEET"), type: DateValues.symptoms, props: { prependIcon: "spa" } },
+  { title: t("ADD_MEAL_BOTTOMSHEET"), type: DateValues.meals, props: { prependIcon: "dinner_dining" } },
+  { title: t("ADD_DRUG_BOTTOMSHEET"), type: DateValues.meds, props: { prependIcon: "medication" } },
+  { title: t("ADD_NOTE_BOTTOMSHEET"), type: DateValues.note, props: { prependIcon: "event_note" } },
 ])
 const showDialog = ref(false)
-const dialogContent = ref<"Symptom">("Symptom")
+const dialogContent = ref<DateValues>(DateValues.symptoms)
 </script>
 
 <template>
@@ -60,7 +60,7 @@ const dialogContent = ref<"Symptom">("Symptom")
   <v-dialog v-model="showDialog" max-width="auto">
     <template v-slot:default="{ isActive }">
       <v-card>
-        <AddASymptom v-if="dialogContent === 'Symptom'" />
+        <AddASymptom v-if="dialogContent === DateValues.symptoms" />
       </v-card>
     </template>
   </v-dialog>
