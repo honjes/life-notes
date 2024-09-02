@@ -5,6 +5,10 @@ import { format } from "date-fns"
 import { useSymptomStore } from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { useRouter } from "vue-router"
+import { emit } from "pouchdb"
+
+// Vue Definitions
+const emits = defineEmits(["close"])
 
 // external components
 const { t } = useI18n()
@@ -63,9 +67,9 @@ symptomStore.getSymptoms().then(symptoms => {
       </div>
     </v-form>
   </v-card-text>
-  <v-card-actions>
-    <v-btn variant="text" @click="dismiss">Cancel</v-btn>
+  <v-card-actions props>
+    <v-btn variant="text" @click="emits('close')">Cancel</v-btn>
     <v-spacer></v-spacer>
-    <v-btn variant="text" @click="dismiss">Save</v-btn>
+    <v-btn variant="text" @click="emits('close')">Save</v-btn>
   </v-card-actions>
 </template>

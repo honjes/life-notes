@@ -18,6 +18,10 @@ const items = ref<{ title: string; type: DateValues; props: any }[]>([
 ])
 const showDialog = ref(false)
 const dialogContent = ref<DateValues>(DateValues.symptoms)
+const showBottomSheet = ref(false)
+function closeDialog() {
+  showAddDataDialog.value = false
+  showBottomSheet.value = false
 </script>
 
 <template>
@@ -61,6 +65,7 @@ const dialogContent = ref<DateValues>(DateValues.symptoms)
     <template v-slot:default="{ isActive }">
       <v-card>
         <AddASymptom v-if="dialogContent === DateValues.symptoms" />
+        <AddASymptom v-if="addDataType === DateValues.symptoms" @close="closeDialog" />
       </v-card>
     </template>
   </v-dialog>
