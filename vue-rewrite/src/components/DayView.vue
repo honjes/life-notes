@@ -1,4 +1,14 @@
 <script lang="ts" setup>
+/*
+ * DayView component displays a day and the symptoms of that day also has possability to add data to a day
+ * It also has a bottom sheet to add data to a day
+ * @TODO: add posability to add WakeUp and GoToBed times
+ * @TODO: add posability to add a note
+ * @TODO: add posability to add a med
+ * @TODO: add posability to add a meal
+ * @TODO: add posability to delete data
+ * @TODO: make style match the original app
+ */
 import { DateValues, IDay } from "@/types/day"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
