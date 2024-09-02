@@ -2,6 +2,7 @@
 import CreateEditSymptom from "@/components/Forms/CreateEditSymptom.vue"
 import useSymptomStore from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
+import { createToast } from "@/utils/vue"
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
@@ -14,28 +15,43 @@ const { t } = useI18n()
 const symptomListItems = ref<ISymptom[]>([])
 const showAddSymptomDialog = ref(false)
 const showEditSymptomDialog = ref(false)
+const showDeleteSymptomDialog = ref(false)
 const symptomToEdit = ref<ISymptom>()
+const symptomToDelete = ref<ISymptom>()
 
 // Functions
-/*
- * Edits a symptom
- * @param symptom - symptom to edit
- * @TODO: add Logic
- */
-function editSymptom(symptom: ISymptom) {}
-
 // Function to show edit symptom dialog
 function showEditSymptom(symptom: ISymptom) {
   symptomToEdit.value = symptom
   showEditSymptomDialog.value = true
 }
 
+// Function to show delete symptom dialog
+function showDeleteSymptom(symptom: ISymptom) {
+  symptomToDelete.value = symptom
+  showDeleteSymptomDialog.value = true
+}
+
 /*
  * removes a symptom from the db
  * @param symptom - symptom to remove
- * @TODO: add Logic
  */
-function deleteSymptom(symptom: ISymptom) {}
+async function deleteSymptom(symptom?: ISymptom) {
+  if (symptom == null) {
+    await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("DELETE"), name: "???" }), 2000, "error")
+    return
+  }
+  symptomStore
+    .deleteSymptom(symptom.key)
+    .then(async () => {
+      await createToast(t("DELETE_EVENT_DIALOG_TITLE", { type: t("SYMPTOM") }), 2000, "success")
+      symptomListItems.value = symptomListItems.value.filter(s => s.key !== symptom.key)
+      showDeleteSymptomDialog.value = false
+    })
+    .catch(async () => {
+      await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("DELETE"), name: symptom.label }), 2000, "error")
+    })
+}
 
 // Initalise symptom list
 symptomStore.getSymptoms().then(returnedSymptoms => {
@@ -43,7 +59,6 @@ symptomStore.getSymptoms().then(returnedSymptoms => {
 })
 // Subscribe to store changes and update symptom list
 symptomStore.$subscribe(() => {
-  console.log("symptom store changed")
   symptomStore.getSymptoms().then(returnedSymptoms => {
     symptomListItems.value = returnedSymptoms
   })
@@ -67,7 +82,7 @@ symptomStore.$subscribe(() => {
               </div>
               <div class="flex flex-row items-center">
                 <v-icon size="large" class="hover:cursor-pointer" @click="showEditSymptom(symptom)">edit</v-icon>
-                <v-icon size="large" class="hover:cursor-pointer" @click="deleteSymptom(symptom)">delete</v-icon>
+                <v-icon size="large" class="hover:cursor-pointer" @click="showDeleteSymptom(symptom)">delete</v-icon>
               </div>
             </div>
           </v-list-item>
@@ -88,12 +103,26 @@ symptomStore.$subscribe(() => {
         <v-dialog v-model="showEditSymptomDialog" max-width="auto">
           <template v-slot:default>
             <v-card>
-              <CreateEditSymptom
-                edit
-                :symptom="symptomToEdit"
-                @edit="(symptom: ISymptom) => editSymptom(symptom)"
-                @close="showEditSymptomDialog = false"
-              />
+              <CreateEditSymptom edit :symptom="symptomToEdit" @close="showEditSymptomDialog = false" />
+            </v-card>
+          </template>
+        </v-dialog>
+        <v-dialog v-model="showDeleteSymptomDialog" max-width="auto">
+          <template v-slot:default>
+            <v-card>
+              <v-card-title>
+                <h3 class="text-xl">
+                  {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}
+                </h3>
+              </v-card-title>
+              <v-card-text>
+                <p>{{ t("DELETE_SYMPTOM_DIALOG_CONTENT") }}</p>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn variant="text" @click="showDeleteSymptomDialog = false">{{ t("CANCEL") }}</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn variant="text" @click="deleteSymptom(symptomToDelete)">{{ t("DELETE") }}</v-btn>
+              </v-card-actions>
             </v-card>
           </template>
         </v-dialog>

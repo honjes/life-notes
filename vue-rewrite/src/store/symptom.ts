@@ -40,7 +40,18 @@ export const useSymptomStore = defineStore("symptom", () => {
     return await db.put(symptom)
   }
 
-  return { updates, getSymptoms, createNewSymptom, editSymptom }
+  /**
+   * Deletes a symptom
+   * @param key - symptom key
+   */
+  async function deleteSymptom(key: string) {
+    if (key == null || key === "") throw new Error("key is required")
+    const symptom = await db.get(key)
+    updates.value++
+    return await db.remove(symptom)
+  }
+
+  return { updates, getSymptoms, createNewSymptom, editSymptom, deleteSymptom }
 })
 
 export default useSymptomStore

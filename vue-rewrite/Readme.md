@@ -28,3 +28,5 @@ In Progress
   - [ ] "SYMPTOM_NAME_REQUIRED"
   - [ ] "SYMPTOM_ACTION_ERROR"
   - [ ] "SYMPTOM_ACTION_SUCCESS"
+  - [ ] "SAVE"
+  - [ ] "DELETE"
