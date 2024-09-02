@@ -1,0 +1,37 @@
+ion-toast {
+  &::part(container) {
+    border-radius: var(--v-border-radius);
+  }
+  &.toast-error {
+    &::part(container) {
+      background-color: rgb(var(--v-theme-error));
+    }
+    &::part(message) {
+      color: rgb(var(--v-theme-on-error));
+    }
+  }
+  &.toast-info {
+    &::part(container) {
+      background-color: rgb(var(--v-theme-info));
+    }
+    &::part(message) {
+      color: rgb(var(--v-theme-on-info));
+    }
+  }
+  &.toast-warning {
+    &::part(container) {
+      background-color: rgb(var(--v-theme-warning));
+    }
+    &::part(message) {
+      color: rgb(var(--v-theme-on-warning));
+    }
+  }
+  &.toast-success {
+    &::part(container) {
+      background-color: rgb(var(--v-theme-success));
+    }
+    &::part(message) {
+      color: rgb(var(--v-theme-on-success));
+    }
+  }
+}

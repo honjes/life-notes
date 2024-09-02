@@ -2,4 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("./vuetify.css");
+@import "@/theme/variables.css";
+@import "@/theme/ionic.scss";
+@import "@/theme/vuetify.css";
