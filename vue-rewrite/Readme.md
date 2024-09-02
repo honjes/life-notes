@@ -23,3 +23,5 @@ In Progress
 ## TODO
 
 - Complete French translation
+  - [ ] "ADD_SYMPTOM_NAME"
+  - [ ] "EMPTY_SYMPTOMS_1"

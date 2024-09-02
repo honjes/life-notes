@@ -73,6 +73,7 @@
   "EXPORT_DIALOG_CONTENT_2": "Le fichier de sauvegarde sera remplacé par un nouveau.",
   "EDIT_SYMPTOM": "Éditer ce symptôme",
   "ADD_SYMPTOM": "Ajouter un symptôme",
+  "ADD_SYMPTOM_NAME": "",
   "DELETE_SYMPTOM_DIALOG_TITLE": "Supprimer le symptôme { symptom }",
   "DELETE_SYMPTOM_DIALOG_CONTENT": "Supprimer le symptôme { symptom }?",
   "SETTINGS_TITLE": "Paramètres",
