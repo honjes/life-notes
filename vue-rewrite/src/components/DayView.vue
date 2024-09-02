@@ -4,24 +4,31 @@ import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import AddASymptom from "@/components/Forms/AddASymptom.vue"
 
+// Vue Defenitions
 const props = defineProps<{
   day: IDay
 }>()
 
+// External Components
 const { t } = useI18n()
 
-const items = ref<{ title: string; type: DateValues; props: any }[]>([
+// Variables
+const bottomSheetItems = ref<{ title: string; type: DateValues; props: any }[]>([
   { title: t("ADD_SYMPTOM_BOTTOMSHEET"), type: DateValues.symptoms, props: { prependIcon: "spa" } },
   { title: t("ADD_MEAL_BOTTOMSHEET"), type: DateValues.meals, props: { prependIcon: "dinner_dining" } },
   { title: t("ADD_DRUG_BOTTOMSHEET"), type: DateValues.meds, props: { prependIcon: "medication" } },
   { title: t("ADD_NOTE_BOTTOMSHEET"), type: DateValues.note, props: { prependIcon: "event_note" } },
 ])
-const showDialog = ref(false)
-const dialogContent = ref<DateValues>(DateValues.symptoms)
+const showAddDataDialog = ref(false)
+const addDataType = ref<DateValues>(DateValues.symptoms)
 const showBottomSheet = ref(false)
+
+// Functions
+// Function to close the dialog
 function closeDialog() {
   showAddDataDialog.value = false
   showBottomSheet.value = false
+}
 </script>
 
 <template>
@@ -31,19 +38,19 @@ function closeDialog() {
       <v-btn variant="text" icon="arrow_forward_ios" />
     </div>
     <div class="flex flex-row items-center">
-      <v-bottom-sheet>
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" variant="text" icon="playlist_add" />
+      <v-bottom-sheet v-model="showBottomSheet">
+        <template v-slot:activator>
+          <v-btn variant="text" icon="playlist_add" @click="showBottomSheet = true" />
         </template>
         <v-card>
           <v-list>
-            <v-list-item v-for="item in items" :key="item.title">
+            <v-list-item v-for="item in bottomSheetItems" :key="item.title">
               <div
                 class="flex flex-row justify-left gap-4 ml-4 hover:cursor-pointer"
                 @click="
                   () => {
-                    showDialog = true
-                    dialogContent = item.type
+                    showAddDataDialog = true
+                    addDataType = item.type
                   }
                 "
               >
@@ -61,10 +68,9 @@ function closeDialog() {
       <v-btn variant="text" icon="delete_sweep" />
     </div>
   </div>
-  <v-dialog v-model="showDialog" max-width="auto">
-    <template v-slot:default="{ isActive }">
+  <v-dialog v-model="showAddDataDialog" max-width="auto">
+    <template v-slot:default>
       <v-card>
-        <AddASymptom v-if="dialogContent === DateValues.symptoms" />
         <AddASymptom v-if="addDataType === DateValues.symptoms" @close="closeDialog" />
       </v-card>
     </template>
