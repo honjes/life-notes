@@ -1,19 +1,7 @@
-<template>
-  <IonPage>
-    <IonContent :fullscreen="true">
-      <IonList>
-        <IonItem v-for="day in days" :key="day.date">
-          <DayView :day="day" />
-        </IonItem>
-      </IonList>
-      <IonInfiniteScroll @ionInfinite="getDayBatch">
-        <IonInfiniteScrollContent></IonInfiniteScrollContent>
-      </IonInfiniteScroll>
-    </IonContent>
-  </IonPage>
-</template>
-
 <script setup lang="ts">
+/*
+ * Home page displays a list of all days and the symptoms of that day also has possability to add data to a day
+ */
 import { useDayStore } from "@/store/day"
 import { IDay } from "@/types/day"
 import DayView from "@/components/DayView.vue"
@@ -38,3 +26,18 @@ async function getDayBatch(ev?: InfiniteScrollCustomEvent) {
 
 getDayBatch()
 </script>
+
+<template>
+  <IonPage>
+    <IonContent :fullscreen="true">
+      <IonList>
+        <IonItem v-for="day in days" :key="day.date">
+          <DayView :day="day" />
+        </IonItem>
+      </IonList>
+      <IonInfiniteScroll @ionInfinite="getDayBatch">
+        <IonInfiniteScrollContent></IonInfiniteScrollContent>
+      </IonInfiniteScroll>
+    </IonContent>
+  </IonPage>
+</template>
