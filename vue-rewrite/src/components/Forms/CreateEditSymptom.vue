@@ -73,9 +73,9 @@ if (props.edit) {
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-btn variant="text" @click="emits('close')">Cancel</v-btn>
+      <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
       <v-spacer></v-spacer>
-      <v-btn variant="text" @click="createNewSymptom">Save</v-btn>
+      <v-btn variant="text" @click="createNewSymptom">{{ t("SAVE") }}</v-btn>
     </v-card-actions>
   </div>
   <div v-else>
@@ -90,9 +90,9 @@ if (props.edit) {
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-btn variant="text" @click="emits('close')">Cancel</v-btn>
+      <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
       <v-spacer></v-spacer>
-      <v-btn variant="text" @click="editSymptom">Save</v-btn>
+      <v-btn variant="text" @click="editSymptom">{{ t("SAVE") }}</v-btn>
     </v-card-actions>
   </div>
 </template>

@@ -66,7 +66,7 @@ symptomStore.$subscribe(() => {
                 <v-list-item-title>{{ symptom.label }}</v-list-item-title>
               </div>
               <div class="flex flex-row items-center">
-                <v-icon size="large" class="hover:cursor-pointer" @click="showEditSymptom(symptom)"> edit </v-icon>
+                <v-icon size="large" class="hover:cursor-pointer" @click="showEditSymptom(symptom)">edit</v-icon>
                 <v-icon size="large" class="hover:cursor-pointer" @click="deleteSymptom(symptom)">delete</v-icon>
               </div>
             </div>
