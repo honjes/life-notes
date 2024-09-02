@@ -13,18 +13,22 @@ const { t } = useI18n()
 // Variables
 const symptomListItems = ref<ISymptom[]>([])
 const showAddSymptomDialog = ref(false)
+const showEditSymptomDialog = ref(false)
+const symptomToEdit = ref<ISymptom>()
 
 // Functions
-function updateSymptoms(symptoms: ISymptom[]) {
-  symptomListItems.value = symptoms
-}
-
 /*
  * Edits a symptom
  * @param symptom - symptom to edit
  * @TODO: add Logic
  */
 function editSymptom(symptom: ISymptom) {}
+
+// Function to show edit symptom dialog
+function showEditSymptom(symptom: ISymptom) {
+  symptomToEdit.value = symptom
+  showEditSymptomDialog.value = true
+}
 
 /*
  * removes a symptom from the db
@@ -35,7 +39,14 @@ function deleteSymptom(symptom: ISymptom) {}
 
 // Initalise symptom list
 symptomStore.getSymptoms().then(returnedSymptoms => {
-  updateSymptoms(returnedSymptoms)
+  symptomListItems.value = returnedSymptoms
+})
+// Subscribe to store changes and update symptom list
+symptomStore.$subscribe(() => {
+  console.log("symptom store changed")
+  symptomStore.getSymptoms().then(returnedSymptoms => {
+    symptomListItems.value = returnedSymptoms
+  })
 })
 </script>
 
@@ -55,7 +66,7 @@ symptomStore.getSymptoms().then(returnedSymptoms => {
                 <v-list-item-title>{{ symptom.label }}</v-list-item-title>
               </div>
               <div class="flex flex-row items-center">
-                <v-icon size="large" class="hover:cursor-pointer" @click="editSymptom(symptom)">edit</v-icon>
+                <v-icon size="large" class="hover:cursor-pointer" @click="showEditSymptom(symptom)"> edit </v-icon>
                 <v-icon size="large" class="hover:cursor-pointer" @click="deleteSymptom(symptom)">delete</v-icon>
               </div>
             </div>
@@ -71,6 +82,18 @@ symptomStore.getSymptoms().then(returnedSymptoms => {
           <template v-slot:default>
             <v-card>
               <CreateSymptom @close="showAddSymptomDialog = false" />
+            </v-card>
+          </template>
+        </v-dialog>
+        <v-dialog v-model="showEditSymptomDialog" max-width="auto">
+          <template v-slot:default>
+            <v-card>
+              <CreateSymptom
+                edit
+                :symptom="symptomToEdit"
+                @edit="(symptom: ISymptom) => editSymptom(symptom)"
+                @close="showEditSymptomDialog = false"
+              />
             </v-card>
           </template>
         </v-dialog>
