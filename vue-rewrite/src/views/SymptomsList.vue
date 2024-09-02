@@ -19,6 +19,20 @@ function updateSymptoms(symptoms: ISymptom[]) {
   symptomListItems.value = symptoms
 }
 
+/*
+ * Edits a symptom
+ * @param symptom - symptom to edit
+ * @TODO: add Logic
+ */
+function editSymptom(symptom: ISymptom) {}
+
+/*
+ * removes a symptom from the db
+ * @param symptom - symptom to remove
+ * @TODO: add Logic
+ */
+function deleteSymptom(symptom: ISymptom) {}
+
 // Initalise symptom list
 symptomStore.getSymptoms().then(returnedSymptoms => {
   updateSymptoms(returnedSymptoms)
@@ -30,14 +44,20 @@ symptomStore.getSymptoms().then(returnedSymptoms => {
     <ion-content>
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
+          <ion-title class="flex justify-center" size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content>
         <v-list v-if="symptomListItems.length > 0">
           <v-list-item v-for="symptom in symptomListItems" :key="symptom.key">
-            <div>
-              <v-list-item-title>{{ symptom.key }}</v-list-item-title>
+            <div class="flex flex-row justify-between">
+              <div>
+                <v-list-item-title>{{ symptom.label }}</v-list-item-title>
+              </div>
+              <div class="flex flex-row items-center">
+                <v-icon size="large" class="hover:cursor-pointer" @click="editSymptom(symptom)">edit</v-icon>
+                <v-icon size="large" class="hover:cursor-pointer" @click="deleteSymptom(symptom)">delete</v-icon>
+              </div>
             </div>
           </v-list-item>
         </v-list>
