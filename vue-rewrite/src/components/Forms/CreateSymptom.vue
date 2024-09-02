@@ -1,11 +1,8 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
 import { ref } from "vue"
-import { format } from "date-fns"
 import { useSymptomStore } from "@/store/symptom"
-import { ISymptom } from "@/types/symptom"
 import { useRouter } from "vue-router"
-import { toastController } from "@ionic/vue"
 import { createToast } from "@/utils/vue"
 
 // Vue Definitions
@@ -14,7 +11,6 @@ const emits = defineEmits(["close"])
 // external components
 const { t } = useI18n()
 const symptomStore = useSymptomStore()
-const router = useRouter()
 
 // Variables
 // Form values
@@ -26,9 +22,15 @@ async function createNewSymptom() {
     await createToast(t("SYMPTOM_NAME_REQUIRED"), 2000, "error")
     return
   }
-  symptomStore.createNewSymptom(name.value).then(() => {
-    emits("close")
-  })
+  symptomStore
+    .createNewSymptom(name.value)
+    .then(async () => {
+      await createToast(t("SYMPTOM_ACTION_SUCCESS", { action: t("ADD"), name: name.value }), 2000, "success")
+      emits("close")
+    })
+    .catch(async () => {
+      await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("ADD"), name: name.value }), 2000, "error")
+    })
 }
 </script>
 

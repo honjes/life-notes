@@ -75,6 +75,8 @@
   "ADD_SYMPTOM": "Add a Symptom",
   "ADD_SYMPTOM_NAME": "Symptom Name",
   "SYMPTOM_NAME_REQUIRED": "Please enter a name for the Symptom",
+  "SYMPTOM_ACTION_ERROR": "Failed to { action } the Symptom: { name }",
+  "SYMPTOM_ACTION_SUCCESS": "Successfully { action } the Symptom: { name }",
   "DELETE_SYMPTOM_DIALOG_TITLE": "Delete Symptom: { symptom }",
   "DELETE_SYMPTOM_DIALOG_CONTENT": "Delete the Symptom { symptom }?",
   "SETTINGS_TITLE": "Settings",
