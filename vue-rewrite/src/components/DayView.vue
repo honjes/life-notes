@@ -34,7 +34,7 @@ const addDataType = ref<DateValues>(DateValues.symptoms)
 const showBottomSheet = ref(false)
 
 // Functions
-// Function to close the dialog
+// Function to close the dialog and the bottom sheet
 function closeDialog() {
   showAddDataDialog.value = false
   showBottomSheet.value = false

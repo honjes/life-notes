@@ -27,6 +27,7 @@ const symptom = ref<ISymptom>()
 
 // Function to go to add a symptom
 function goToAddASymptom() {
+  emits("close")
   router.push({ name: "Symptom List" })
 }
 
