@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /*
  * Header on each page
+ * @TODO: make icons bigger
  */
 import { IonTabBar, IonTabButton, IonTabs, IonPage, IonRouterOutlet } from "@ionic/vue"
 </script>
