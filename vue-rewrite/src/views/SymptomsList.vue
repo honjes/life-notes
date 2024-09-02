@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CreateSymptom from "@/components/Forms/CreateSymptom.vue"
+import CreateEditSymptom from "@/components/Forms/CreateEditSymptom.vue"
 import useSymptomStore from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
@@ -81,14 +81,14 @@ symptomStore.$subscribe(() => {
         <v-dialog v-model="showAddSymptomDialog" max-width="auto">
           <template v-slot:default>
             <v-card>
-              <CreateSymptom @close="showAddSymptomDialog = false" />
+              <CreateEditSymptom @close="showAddSymptomDialog = false" />
             </v-card>
           </template>
         </v-dialog>
         <v-dialog v-model="showEditSymptomDialog" max-width="auto">
           <template v-slot:default>
             <v-card>
-              <CreateSymptom
+              <CreateEditSymptom
                 edit
                 :symptom="symptomToEdit"
                 @edit="(symptom: ISymptom) => editSymptom(symptom)"
