@@ -11,15 +11,15 @@
             <ion-tab-button tab="tab2" href="/calendar">
               <v-icon size="large">apps</v-icon>
             </ion-tab-button>
-            <ion-tab-button tab="tab3" href="/Symptoms">
+            <ion-tab-button tab="tab3" href="/symptom-list">
               <v-icon size="large">spa</v-icon>
             </ion-tab-button>
           </div>
           <div class="flex flex-row">
-            <ion-tab-button tab="tab4" href="/tab4">
+            <ion-tab-button tab="tab4" href="/help">
               <v-icon size="large">help</v-icon>
             </ion-tab-button>
-            <ion-tab-button tab="tab5" href="/tab5">
+            <ion-tab-button tab="tab5" href="/settings">
               <v-icon size="large">settings</v-icon>
             </ion-tab-button>
           </div>
