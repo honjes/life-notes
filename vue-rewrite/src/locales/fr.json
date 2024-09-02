@@ -74,6 +74,7 @@
   "EDIT_SYMPTOM": "Éditer ce symptôme",
   "ADD_SYMPTOM": "Ajouter un symptôme",
   "ADD_SYMPTOM_NAME": "",
+  "SYMPTOM_NAME_REQUIRED": "",
   "DELETE_SYMPTOM_DIALOG_TITLE": "Supprimer le symptôme { symptom }",
   "DELETE_SYMPTOM_DIALOG_CONTENT": "Supprimer le symptôme { symptom }?",
   "SETTINGS_TITLE": "Paramètres",

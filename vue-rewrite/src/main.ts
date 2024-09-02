@@ -73,7 +73,7 @@ import * as components from "vuetify/components"
 import { VTimePicker } from "vuetify/labs/VTimePicker"
 import * as directives from "vuetify/directives"
 import { aliases, md } from "vuetify/iconsets/md"
-import { darkTheme, lightTheme } from "./theme"
+import { darkTheme, getTheme, lightTheme } from "./theme"
 
 const vuetify = createVuetify({
   components: { VTimePicker, ...components },
@@ -88,8 +88,8 @@ const vuetify = createVuetify({
   theme: {
     defaultTheme: "dark",
     themes: {
-      light: lightTheme,
-      dark: darkTheme,
+      light: getTheme("light"),
+      dark: getTheme("dark"),
     },
   },
 })
