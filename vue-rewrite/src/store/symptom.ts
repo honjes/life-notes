@@ -4,6 +4,8 @@ import { ref } from "vue"
 
 export const useSymptomStore = defineStore("symptom", () => {
   const db = new PouchDB<ISymptom>("symptoms")
+  // create indexes
+  db.createIndex({ index: { fields: ["label"] } }).then(() => console.log("index created"))
   // number of updates
   const updates = ref(0)
 
@@ -12,7 +14,12 @@ export const useSymptomStore = defineStore("symptom", () => {
    * @returns Promise<ISymptom[]>
    */
   async function getSymptoms(): Promise<ISymptom[]> {
-    return (await db.allDocs({ include_docs: true, descending: true })).rows.map(row => row.doc as ISymptom)
+    return (
+      (await db.allDocs({ include_docs: true, descending: true })).rows
+        .map(row => row.doc as ISymptom)
+        // @ts-expect-error - ignore rows that include language (probably the index reference of the db)
+        .filter(s => s.language !== "query")
+    )
   }
 
   /**
