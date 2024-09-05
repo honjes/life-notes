@@ -27,8 +27,10 @@ export const useSymptomStore = defineStore("symptom", () => {
    * @param label - symptom label
    * @returns Promise<ISymptom>
    */
-  async function getSymptomByLabel(key: string): Promise<ISymptom> {
-    return await db.get(key)
+  async function getSymptomByLabel(label: string): Promise<ISymptom> {
+    const symptomReturn = await db.find({ selector: { label: { $eq: label } } })
+    if (symptomReturn.docs.length === 0) throw new Error("Symptom not found")
+    return symptomReturn.docs[0]
   }
 
   /**
