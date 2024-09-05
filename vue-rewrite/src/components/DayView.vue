@@ -35,7 +35,7 @@ const showBottomSheet = ref(false)
 
 // Functions
 // Function to close the dialog and the bottom sheet
-function closeDialog() {
+function closeDialogAndBottomSheet() {
   showAddDataDialog.value = false
   showBottomSheet.value = false
 }

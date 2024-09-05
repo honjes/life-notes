@@ -4,10 +4,13 @@ import { IMed } from "./med"
 import { ISymptom, ISymptomOverview } from "./symptom"
 
 export interface IDayOverview {
+  /* yyyy-MM-dd */
   date: string
   detailedDate: IDetailedDate
   symptomOverviews: ISymptomOverview[]
+  /* HH:mm */
   wakeUp: string
+  /* HH:mm */
   goToBed: string
 }
 
@@ -33,6 +36,7 @@ export interface IDetailedDate {
   dayOfWeek: number
   dayOfYear: number
   weekOfMonth: number
+  /* JS Date object */
   date: Date
   formattedDate: string
 }

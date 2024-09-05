@@ -7,6 +7,6 @@ import { ISymptomLog } from "@/types/symptom"
  * @param detail - details
  * @returns ISymptomLog
  */
-export function buildSymptomLog(time: string, pain: number, detail: string): ISymptomLog {
+export function buildISymptomLog(time: string, pain: number, detail: string): ISymptomLog {
   return { time, pain, detail }
 }
