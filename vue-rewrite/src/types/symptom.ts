@@ -4,8 +4,6 @@ export interface ISymptomOverview {
 }
 
 export interface ISymptomLog {
-  type: string
-  key: string
   time: string
   pain: number
   detail: string
@@ -15,5 +13,5 @@ export interface ISymptom {
   key: string
   pain?: string
   label?: string
-  logs?: ISymptomLog[]
+  logs: ISymptomLog[]
 }
