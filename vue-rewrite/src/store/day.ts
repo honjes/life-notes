@@ -8,14 +8,16 @@ import { ISymptom, ISymptomLog } from "@/types/symptom"
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
   const updates = ref(0)
+  const dayUpdate = ref<string[]>([])
 
   /**
    * Returns an empty IDay object for a given date
    * @param formattedDate - date in format yyyy-MM-dd
    * @returns IDay object
    */
-  function buildDay(formattedDate: string): IDay {
+  function buildDay(formattedDate: string): IDay & { _id: string } {
     return {
+      _id: formattedDate,
       date: formattedDate,
       detailedDate: getDetailedDate(formattedDate),
       symptomOverviews: [],
@@ -53,19 +55,25 @@ export const useDayStore = defineStore("day", () => {
   }
 
   /**
-   * get a specific day from the database or add it if it doesn't exist
+   * get a specific day from the database or empty day if it doesn't exist
    * @param day - day to get
    * @returns IDay object
    */
-  async function getOrAddDay(day: string): Promise<IDay> {
-    const iDay = await db.get<IDay>(day)
-
-    if (!iDay) {
-      const newDay = buildDay(day)
-      await db.put(newDay)
-      return newDay
+  async function getDay(day: string): Promise<IDay> {
+    // try to get the day
+    try {
+      return await db.get<IDay>(day)
+    } catch (err: unknown) {
+      // if it doesn't exist, return empty day
+      const tErr = err as PouchDB.Core.Error
+      if (tErr.name === "not_found") {
+        return buildDay(day)
+      }
+      // if there is another error, throw it
+      else {
+        throw err
+      }
     }
-    return iDay
   }
 
   /**
@@ -75,8 +83,7 @@ export const useDayStore = defineStore("day", () => {
    * @param details - details
    */
   async function addSymptom(day: string, symptom: ISymptom, log: ISymptomLog) {
-    const iDay = await getOrAddDay(day)
-    if (day.length === 0) throw new Error("No day found")
+    const iDay = await getDay(day)
 
     // check if symptom already exists
     const symptomIndex = iDay.symptoms.findIndex(s => s.key === symptom.key)
@@ -85,14 +92,22 @@ export const useDayStore = defineStore("day", () => {
       ;(iDay.symptoms[symptomIndex] as ISymptom).logs.push(log)
       await db.put(iDay)
       updates.value++
+      dayUpdate.value = [day]
     }
     // add symptom if it doesn't exist
     else {
-      iDay.symptoms.push({ key: symptom.key, label: symptom.label, logs: [log] })
-      await db.put(iDay)
-      updates.value++
+      try {
+        iDay.symptoms.push({ key: symptom.key, label: symptom.label, logs: [log] })
+        await db.put(iDay)
+
+        updates.value++
+        dayUpdate.value = [day]
+      } catch (err) {
+        console.error("Error adding symptom: ", err)
+        throw err
+      }
     }
   }
 
-  return { getDays, updates, getDay: getOrAddDay, addSymptom }
+  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom }
 })
