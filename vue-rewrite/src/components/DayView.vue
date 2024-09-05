@@ -23,7 +23,7 @@ const props = defineProps<{
 const { t } = useI18n()
 
 // Variables
-const bottomSheetItems = ref<{ title: string; type: DateValues; props: any }[]>([
+const bottomSheetItems = ref<{ title: string; type: DateValues; props: { prependIcon: string } }[]>([
   { title: t("ADD_SYMPTOM_BOTTOMSHEET"), type: DateValues.symptoms, props: { prependIcon: "spa" } },
   { title: t("ADD_MEAL_BOTTOMSHEET"), type: DateValues.meals, props: { prependIcon: "dinner_dining" } },
   { title: t("ADD_DRUG_BOTTOMSHEET"), type: DateValues.meds, props: { prependIcon: "medication" } },
@@ -43,42 +43,45 @@ function closeDialogAndBottomSheet() {
 </script>
 
 <template>
-  <div class="flex flex-row justify-between w-full">
-    <div class="flex flex-row items-center">
-      <h2 class="text-xl">{{ props.day.date }}</h2>
-      <v-btn variant="text" icon="arrow_forward_ios" />
-    </div>
-    <div class="flex flex-row items-center">
-      <v-bottom-sheet v-model="showBottomSheet">
-        <template v-slot:activator>
-          <v-btn variant="text" icon="playlist_add" @click="showBottomSheet = true" />
-        </template>
-        <v-card>
-          <v-list>
-            <v-list-item v-for="item in bottomSheetItems" :key="item.title">
-              <div
-                class="flex flex-row justify-left gap-4 ml-4 hover:cursor-pointer"
-                @click="
-                  () => {
-                    showAddDataDialog = true
-                    addDataType = item.type
-                    addDataDay = day.date
-                  }
-                "
-              >
-                <div>
-                  <v-icon>{{ item.props.prependIcon }}</v-icon>
+  <div class="flex flex-col gap-2 w-full">
+    <div class="flex flex-row justify-between w-full">
+      <div class="flex flex-row items-center">
+        <h2 class="text-xl">{{ props.day.date }}</h2>
+        <v-btn variant="text" icon="arrow_forward_ios" />
+      </div>
+      <div class="flex flex-row items-center">
+        <v-bottom-sheet v-model="showBottomSheet">
+          <template v-slot:activator>
+            <v-btn variant="text" icon="playlist_add" @click="showBottomSheet = true" />
+          </template>
+          <v-card>
+            <v-list>
+              <v-list-item v-for="item in bottomSheetItems" :key="item.title">
+                <div
+                  class="flex flex-row justify-left gap-4 ml-4"
+                  @click="
+                    () => {
+                      showAddDataDialog = true
+                      addDataType = item.type
+                      addDataDay = day.date
+                    }
+                  "
+                >
+                  <div>
+                    <v-icon>{{ item.props.prependIcon }}</v-icon>
+                  </div>
+                  <div>
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  </div>
                 </div>
-                <div>
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </div>
-              </div>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-bottom-sheet>
-      <v-btn variant="text" icon="delete_sweep" />
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-bottom-sheet>
+        <v-btn variant="text" icon="delete_sweep" />
+      </div>
     </div>
+    {{ day.symptoms }}
   </div>
   <v-dialog v-model="showAddDataDialog" max-width="auto">
     <template v-slot:default>
