@@ -53,8 +53,7 @@ async function addSymptomToDay() {
       await createToast(t("SYMPTOM_ACTION_SUCCESS", { action: t("ADD"), name: symptomLabel.value }), 2000, "success")
       emits("close")
     })
-    .catch(async err => {
-      console.log("error: ", err)
+    .catch(async () => {
       await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("ADD"), name: symptomLabel.value }), 2000, "error")
     })
 }

@@ -58,7 +58,6 @@ async function deleteSymptom(symptom?: ISymptom) {
  */
 async function updateSymptomList() {
   const symptoms = await symptomStore.getSymptoms()
-  console.log(symptoms)
   symptomListItems.value = symptoms
 }
 

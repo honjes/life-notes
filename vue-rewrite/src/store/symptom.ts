@@ -5,7 +5,7 @@ import { ref } from "vue"
 export const useSymptomStore = defineStore("symptom", () => {
   const db = new PouchDB<ISymptom>("symptoms")
   // create indexes
-  db.createIndex({ index: { fields: ["label"] } }).then(() => console.log("index created"))
+  db.createIndex({ index: { fields: ["label"] } })
   // number of updates
   const updates = ref(0)
 

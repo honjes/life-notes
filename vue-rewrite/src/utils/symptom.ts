@@ -20,9 +20,7 @@ export function buildISymptomLog(time: string, pain: number, detail: string): IS
  */
 export function buildDayView(day: IDay): DayView {
   const content: ContentType[] = [...day.logs, ...day.meds, ...day.meals]
-  console.log(content)
   day.symptoms.forEach(s => content.push(...buildSymptomOverview(s)))
-  console.log(content)
   content.sort((a, b) => a.time.localeCompare(b.time))
 
   return {

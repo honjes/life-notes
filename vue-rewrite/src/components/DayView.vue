@@ -39,10 +39,6 @@ const addDataDay = ref<string>("")
 const showBottomSheet = ref(false)
 // Data variables
 const dayView = buildDayView(props.day)
-console.log(
-  "dayview content filter",
-  dayView.content.filter(l => l.type === LogTypes.symptoms)
-)
 
 // Functions
 // Function to close the dialog and the bottom sheet
