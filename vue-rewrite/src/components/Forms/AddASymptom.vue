@@ -26,6 +26,8 @@ const symptomList = ref<ISymptom[]>([])
 const time = ref(format(new Date(props.day), "HH:mm"))
 const menu2 = ref(false)
 const symptom = ref<ISymptom>()
+const pain = ref(0)
+const details = ref("")
 
 // Function to go to add a symptom
 function goToAddASymptom() {
@@ -59,7 +61,7 @@ symptomStore.getSymptoms().then(symptoms => {
         </v-menu>
       </v-text-field>
       <div class="flex flex-row gap-4">
-        <v-select v-model="symptom" :items="symptomList" :label="t('SYMPTOM')">
+        <v-select v-model="symptom" :items="symptomList" item-value="label" item-title="label" :label="t('SYMPTOM')">
           <template v-slot:no-data>
             <v-list-item>
               {{ t("EMPTY_SYMPTOMS_1") }}
@@ -68,6 +70,11 @@ symptomStore.getSymptoms().then(symptoms => {
         </v-select>
         <v-btn density="compact" size="large" icon="add" class="mt-3 h-fit" @click="goToAddASymptom" />
       </div>
+      <div class="flex flex-row gap-4">
+        <v-slider :label="t('PAIN')" v-model="pain" min="0" max="5" step="1" thumb-label></v-slider>
+        {{ pain }}
+      </div>
+      <v-text-field v-model="details" :label="t('DETAIL')"></v-text-field>
     </v-form>
   </v-card-text>
   <v-card-actions props>
