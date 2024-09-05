@@ -5,10 +5,12 @@ import { format } from "date-fns"
 import { useSymptomStore } from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { useRouter } from "vue-router"
-import { emit } from "pouchdb"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
+const props = defineProps<{
+  day: string
+}>()
 
 // external components
 const { t } = useI18n()
@@ -16,12 +18,12 @@ const symptomStore = useSymptomStore()
 const router = useRouter()
 
 // Variables
-const monthShort = ref(format(new Date(), "MMM"))
-const day = ref(format(new Date(), "dd"))
+const monthShort = ref(format(new Date(props.day), "MMM"))
+const day = ref(format(new Date(props.day), "dd"))
 const symptomList = ref<ISymptom[]>([])
 
 // Form values
-const time = ref(format(new Date(), "HH:mm"))
+const time = ref(format(new Date(props.day), "HH:mm"))
 const menu2 = ref(false)
 const symptom = ref<ISymptom>()
 

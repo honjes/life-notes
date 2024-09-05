@@ -31,6 +31,7 @@ const bottomSheetItems = ref<{ title: string; type: DateValues; props: any }[]>(
 ])
 const showAddDataDialog = ref(false)
 const addDataType = ref<DateValues>(DateValues.symptoms)
+const addDataDay = ref<string>("")
 const showBottomSheet = ref(false)
 
 // Functions
@@ -61,6 +62,7 @@ function closeDialogAndBottomSheet() {
                   () => {
                     showAddDataDialog = true
                     addDataType = item.type
+                    addDataDay = day.date
                   }
                 "
               >
@@ -81,7 +83,7 @@ function closeDialogAndBottomSheet() {
   <v-dialog v-model="showAddDataDialog" max-width="auto">
     <template v-slot:default>
       <v-card>
-        <AddASymptom v-if="addDataType === DateValues.symptoms" @close="closeDialog" />
+        <AddASymptom :day="addDataDay" v-if="addDataType === DateValues.symptoms" @close="closeDialogAndBottomSheet" />
       </v-card>
     </template>
   </v-dialog>
