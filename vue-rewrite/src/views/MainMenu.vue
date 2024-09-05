@@ -7,6 +7,7 @@ import { IonTabBar, IonTabButton, IonTabs, IonPage, IonRouterOutlet } from "@ion
 </script>
 
 <template>
+  <!-- eslint-disable vue/no-deprecated-slot-attribute -->
   <ion-page>
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>

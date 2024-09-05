@@ -2,7 +2,6 @@
 import { useI18n } from "vue-i18n"
 import { ref } from "vue"
 import { useSymptomStore } from "@/store/symptom"
-import { useRouter } from "vue-router"
 import { createToast } from "@/utils/vue"
 import { ISymptom } from "@/types/symptom"
 
