@@ -74,12 +74,12 @@ export const useDayStore = defineStore("day", () => {
    * @param pain - pain level
    * @param details - details
    */
-  async function addSymptom(day: string, symptom: string, log: ISymptomLog) {
-    const iDay = await getDay(day)
+  async function addSymptom(day: string, symptom: ISymptom, log: ISymptomLog) {
+    const iDay = await getOrAddDay(day)
     if (day.length === 0) throw new Error("No day found")
 
     // check if symptom already exists
-    const symptomIndex = iDay.symptoms.findIndex(s => s.key === symptom)
+    const symptomIndex = iDay.symptoms.findIndex(s => s.key === symptom.key)
     // add log to symptom if it exists
     if (symptomIndex != -1) {
       ;(iDay.symptoms[symptomIndex] as ISymptom).logs.push(log)
@@ -88,11 +88,11 @@ export const useDayStore = defineStore("day", () => {
     }
     // add symptom if it doesn't exist
     else {
-      iDay.symptoms.push({ key: symptom, logs: [log] })
+      iDay.symptoms.push({ key: symptom.key, label: symptom.label, logs: [log] })
       await db.put(iDay)
       updates.value++
     }
   }
 
-  return { getDays, updates, getDay, addSymptom }
+  return { getDays, updates, getDay: getOrAddDay, addSymptom }
 })
