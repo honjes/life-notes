@@ -2,8 +2,16 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx,vue}"],
   theme: {
-    extend: {},
+    extend: {
+      minHeight: {
+        120: "30rem",
+        124: "33rem",
+        128: "36rem",
+        132: "39rem",
+        136: "42rem",
+        140: "45rem",
+      },
+    },
   },
   plugins: [],
 }
-
