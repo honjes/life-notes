@@ -6,7 +6,7 @@ import { useDayStore } from "@/store/day"
 import { IDay } from "@/types/day"
 import DayView from "@/components/DayView.vue"
 import { IonItem, IonList, InfiniteScrollCustomEvent } from "@ionic/vue"
-import { ref } from "vue"
+import { onBeforeMount, ref } from "vue"
 
 const dayStore = useDayStore()
 
@@ -24,7 +24,20 @@ async function getDayBatch(ev?: InfiniteScrollCustomEvent) {
   }
 }
 
-getDayBatch()
+// Init
+onBeforeMount(() => {
+  getDayBatch()
+  // Subscribe to store changes
+  dayStore.$subscribe(() => {
+    // update the days that have been updated
+    dayStore.dayUpdate.forEach(async day => {
+      const dayIndex = days.value.findIndex(d => d.date === day)
+      if (dayIndex != -1) {
+        days.value[dayIndex] = await dayStore.getDay(day)
+      }
+    })
+  })
+})
 </script>
 
 <template>
