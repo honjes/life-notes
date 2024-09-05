@@ -71,8 +71,8 @@ symptomStore.getSymptoms().then(symptoms => {
     </v-form>
   </v-card-text>
   <v-card-actions props>
-    <v-btn variant="text" @click="emits('close')">Cancel</v-btn>
+    <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
     <v-spacer></v-spacer>
-    <v-btn variant="text" @click="emits('close')">Save</v-btn>
+    <v-btn @click="addSymptomToDay">{{ t("ADD") }}</v-btn>
   </v-card-actions>
 </template>
