@@ -12,6 +12,6 @@ export interface ISymptomLog {
 export interface ISymptom {
   key: string
   pain?: string
-  label?: string
+  label: string
   logs: ISymptomLog[]
 }
