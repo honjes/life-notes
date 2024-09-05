@@ -2,9 +2,12 @@ import { IDay } from "@/types/day"
 import { defineStore } from "pinia"
 import { format, subDays } from "date-fns"
 import { getDetailedDate } from "@/utils/date"
+import { ref } from "vue"
+import { ISymptom, ISymptomLog } from "@/types/symptom"
 
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
+  const updates = ref(0)
 
   /**
    * Returns an empty IDay object for a given date
@@ -23,6 +26,18 @@ export const useDayStore = defineStore("day", () => {
       wakeUp: "",
       goToBed: "",
     }
+  }
+
+  /**
+   * add a day to the database
+   * @param day - day to add
+   */
+  async function addDay(day: string) {
+    const newDay = buildDay(day)
+    // check if day already exists
+    const iDay = await db.allDocs({ include_docs: true, descending: true, key: day })
+    if (iDay.rows.length > 0) return
+    return await db.put(newDay)
   }
 
   /**
@@ -49,5 +64,48 @@ export const useDayStore = defineStore("day", () => {
     return returnDays.sort((a, b) => b.date.localeCompare(a.date))
   }
 
-  return { getDays }
+  /**
+   * get a specific day from the database or add it if it doesn't exist
+   * @param day - day to get
+   * @returns IDay object
+   */
+  async function getDay(day: string): Promise<IDay> {
+    const iDay = await db.allDocs<IDay>({ include_docs: true, descending: true, key: day })
+
+    if (iDay.rows.length === 0) {
+      await addDay(day)
+      return buildDay(day)
+    }
+
+    const dayToGet = iDay.rows[0].doc as IDay
+    return dayToGet
+  }
+
+  /**
+   * Adds a symptom to a day
+   * @param symptom - symptom to add
+   * @param pain - pain level
+   * @param details - details
+   */
+  async function addSymptom(day: string, symptom: string, log: ISymptomLog) {
+    const iDay = await getDay(day)
+    if (day.length === 0) throw new Error("No day found")
+
+    // check if symptom already exists
+    const symptomIndex = iDay.symptoms.findIndex(s => s.key === symptom)
+    // add log to symptom if it exists
+    if (symptomIndex != -1) {
+      ;(iDay.symptoms[symptomIndex] as ISymptom).logs.push(log)
+      await db.put(iDay)
+      updates.value++
+    }
+    // add symptom if it doesn't exist
+    else {
+      iDay.symptoms.push({ key: symptom, logs: [log] })
+      await db.put(iDay)
+      updates.value++
+    }
+  }
+
+  return { getDays, updates, getDay, addSymptom }
 })
