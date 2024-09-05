@@ -25,7 +25,7 @@ const day = ref(format(new Date(props.day), "dd"))
 const symptomList = ref<ISymptom[]>([])
 
 // Form values
-const time = ref(format(new Date(props.day), "HH:mm"))
+const time = ref(format(new Date(), "HH:mm"))
 const menu2 = ref(false)
 const symptomLabel = ref<string>("")
 const pain = ref(0)
