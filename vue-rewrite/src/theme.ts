@@ -1,5 +1,3 @@
-import { on } from "pouchdb"
-
 export const defaultSizeVariables = {
   "icon-size": "2em",
   "border-radius": "0.5rem",

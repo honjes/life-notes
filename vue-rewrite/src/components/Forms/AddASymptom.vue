@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
-import { ref } from "vue"
+import { onBeforeMount, ref } from "vue"
 import { format } from "date-fns"
-import { useSymptomStore } from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { useRouter } from "vue-router"
+import { useDayStore, useSymptomStore } from "@/store"
+import { buildISymptomLog, createToast } from "@/utils"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
@@ -15,6 +16,7 @@ const props = defineProps<{
 // external components
 const { t } = useI18n()
 const symptomStore = useSymptomStore()
+const dayStore = useDayStore()
 const router = useRouter()
 
 // Variables
@@ -25,19 +27,55 @@ const symptomList = ref<ISymptom[]>([])
 // Form values
 const time = ref(format(new Date(props.day), "HH:mm"))
 const menu2 = ref(false)
-const symptom = ref<ISymptom>()
+const symptomLabel = ref<string>("")
 const pain = ref(0)
 const details = ref("")
 
-// Function to go to add a symptom
+// Functions
+// closes Dialog and routes to symptom list
 function goToAddASymptom() {
   emits("close")
   router.push({ name: "Symptom List" })
 }
 
-// Initalise symptom list
-symptomStore.getSymptoms().then(symptoms => {
+/*
+ * Adds a symptom to the db
+ */
+async function addSymptomToDay() {
+  if (symptomLabel.value == undefined) {
+    await createToast(t("SYMPTOM_NAME_REQUIRED"), 2000, "error")
+    return
+  }
+  const symptom = await symptomStore.getSymptomByLabel(symptomLabel.value)
+  dayStore
+    .addSymptom(props.day, symptom, buildISymptomLog(time.value, pain.value, details.value))
+    .then(async () => {
+      await createToast(t("SYMPTOM_ACTION_SUCCESS", { action: t("ADD"), name: symptomLabel.value }), 2000, "success")
+      emits("close")
+    })
+    .catch(async err => {
+      console.log("error: ", err)
+      await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("ADD"), name: symptomLabel.value }), 2000, "error")
+    })
+}
+
+/**
+ * Updates the symptom list
+ */
+async function updateSymptomList() {
+  const symptoms = await symptomStore.getSymptoms()
+
   symptomList.value = symptoms
+}
+
+// Init
+onBeforeMount(() => {
+  updateSymptomList()
+
+  // Subscribe to store changes
+  symptomStore.$subscribe(() => {
+    updateSymptomList()
+  })
 })
 </script>
 
@@ -61,7 +99,13 @@ symptomStore.getSymptoms().then(symptoms => {
         </v-menu>
       </v-text-field>
       <div class="flex flex-row gap-4">
-        <v-select v-model="symptom" :items="symptomList" item-value="label" item-title="label" :label="t('SYMPTOM')">
+        <v-select
+          v-model="symptomLabel"
+          :items="symptomList"
+          item-value="label"
+          item-title="label"
+          :label="t('SYMPTOM')"
+        >
           <template v-slot:no-data>
             <v-list-item>
               {{ t("EMPTY_SYMPTOMS_1") }}
