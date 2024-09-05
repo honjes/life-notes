@@ -5,10 +5,23 @@ import { ref } from "vue"
 export const useSymptomStore = defineStore("symptom", () => {
   const db = new PouchDB<ISymptom>("symptoms")
   // number of updates
-  let updates = ref(0)
+  const updates = ref(0)
 
+  /**
+   * returns all symptoms
+   * @returns Promise<ISymptom[]>
+   */
   async function getSymptoms(): Promise<ISymptom[]> {
     return (await db.allDocs({ include_docs: true, descending: true })).rows.map(row => row.doc as ISymptom)
+  }
+
+  /**
+   * returns a symptom by labe
+   * @param label - symptom label
+   * @returns Promise<ISymptom>
+   */
+  async function getSymptomByLabel(key: string): Promise<ISymptom> {
+    return await db.get(key)
   }
 
   /**
@@ -51,7 +64,7 @@ export const useSymptomStore = defineStore("symptom", () => {
     return await db.remove(symptom)
   }
 
-  return { updates, getSymptoms, createNewSymptom, editSymptom, deleteSymptom }
+  return { updates, getSymptoms, getSymptomByLabel, createNewSymptom, editSymptom, deleteSymptom }
 })
 
 export default useSymptomStore
