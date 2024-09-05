@@ -29,18 +29,6 @@ export const useDayStore = defineStore("day", () => {
   }
 
   /**
-   * add a day to the database
-   * @param day - day to add
-   */
-  async function addDay(day: string) {
-    const newDay = buildDay(day)
-    // check if day already exists
-    const iDay = await db.allDocs({ include_docs: true, descending: true, key: day })
-    if (iDay.rows.length > 0) return
-    return await db.put(newDay)
-  }
-
-  /**
    * Function to get a specific number of days from the database
    * @param limit - number of days to return
    * @param offset - number of days to skip
@@ -69,16 +57,15 @@ export const useDayStore = defineStore("day", () => {
    * @param day - day to get
    * @returns IDay object
    */
-  async function getDay(day: string): Promise<IDay> {
-    const iDay = await db.allDocs<IDay>({ include_docs: true, descending: true, key: day })
+  async function getOrAddDay(day: string): Promise<IDay> {
+    const iDay = await db.get<IDay>(day)
 
-    if (iDay.rows.length === 0) {
-      await addDay(day)
-      return buildDay(day)
+    if (!iDay) {
+      const newDay = buildDay(day)
+      await db.put(newDay)
+      return newDay
     }
-
-    const dayToGet = iDay.rows[0].doc as IDay
-    return dayToGet
+    return iDay
   }
 
   /**
