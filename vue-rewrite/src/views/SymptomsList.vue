@@ -4,7 +4,7 @@ import useSymptomStore from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { createToast } from "@/utils/vue"
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
-import { ref } from "vue"
+import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
 
 // External Components
@@ -53,14 +53,22 @@ async function deleteSymptom(symptom?: ISymptom) {
     })
 }
 
+/**
+ * Updates the symptom list
+ */
+async function updateSymptomList() {
+  const symptoms = await symptomStore.getSymptoms()
+  console.log(symptoms)
+  symptomListItems.value = symptoms
+}
+
 // Initalise symptom list
-symptomStore.getSymptoms().then(returnedSymptoms => {
-  symptomListItems.value = returnedSymptoms
-})
-// Subscribe to store changes and update symptom list
-symptomStore.$subscribe(() => {
-  symptomStore.getSymptoms().then(returnedSymptoms => {
-    symptomListItems.value = returnedSymptoms
+onBeforeMount(() => {
+  updateSymptomList()
+
+  // Subscribe to store changes and update symptom list
+  symptomStore.$subscribe(() => {
+    updateSymptomList()
   })
 })
 </script>
