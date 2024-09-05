@@ -1,5 +1,14 @@
+import { LogTypes } from "./log"
+
+/**
+ * All needed information to display a symptom Badge
+ */
 export interface ISymptomOverview {
+  type: LogTypes
   key: string
+  label: string
+  /* HH:mm */
+  time: string
   pain: number
 }
 
