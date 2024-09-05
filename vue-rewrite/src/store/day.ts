@@ -89,17 +89,28 @@ export const useDayStore = defineStore("day", () => {
     const symptomIndex = iDay.symptoms.findIndex(s => s.key === symptom.key)
     // add log to symptom if it exists
     if (symptomIndex != -1) {
-      ;(iDay.symptoms[symptomIndex] as ISymptom).logs.push(log)
-      await db.put(iDay)
+      // add log to symptom
+      const newIDay = iDay.symptoms[symptomIndex] as ISymptom
+      newIDay.logs.push(log)
+
+      // update Day
+      await db.put(newIDay)
+
+      // update store
       updates.value++
       dayUpdate.value = [day]
     }
     // add symptom if it doesn't exist
     else {
       try {
-        iDay.symptoms.push({ key: symptom.key, label: symptom.label, logs: [log] })
+        const symptomToAdd = { key: symptom.key, label: symptom.label, logs: [log] }
+        // add symptom to day
+        iDay.symptoms.push(symptomToAdd)
+
+        // update Day
         await db.put(iDay)
 
+        // update store
         updates.value++
         dayUpdate.value = [day]
       } catch (err) {
