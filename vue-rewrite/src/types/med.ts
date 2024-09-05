@@ -1,5 +1,7 @@
+import { LogTypes } from "./log"
+
 export interface IMed {
-  type: string
+  type: LogTypes
   key: string
   time: string
   quantity: number

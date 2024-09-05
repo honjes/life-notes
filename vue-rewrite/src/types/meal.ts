@@ -1,5 +1,7 @@
+import { LogTypes } from "./log"
+
 export interface IMeal {
-  type: string
+  type: LogTypes
   time: string
   key: string
   detail: string

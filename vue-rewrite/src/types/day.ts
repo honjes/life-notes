@@ -21,11 +21,13 @@ export interface IDay extends IDayOverview {
   meals: IMeal[]
 }
 
-export enum DateValues {
-  symptoms = "symptoms",
-  meals = "meals",
-  meds = "meds",
-  note = "note",
+export type ContentType = ILog | ISymptomOverview | IMed | IMeal
+
+export interface DayView {
+  wakeUp: string
+  goToBed: string
+  content: ContentType[]
+  symptoms: ISymptom[]
 }
 
 export interface IDetailedDate {

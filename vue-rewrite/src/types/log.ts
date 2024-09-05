@@ -1,5 +1,15 @@
+/**
+ * All possible log types
+ */
+export enum LogTypes {
+  symptoms = "symptoms",
+  meals = "meals",
+  meds = "meds",
+  note = "note",
+}
+
 export interface ILog {
-  type: string
+  type: LogTypes
   time: string
   key: string
   detail: string
