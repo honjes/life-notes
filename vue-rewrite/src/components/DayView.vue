@@ -9,17 +9,16 @@
  * @TODO: add posability to delete data
  * @TODO: make style match the original app
  */
-import { IDay } from "@/types/day"
+import { DayView } from "@/types/day"
 import { LogTypes } from "@/types/log"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import AddASymptom from "@/components/Forms/AddASymptom.vue"
-import { buildDayView } from "@/utils"
 import { ISymptomOverview } from "@/types/symptom"
 
 // Vue Defenitions
 const props = defineProps<{
-  day: IDay
+  day: DayView
 }>()
 
 // External Components
@@ -38,7 +37,6 @@ const addDataType = ref<LogTypes>(LogTypes.symptoms)
 const addDataDay = ref<string>("")
 const showBottomSheet = ref(false)
 // Data variables
-const dayView = buildDayView(props.day)
 
 // Functions
 // Function to close the dialog and the bottom sheet
@@ -90,7 +88,7 @@ function closeDialogAndBottomSheet() {
     <div class="flex flex-col gap-2 w-3/5">
       <div
         class="w-full flex flex-row gap-2 bg-red-700 p-2 rounded-lg"
-        v-for="log in (dayView.content.filter(l => l.type === LogTypes.symptoms) as ISymptomOverview[])"
+        v-for="log in (day.content.filter(l => l.type === LogTypes.symptoms) as ISymptomOverview[])"
         :key="log.key"
       >
         <div>{{ log.time }}</div>
