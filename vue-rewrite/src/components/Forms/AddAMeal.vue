@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
-import { onBeforeMount, ref } from "vue"
 import { format } from "date-fns"
-import { useDayStore, useMealStore } from "@/store"
+import { useDayStore } from "@/store"
 import { buildMeal, createToast } from "@/utils"
-import { IMealBasic } from "@/types/meal"
+import { ref } from "vue"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
@@ -14,13 +13,11 @@ const props = defineProps<{
 
 // external components
 const { t } = useI18n()
-const mealStore = useMealStore()
 const dayStore = useDayStore()
 
 // Variables
 const monthShort = ref(format(new Date(props.day), "MMM"))
 const day = ref(format(new Date(props.day), "dd"))
-const mealList = ref<IMealBasic[]>([])
 
 // Form values
 const time = ref(format(new Date(), "HH:mm"))
@@ -66,25 +63,6 @@ async function addMealToDay() {
       )
     })
 }
-
-/**
- * Updates the symptom list
- */
-async function updateMealList() {
-  const meals = await mealStore.getMeals()
-
-  mealList.value = meals
-}
-
-// Init
-onBeforeMount(() => {
-  updateMealList()
-
-  // Subscribe to store changes
-  mealStore.$subscribe(() => {
-    updateMealList()
-  })
-})
 </script>
 
 <template>
