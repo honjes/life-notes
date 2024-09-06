@@ -109,6 +109,7 @@ onBeforeMount(() => {
           v-model="menu2"
           :close-on-content-click="false"
           activator="parent"
+          format="24hr"
           location="center"
           transition="scale-transition"
         >
