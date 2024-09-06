@@ -5,7 +5,6 @@
  * @TODO: add posability to add WakeUp and GoToBed times
  * @TODO: add posability to add a note
  * @TODO: add posability to add a med
- * @TODO: add posability to add a meal
  * @TODO: add posability to delete data
  * @TODO: make style match the original app
  */
@@ -14,7 +13,9 @@ import { LogTypes } from "@/types/log"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import AddASymptom from "@/components/Forms/AddASymptom.vue"
+import AddAMeal from "@/components/Forms/AddAMeal.vue"
 import { ISymptomOverview } from "@/types/symptom"
+import { IMeal } from "@/types/meal"
 
 // Vue Defenitions
 const props = defineProps<{
@@ -86,14 +87,18 @@ function closeDialogAndBottomSheet() {
       </div>
     </div>
     <div class="flex flex-col gap-2 w-3/5">
-      <div
-        class="w-full flex flex-row gap-2 bg-red-700 p-2 rounded-lg"
-        v-for="log in (day.content.filter(l => l.type === LogTypes.symptoms) as ISymptomOverview[])"
-        :key="log.key"
-      >
-        <div>{{ log.time }}</div>
-        <div class="w-full">{{ log.label }}</div>
-        <div>[{{ log.pain }}/5]</div>
+      <div v-for="log in day.content" :key="log.key">
+        <div v-if="log.type === LogTypes.symptoms" class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg">
+          <div>{{ log.time }}</div>
+          <div class="w-full">{{ (log as ISymptomOverview).label }}</div>
+          <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
+          <div><v-icon>spa</v-icon></div>
+        </div>
+        <div v-if="log.type === LogTypes.meals" class="flex flex-row gap-2 bg-green-700 p-2 rounded-lg">
+          <div>{{ log.time }}</div>
+          <div class="w-full">{{ (log as IMeal).key }}</div>
+          <div><v-icon>dinner_dining</v-icon></div>
+        </div>
       </div>
     </div>
   </div>
@@ -101,6 +106,7 @@ function closeDialogAndBottomSheet() {
     <template v-slot:default>
       <v-card>
         <AddASymptom :day="addDataDay" v-if="addDataType === LogTypes.symptoms" @close="closeDialogAndBottomSheet" />
+        <AddAMeal :day="addDataDay" v-if="addDataType === LogTypes.meals" @close="closeDialogAndBottomSheet" />
       </v-card>
     </template>
   </v-dialog>
