@@ -4,6 +4,7 @@ import { format, subDays } from "date-fns"
 import { getDetailedDate } from "@/utils/date"
 import { ref } from "vue"
 import { ISymptom, ISymptomLog } from "@/types/symptom"
+import { IMeal } from "@/types/meal"
 
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
@@ -123,5 +124,28 @@ export const useDayStore = defineStore("day", () => {
     }
   }
 
-  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom }
+  /**
+   * Adds a meal to a day
+   * @param {string} day - day to add
+   * @param {IMeal} meal - meal to add
+   */
+  async function addMeal(day: string, meal: IMeal) {
+    const iDay = await getDay(day)
+
+    // add meal to day
+    iDay.meals.push(meal)
+
+    // update Day
+    try {
+      await db.put(iDay)
+      // update store
+      updates.value++
+      dayUpdate.value = [day]
+    } catch (err) {
+      console.error("add meal error: ", err)
+      throw err
+    }
+  }
+
+  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom, addMeal }
 })

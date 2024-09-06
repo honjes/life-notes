@@ -6,8 +6,11 @@
 
     <base href="/" />
     <!-- scripts -->
-    <script src="node_modules/pouchdb/dist/pouchdb.min.js"></script>
-    <script src="node_modules/pouchdb/dist/pouchdb.find.min.js"></script>
+    <script>
+      window.global = window
+    </script>
+    <script src="/js/pouchdb.min.js"></script>
+    <script src="/js/pouchdb.find.min.js"></script>
 
     <!-- meta -->
     <meta name="color-scheme" content="light dark" />
