@@ -90,15 +90,18 @@ export const useDayStore = defineStore("day", () => {
     // add log to symptom if it exists
     if (symptomIndex != -1) {
       // add log to symptom
-      const newIDay = iDay.symptoms[symptomIndex] as ISymptom
-      newIDay.logs.push(log)
+      ;(iDay.symptoms[symptomIndex] as ISymptom).logs.push(log)
 
       // update Day
-      await db.put(newIDay)
-
-      // update store
-      updates.value++
-      dayUpdate.value = [day]
+      try {
+        await db.put(iDay)
+        // update store
+        updates.value++
+        dayUpdate.value = [day]
+      } catch (err) {
+        console.error("add log to existing symptom error: ", err)
+        throw err
+      }
     }
     // add symptom if it doesn't exist
     else {

@@ -24,6 +24,7 @@ export interface IDay extends IDayOverview {
 export type ContentType = ILog | ISymptomOverview | IMed | IMeal
 
 export interface DayView {
+  date: string
   wakeUp: string
   goToBed: string
   content: ContentType[]

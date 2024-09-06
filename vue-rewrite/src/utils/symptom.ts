@@ -24,6 +24,7 @@ export function buildDayView(day: IDay): DayView {
   content.sort((a, b) => a.time.localeCompare(b.time))
 
   return {
+    date: day.date,
     wakeUp: day.wakeUp,
     goToBed: day.goToBed,
     content,
