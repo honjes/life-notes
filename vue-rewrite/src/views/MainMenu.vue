@@ -11,7 +11,7 @@ import { IonTabBar, IonTabButton, IonTabs, IonPage, IonRouterOutlet } from "@ion
   <ion-page>
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
-      <ion-tab-bar slot="top">
+      <ion-tab-bar slot="top" id="header">
         <div class="flex flex-row w-full justify-between px-5">
           <div class="flex flex-row">
             <ion-tab-button tab="tab1" href="/Home">
