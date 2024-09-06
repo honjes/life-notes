@@ -18,7 +18,7 @@ export function getTheme(theme: "dark" | "light", options = { variables: { ...de
         info: "#0288d1",
         onInfo: "#000000",
         success: "#378e3c",
-        onSuccess: "#000000",
+        onSuccess: "#ffffff",
       },
       variables: options.variables,
     }
@@ -36,7 +36,7 @@ export function getTheme(theme: "dark" | "light", options = { variables: { ...de
       info: "#0288d1",
       onInfo: "#000000",
       success: "#378e3c",
-      onSuccess: "#000000",
+      onSuccess: "#ffffff",
     },
     variables: {
       "overlay-opacity": 0.15,

@@ -49,7 +49,7 @@ function closeDialogAndBottomSheet() {
 
 <template>
   <div class="flex flex-col gap-2 w-full min-h-120">
-    <div class="flex flex-row justify-between w-full">
+    <div class="flex flex-row justify-between w-full dark:bg-gray-700 bg-gray-500 text-white px-4">
       <div class="flex flex-row items-center">
         <h2 class="text-xl">{{ props.day.date }}</h2>
         <v-btn variant="text" icon="arrow_forward_ios" />
@@ -86,18 +86,20 @@ function closeDialogAndBottomSheet() {
         <v-btn variant="text" icon="delete_sweep" />
       </div>
     </div>
-    <div class="flex flex-col gap-2 w-3/5">
-      <div v-for="log in day.content" :key="log.key">
-        <div v-if="log.type === LogTypes.symptoms" class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg">
-          <div>{{ log.time }}</div>
-          <div class="w-full">{{ (log as ISymptomOverview).label }}</div>
-          <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
-          <div><v-icon>spa</v-icon></div>
-        </div>
-        <div v-if="log.type === LogTypes.meals" class="flex flex-row gap-2 bg-green-700 p-2 rounded-lg">
-          <div>{{ log.time }}</div>
-          <div class="w-full">{{ (log as IMeal).key }}</div>
-          <div><v-icon>dinner_dining</v-icon></div>
+    <div class="flex flex-row w-full space-between px-4">
+      <div class="flex flex-col gap-2 w-3/5">
+        <div v-for="log in day.content" :key="log.key">
+          <div v-if="log.type === LogTypes.symptoms" class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg text-white">
+            <div>{{ log.time }}</div>
+            <div class="w-full">{{ (log as ISymptomOverview).label }}</div>
+            <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
+            <div><v-icon>spa</v-icon></div>
+          </div>
+          <div v-if="log.type === LogTypes.meals" class="flex flex-row gap-2 bg-green-700 p-2 rounded-lg text-white">
+            <div>{{ log.time }}</div>
+            <div class="w-full">{{ (log as IMeal).key }}</div>
+            <div><v-icon>dinner_dining</v-icon></div>
+          </div>
         </div>
       </div>
     </div>
