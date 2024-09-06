@@ -48,8 +48,8 @@ function closeDialogAndBottomSheet() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 w-full min-h-120">
-    <div class="flex flex-row justify-between w-full dark:bg-gray-700 bg-gray-500 text-white px-4">
+  <div class="flex flex-col w-full">
+    <div class="flex flex-row justify-between w-full dark:bg-gray-700 bg-gray-500 text-white">
       <div class="flex flex-row items-center">
         <h2 class="text-xl">{{ props.day.date }}</h2>
         <v-btn variant="text" icon="arrow_forward_ios" />
@@ -86,8 +86,8 @@ function closeDialogAndBottomSheet() {
         <v-btn variant="text" icon="delete_sweep" />
       </div>
     </div>
-    <div class="flex flex-row w-full space-between px-4">
-      <div class="flex flex-col gap-2 w-3/5">
+    <div class="group flex flex-row w-full justify-between pl-4 min-h-112">
+      <div class="flex flex-col gap-2 w-3/5 py-4">
         <div v-for="log in day.content" :key="log.key">
           <div v-if="log.type === LogTypes.symptoms" class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg text-white">
             <div>{{ log.time }}</div>
@@ -100,6 +100,16 @@ function closeDialogAndBottomSheet() {
             <div class="w-full">{{ (log as IMeal).key }}</div>
             <div><v-icon>dinner_dining</v-icon></div>
           </div>
+        </div>
+      </div>
+      <div class="flex flex-col w-1/5 justify-between group-h-full">
+        <div class="h-20 rounded-bl-full bg-gray-500 flex flex-col justify-start gap-2 items-end pr-2">
+          <p class="min-h-6">{{ day.wakeUp }}</p>
+          <v-icon>alarm</v-icon>
+        </div>
+        <div class="h-20 rounded-tl-full bg-gray-500 flex flex-col justify-end gap-2 items-end pr-2">
+          <v-icon>bedtime</v-icon>
+          <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
       </div>
     </div>

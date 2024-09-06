@@ -45,7 +45,7 @@ onBeforeMount(() => {
   <IonPage>
     <IonContent :fullscreen="true">
       <div>
-        <div v-for="day in days" :key="day.date" class="pb-4">
+        <div v-for="day in days" :key="day.date">
           <DayView :day="buildDayView(day)" />
         </div>
       </div>

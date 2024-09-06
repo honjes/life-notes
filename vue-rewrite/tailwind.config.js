@@ -4,6 +4,8 @@ export default {
   theme: {
     extend: {
       minHeight: {
+        112: "24rem",
+        116: "27rem",
         120: "30rem",
         124: "33rem",
         128: "36rem",
