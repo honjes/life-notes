@@ -18,7 +18,12 @@ This is a rewrite of the Life Notes app in Vue.js.
 
 ## How to build
 
-In Progress
+### Android
+
+1. Run `npm run build`
+2. (if first build) Run `npx cap add android`
+3. Run `npx cap open android`
+4. Build the app with android studio
 
 ## TODO
 
