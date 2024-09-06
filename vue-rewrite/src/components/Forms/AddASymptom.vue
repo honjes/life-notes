@@ -50,11 +50,29 @@ async function addSymptomToDay() {
   dayStore
     .addSymptom(props.day, symptom, buildISymptomLog(time.value, pain.value, details.value))
     .then(async () => {
-      await createToast(t("SYMPTOM_ACTION_SUCCESS", { action: t("ADD"), name: symptomLabel.value }), 2000, "success")
+      await createToast(
+        t("ACTION_TOAST", {
+          action: t("ADD"),
+          successfully_failuar: t("SUCCESSFULLY"),
+          data_type: t("SYMPTOM"),
+          name: symptomLabel.value,
+        }),
+        2000,
+        "success"
+      )
       emits("close")
     })
     .catch(async () => {
-      await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("ADD"), name: symptomLabel.value }), 2000, "error")
+      await createToast(
+        t("ACTION_TOAST", {
+          action: t("ADD"),
+          successfully_failuar: t("FAILED"),
+          data_type: t("SYMPTOM"),
+          name: symptomLabel.value,
+        }),
+        2000,
+        "error"
+      )
     })
 }
 

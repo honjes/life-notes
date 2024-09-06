@@ -23,10 +23,12 @@ In Progress
 ## TODO
 
 - Complete French translation
+  - [ ] "ACTION_TOAST"
   - [ ] "ADD_SYMPTOM_NAME"
   - [ ] "EMPTY_SYMPTOMS_1"
   - [ ] "SYMPTOM_NAME_REQUIRED"
-  - [ ] "SYMPTOM_ACTION_ERROR"
-  - [ ] "SYMPTOM_ACTION_SUCCESS"
+  - [ ] "MEAL_NAME_REQUIRED"
   - [ ] "SAVE"
   - [ ] "DELETE"
+  - [ ] "SUCCESSFULLY"
+  - [ ] "FAILED"
