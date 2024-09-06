@@ -38,7 +38,16 @@ function showDeleteSymptom(symptom: ISymptom) {
  */
 async function deleteSymptom(symptom?: ISymptom) {
   if (symptom == null) {
-    await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("DELETE"), name: "???" }), 2000, "error")
+    await createToast(
+      t("ACTION_TOAST", {
+        action: t("DELETE"),
+        successfully_failuar: t("FAILED"),
+        data_type: t("SYMPTOM"),
+        name: "???",
+      }),
+      2000,
+      "error"
+    )
     return
   }
   symptomStore
@@ -49,7 +58,16 @@ async function deleteSymptom(symptom?: ISymptom) {
       showDeleteSymptomDialog.value = false
     })
     .catch(async () => {
-      await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("DELETE"), name: symptom.label }), 2000, "error")
+      await createToast(
+        t("ACTION_TOAST", {
+          action: t("DELETE"),
+          successfully_failuar: t("FAILED"),
+          data_type: t("SYMPTOM"),
+          name: symptom.label,
+        }),
+        2000,
+        "error"
+      )
     })
 }
 

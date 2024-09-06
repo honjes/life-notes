@@ -29,11 +29,29 @@ async function createNewSymptom() {
   symptomStore
     .createNewSymptom(name.value)
     .then(async () => {
-      await createToast(t("SYMPTOM_ACTION_SUCCESS", { action: t("ADD"), name: name.value }), 2000, "success")
+      await createToast(
+        t("ACTION_TOAST", {
+          action: t("ADD"),
+          successfully_failuar: t("SUCCESSFULLY"),
+          data_type: t("SYMPTOM"),
+          name: name.value,
+        }),
+        2000,
+        "success"
+      )
       emits("close")
     })
     .catch(async () => {
-      await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("ADD"), name: name.value }), 2000, "error")
+      await createToast(
+        t("ACTION_TOAST", {
+          action: t("ADD"),
+          successfully_failuar: t("FAILED"),
+          data_type: t("SYMPTOM"),
+          name: name.value,
+        }),
+        2000,
+        "error"
+      )
     })
 }
 
@@ -45,11 +63,29 @@ async function editSymptom() {
   symptomStore
     .editSymptom(props.symptom?.key || "", name.value)
     .then(async () => {
-      await createToast(t("SYMPTOM_ACTION_SUCCESS", { action: t("EDIT"), name: name.value }), 2000, "success")
+      await createToast(
+        t("ACTION_TOAST", {
+          action: t("EDIT"),
+          successfully_failuar: t("SUCCESSFULLY"),
+          data_type: t("SYMPTOM"),
+          name: name.value,
+        }),
+        2000,
+        "success"
+      )
       emits("close")
     })
     .catch(async () => {
-      await createToast(t("SYMPTOM_ACTION_ERROR", { action: t("EDIT"), name: name.value }), 2000, "error")
+      await createToast(
+        t("ACTION_TOAST", {
+          action: t("EDIT"),
+          successfully_failuar: t("FAILED"),
+          data_type: t("SYMPTOM"),
+          name: name.value,
+        }),
+        2000,
+        "error"
+      )
     })
 }
 
