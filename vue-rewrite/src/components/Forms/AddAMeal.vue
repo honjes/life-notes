@@ -4,6 +4,7 @@ import { format } from "date-fns"
 import { useDayStore } from "@/store"
 import { buildMeal, createToast } from "@/utils"
 import { ref } from "vue"
+import { TimePicker } from "./Fields"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
@@ -21,7 +22,6 @@ const day = ref(format(new Date(props.day), "dd"))
 
 // Form values
 const time = ref(format(new Date(), "HH:mm"))
-const menu2 = ref(false)
 const mealLabel = ref<string>("")
 const details = ref("")
 
@@ -73,18 +73,7 @@ async function addMealToDay() {
   </v-card-title>
   <v-card-text>
     <v-form>
-      {{ time }}
-      <v-text-field v-model="time" :active="menu2" :focus="menu2" :label="t('TIME')" readonly>
-        <v-menu
-          v-model="menu2"
-          :close-on-content-click="false"
-          activator="parent"
-          location="center"
-          transition="scale-transition"
-        >
-          <v-time-picker v-if="menu2" format="24hr" v-model="time" full-width></v-time-picker>
-        </v-menu>
-      </v-text-field>
+      <TimePicker v-model="time" />
       <v-text-field v-model="mealLabel" :label="t('MEAL')" />
       <v-text-field v-model="details" :label="t('DETAIL')" />
     </v-form>

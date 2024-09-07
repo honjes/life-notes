@@ -5,6 +5,7 @@ import { getDetailedDate } from "@/utils/date"
 import { ref } from "vue"
 import { ISymptom, ISymptomLog } from "@/types/symptom"
 import { IMeal } from "@/types/meal"
+import { IMed } from "@/types/med"
 
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
@@ -148,6 +149,29 @@ export const useDayStore = defineStore("day", () => {
   }
 
   /**
+   * Adds a med to a day
+   * @param {string} day - day to add
+   * @param {IMed} med - med to add
+   */
+  async function addMed(day: string, med: IMed) {
+    const iDay = await getDay(day)
+
+    // add med to day
+    iDay.meds.push(med)
+
+    // update Day
+    try {
+      await db.put(iDay)
+      // update store
+      updates.value++
+      dayUpdate.value = [day]
+    } catch (err) {
+      console.error("add med error: ", err)
+      throw err
+    }
+  }
+
+  /**
    * Adds a wake up to a day
    * @param {string} day - day to add
    * @param {string} time - time of the wake up
@@ -193,5 +217,5 @@ export const useDayStore = defineStore("day", () => {
     }
   }
 
-  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom, addMeal, addWakeUp, addGoToBed }
+  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom, addMeal, addMed, addWakeUp, addGoToBed }
 })

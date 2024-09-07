@@ -2,19 +2,17 @@
 /*
  * DayView component displays a day and the symptoms of that day also has possability to add data to a day
  * It also has a bottom sheet to add data to a day
- * @TODO: add posability to add WakeUp and GoToBed times
  * @TODO: add posability to add a note
- * @TODO: add posability to add a med
  * @TODO: add posability to delete data
- * @TODO: make style match the original app
  */
 import { DayView } from "@/types/day"
 import { LogTypes } from "@/types/log"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
-import { AddASymptom, AddAMeal, AddWakeUpGoToBed } from "@/components/Forms"
+import { AddASymptom, AddAMeal, AddWakeUpGoToBed, AddAMed } from "@/components/Forms"
 import { ISymptomOverview } from "@/types/symptom"
 import { IMeal } from "@/types/meal"
+import { IMed } from "@/types/med"
 
 // Vue Defenitions
 const props = defineProps<{
@@ -101,6 +99,11 @@ function openAddDataDialog(type: LogTypes, day: string) {
             <div class="w-full">{{ (log as IMeal).key }}</div>
             <div><v-icon>dinner_dining</v-icon></div>
           </div>
+          <div v-if="log.type === LogTypes.meds" class="flex flex-row gap-2 bg-blue-700 p-2 rounded-lg text-white">
+            <div>{{ log.time }}</div>
+            <div class="w-full">{{ (log as IMed).key }}</div>
+            <div><v-icon>medication</v-icon></div>
+          </div>
         </div>
       </div>
       <div class="flex flex-col w-1/5 justify-between group-h-full">
@@ -132,6 +135,7 @@ function openAddDataDialog(type: LogTypes, day: string) {
           v-else-if="addDataType === LogTypes.wakeUp || addDataType === LogTypes.goToBed"
           @close="closeDialogAndBottomSheet"
         />
+        <AddAMed :day="addDataDay" v-else-if="addDataType === LogTypes.meds" @close="closeDialogAndBottomSheet" />
       </v-card>
     </template>
   </v-dialog>
