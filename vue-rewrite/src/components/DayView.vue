@@ -104,11 +104,17 @@ function openAddDataDialog(type: LogTypes, day: string) {
         </div>
       </div>
       <div class="flex flex-col w-1/5 justify-between group-h-full">
-        <div class="h-20 rounded-bl-full bg-gray-500 flex flex-col justify-start gap-2 items-end pr-2 text-white">
+        <div
+          class="h-20 rounded-bl-full bg-gray-500 flex flex-col justify-start gap-2 items-end pr-2 text-white"
+          @click="openAddDataDialog(LogTypes.wakeUp, day.date)"
+        >
           <p class="min-h-6">{{ day.wakeUp }}</p>
           <v-icon>alarm</v-icon>
         </div>
-        <div class="h-20 rounded-tl-full bg-gray-500 flex flex-col justify-end gap-2 items-end pr-2 text-white">
+        <div
+          class="h-20 rounded-tl-full bg-gray-500 flex flex-col justify-end gap-2 items-end pr-2 text-white"
+          @click="openAddDataDialog(LogTypes.goToBed, day.date)"
+        >
           <v-icon>bedtime</v-icon>
           <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
@@ -119,7 +125,13 @@ function openAddDataDialog(type: LogTypes, day: string) {
     <template v-slot:default>
       <v-card>
         <AddASymptom :day="addDataDay" v-if="addDataType === LogTypes.symptoms" @close="closeDialogAndBottomSheet" />
-        <AddAMeal :day="addDataDay" v-if="addDataType === LogTypes.meals" @close="closeDialogAndBottomSheet" />
+        <AddAMeal :day="addDataDay" v-else-if="addDataType === LogTypes.meals" @close="closeDialogAndBottomSheet" />
+        <AddWakeUpGoToBed
+          :day="addDataDay"
+          :wakeUp="addDataType === LogTypes.wakeUp"
+          v-else-if="addDataType === LogTypes.wakeUp || addDataType === LogTypes.goToBed"
+          @close="closeDialogAndBottomSheet"
+        />
       </v-card>
     </template>
   </v-dialog>
