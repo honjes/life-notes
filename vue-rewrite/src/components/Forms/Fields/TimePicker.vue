@@ -13,7 +13,7 @@ const menu2 = ref(false)
 </script>
 
 <template>
-  <v-text-field v-model="model" :active="menu2" :focus="menu2" :label="t('TIME')" readonly>
+  <v-text-field v-model="model" :active="menu2" :focus="menu2" :label="t('TIME')" readonly hide-details>
     <v-menu
       v-model="menu2"
       :close-on-content-click="false"
