@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CreateEditSymptom from "@/components/Forms/CreateEditSymptom.vue"
+import { CreateEditSymptom } from "@/components/Forms"
 import useSymptomStore from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { createToast } from "@/utils/vue"

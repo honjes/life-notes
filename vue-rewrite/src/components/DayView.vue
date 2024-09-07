@@ -58,8 +58,8 @@ function openAddDataDialog(type: LogTypes, day: string) {
 </script>
 
 <template>
-  <div class="flex flex-col w-full">
-    <div class="flex flex-row justify-between w-full dark:bg-gray-700 bg-gray-500 text-white">
+  <aside class="flex flex-col w-full">
+    <section name="header" class="flex flex-row pl-4 justify-between w-full dark:bg-gray-700 bg-gray-500 text-white">
       <div class="flex flex-row items-center">
         <h2 class="text-xl">{{ props.day.date }}</h2>
         <v-btn variant="text" icon="arrow_forward_ios" />
@@ -86,8 +86,8 @@ function openAddDataDialog(type: LogTypes, day: string) {
         </v-bottom-sheet>
         <v-btn variant="text" icon="delete_sweep" />
       </div>
-    </div>
-    <div class="group flex flex-row w-full justify-between pl-4 min-h-112">
+    </section>
+    <section name="content" class="group flex flex-row w-full justify-between pl-4 min-h-112">
       <div class="flex flex-col gap-2 w-3/5 py-4">
         <div v-for="log in day.content" :key="log.key">
           <div v-if="log.type === LogTypes.symptoms" class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg text-white">
@@ -119,8 +119,8 @@ function openAddDataDialog(type: LogTypes, day: string) {
           <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
+  </aside>
   <v-dialog v-model="showAddDataDialog" max-width="auto">
     <template v-slot:default>
       <v-card>
