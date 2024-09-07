@@ -23,7 +23,7 @@ const name = ref<string>()
 // Functions
 async function createNewSymptom() {
   if (name.value == null || name.value === "") {
-    await createToast(t("SYMPTOM_NAME_REQUIRED"), 2000, "error")
+    await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("SYMPTOM") }), 2000, "error")
     return
   }
   symptomStore
@@ -57,7 +57,7 @@ async function createNewSymptom() {
 
 async function editSymptom() {
   if (name.value == null || name.value === "") {
-    await createToast(t("SYMPTOM_NAME_REQUIRED"), 2000, "error")
+    await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("SYMPTOM") }), 2000, "error")
     return
   }
   symptomStore

@@ -43,7 +43,7 @@ function goToAddASymptom() {
  */
 async function addSymptomToDay() {
   if (symptomLabel.value == undefined) {
-    await createToast(t("SYMPTOM_NAME_REQUIRED"), 2000, "error")
+    await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("SYMPTOM") }), 2000, "error")
     return
   }
   const symptom = await symptomStore.getSymptomByLabel(symptomLabel.value)
