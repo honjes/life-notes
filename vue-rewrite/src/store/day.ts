@@ -147,5 +147,51 @@ export const useDayStore = defineStore("day", () => {
     }
   }
 
-  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom, addMeal }
+  /**
+   * Adds a wake up to a day
+   * @param {string} day - day to add
+   * @param {string} time - time of the wake up
+   */
+  async function addWakeUp(day: string, time: string) {
+    const iDay = await getDay(day)
+
+    // add wake up to day
+    iDay.wakeUp = time
+
+    // update Day
+    try {
+      await db.put(iDay)
+      // update store
+      updates.value++
+      dayUpdate.value = [day]
+    } catch (err) {
+      console.error("add wake up error: ", err)
+      throw err
+    }
+  }
+
+  /**
+   * Adds a go to bed to a day
+   * @param {string} day - day to add
+   * @param {string} time - time of the go to bed
+   */
+  async function addGoToBed(day: string, time: string) {
+    const iDay = await getDay(day)
+
+    // add go to bed to day
+    iDay.goToBed = time
+
+    // update Day
+    try {
+      await db.put(iDay)
+      // update store
+      updates.value++
+      dayUpdate.value = [day]
+    } catch (err) {
+      console.error("add go to bed error: ", err)
+      throw err
+    }
+  }
+
+  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom, addMeal, addWakeUp, addGoToBed }
 })

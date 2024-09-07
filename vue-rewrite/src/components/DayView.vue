@@ -12,8 +12,7 @@ import { DayView } from "@/types/day"
 import { LogTypes } from "@/types/log"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
-import AddASymptom from "@/components/Forms/AddASymptom.vue"
-import AddAMeal from "@/components/Forms/AddAMeal.vue"
+import { AddASymptom, AddAMeal, AddWakeUpGoToBed } from "@/components/Forms"
 import { ISymptomOverview } from "@/types/symptom"
 import { IMeal } from "@/types/meal"
 
@@ -45,6 +44,17 @@ function closeDialogAndBottomSheet() {
   showAddDataDialog.value = false
   showBottomSheet.value = false
 }
+
+/**
+ * Opens a Dialog
+ * @param {LogTypes} type - type of Data to add
+ * @param {string} day - day to add the data
+ */
+function openAddDataDialog(type: LogTypes, day: string) {
+  addDataType.value = type
+  addDataDay.value = day
+  showAddDataDialog.value = true
+}
 </script>
 
 <template>
@@ -62,16 +72,7 @@ function closeDialogAndBottomSheet() {
           <v-card>
             <v-list>
               <v-list-item v-for="item in bottomSheetItems" :key="item.title">
-                <div
-                  class="flex flex-row justify-left gap-4 ml-4"
-                  @click="
-                    () => {
-                      showAddDataDialog = true
-                      addDataType = item.type
-                      addDataDay = day.date
-                    }
-                  "
-                >
+                <div class="flex flex-row justify-left gap-4 ml-4" @click="openAddDataDialog(item.type, day.date)">
                   <div>
                     <v-icon>{{ item.props.prependIcon }}</v-icon>
                   </div>
@@ -103,11 +104,17 @@ function closeDialogAndBottomSheet() {
         </div>
       </div>
       <div class="flex flex-col w-1/5 justify-between group-h-full">
-        <div class="h-20 rounded-bl-full bg-gray-500 flex flex-col justify-start gap-2 items-end pr-2 text-white">
+        <div
+          class="h-20 rounded-bl-full bg-gray-500 flex flex-col justify-start gap-2 items-end pr-2 text-white"
+          @click="openAddDataDialog(LogTypes.wakeUp, day.date)"
+        >
           <p class="min-h-6">{{ day.wakeUp }}</p>
           <v-icon>alarm</v-icon>
         </div>
-        <div class="h-20 rounded-tl-full bg-gray-500 flex flex-col justify-end gap-2 items-end pr-2 text-white">
+        <div
+          class="h-20 rounded-tl-full bg-gray-500 flex flex-col justify-end gap-2 items-end pr-2 text-white"
+          @click="openAddDataDialog(LogTypes.goToBed, day.date)"
+        >
           <v-icon>bedtime</v-icon>
           <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
@@ -118,7 +125,13 @@ function closeDialogAndBottomSheet() {
     <template v-slot:default>
       <v-card>
         <AddASymptom :day="addDataDay" v-if="addDataType === LogTypes.symptoms" @close="closeDialogAndBottomSheet" />
-        <AddAMeal :day="addDataDay" v-if="addDataType === LogTypes.meals" @close="closeDialogAndBottomSheet" />
+        <AddAMeal :day="addDataDay" v-else-if="addDataType === LogTypes.meals" @close="closeDialogAndBottomSheet" />
+        <AddWakeUpGoToBed
+          :day="addDataDay"
+          :wakeUp="addDataType === LogTypes.wakeUp"
+          v-else-if="addDataType === LogTypes.wakeUp || addDataType === LogTypes.goToBed"
+          @close="closeDialogAndBottomSheet"
+        />
       </v-card>
     </template>
   </v-dialog>
