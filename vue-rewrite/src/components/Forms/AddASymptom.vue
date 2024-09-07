@@ -6,6 +6,7 @@ import { ISymptom } from "@/types/symptom"
 import { useRouter } from "vue-router"
 import { useDayStore, useSymptomStore } from "@/store"
 import { buildISymptomLog, createToast } from "@/utils"
+import { TimePicker } from "./Fields"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
@@ -26,7 +27,6 @@ const symptomList = ref<ISymptom[]>([])
 
 // Form values
 const time = ref(format(new Date(), "HH:mm"))
-const menu2 = ref(false)
 const symptomLabel = ref<string>("")
 const pain = ref(0)
 const details = ref("")
@@ -104,18 +104,7 @@ onBeforeMount(() => {
   </v-card-title>
   <v-card-text>
     <v-form>
-      <v-text-field v-model="time" :active="menu2" :focus="menu2" :label="t('TIME')" readonly>
-        <v-menu
-          v-model="menu2"
-          :close-on-content-click="false"
-          activator="parent"
-          format="24hr"
-          location="center"
-          transition="scale-transition"
-        >
-          <v-time-picker v-if="menu2" v-model="time" full-width></v-time-picker>
-        </v-menu>
-      </v-text-field>
+      <TimePicker v-model="time" />
       <div class="flex flex-row gap-4">
         <v-select
           v-model="symptomLabel"
