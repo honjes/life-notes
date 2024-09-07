@@ -6,6 +6,8 @@ export enum LogTypes {
   meals = "meals",
   meds = "meds",
   note = "note",
+  wakeUp = "wakeUp",
+  goToBed = "goToBed",
 }
 
 export interface ILog {
