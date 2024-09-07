@@ -44,6 +44,17 @@ function closeDialogAndBottomSheet() {
   showAddDataDialog.value = false
   showBottomSheet.value = false
 }
+
+/**
+ * Opens a Dialog
+ * @param {LogTypes} type - type of Data to add
+ * @param {string} day - day to add the data
+ */
+function openAddDataDialog(type: LogTypes, day: string) {
+  addDataType.value = type
+  addDataDay.value = day
+  showAddDataDialog.value = true
+}
 </script>
 
 <template>
@@ -61,16 +72,7 @@ function closeDialogAndBottomSheet() {
           <v-card>
             <v-list>
               <v-list-item v-for="item in bottomSheetItems" :key="item.title">
-                <div
-                  class="flex flex-row justify-left gap-4 ml-4"
-                  @click="
-                    () => {
-                      showAddDataDialog = true
-                      addDataType = item.type
-                      addDataDay = day.date
-                    }
-                  "
-                >
+                <div class="flex flex-row justify-left gap-4 ml-4" @click="openAddDataDialog(item.type, day.date)">
                   <div>
                     <v-icon>{{ item.props.prependIcon }}</v-icon>
                   </div>
