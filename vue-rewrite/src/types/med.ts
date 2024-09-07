@@ -1,10 +1,13 @@
 import { LogTypes } from "./log"
 
-export interface IMed {
+export interface IMedBasic {
   type: LogTypes
   key: string
-  time: string
   quantity: number
+}
+
+export interface IMed extends IMedBasic {
+  time: string
 }
 
 export interface IMedHistory {
