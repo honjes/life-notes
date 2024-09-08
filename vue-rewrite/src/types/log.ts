@@ -1,7 +1,7 @@
 /**
  * All possible log types
  */
-export enum LogTypes {
+export enum DataTypes {
   symptoms = "symptoms",
   meals = "meals",
   meds = "meds",
@@ -10,11 +10,20 @@ export enum LogTypes {
   goToBed = "goToBed",
 }
 
-export interface ILog {
-  type: LogTypes
-  time: string
+/**
+ * Note object without time for the store
+ */
+export interface ILogBasic {
+  type: DataTypes
   key: string
   detail: string
+}
+
+/**
+ * Object of a Note
+ */
+export interface ILog extends ILogBasic {
+  time: string
 }
 
 export interface ILogHistory {

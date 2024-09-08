@@ -100,7 +100,7 @@ async function addWakeUpGoToBedToDay() {
 <template>
   <v-card-title>
     <h3 class="text-xl">
-      {{ t("ADD_EVENT_DIALOG_TITLE", { monthShort, day }) }}
+      {{ t("ADD_EVENT_DIALOG_TITLE", { type: props.wakeUp ? t("WAKE_UP") : t("GO_TO_BED"), monthShort, day }) }}
     </h3>
   </v-card-title>
   <v-card-text>

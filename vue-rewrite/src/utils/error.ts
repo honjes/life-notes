@@ -1,5 +1,6 @@
 export enum NotFoundErrors {
   MedNotFound = "Med Not Found",
+  NoteNotFound = "Note Not Found",
 }
 
 export class NotFoundError extends Error {

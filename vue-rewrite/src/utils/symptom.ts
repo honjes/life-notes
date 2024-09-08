@@ -1,5 +1,5 @@
 import { ContentType, DayView, IDay } from "@/types/day"
-import { LogTypes } from "@/types/log"
+import { DataTypes } from "@/types/log"
 import { ISymptom, ISymptomLog, ISymptomOverview } from "@/types/symptom"
 
 /**
@@ -39,7 +39,7 @@ export function buildDayView(day: IDay): DayView {
  */
 export function buildSymptomOverview(symptom: ISymptom): ISymptomOverview[] {
   const returnArray: ISymptomOverview[] = symptom.logs.map(log => ({
-    type: LogTypes.symptoms,
+    type: DataTypes.symptoms,
     label: symptom.label,
     key: symptom.key,
     time: log.time,
