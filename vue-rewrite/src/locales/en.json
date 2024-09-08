@@ -36,7 +36,7 @@
   "DAY-OF-WEEK-SHORT-0": "Sun",
   "SYMPTOM": "Symptom",
   "SYMPTOM_LOG": "Symptom",
-  "LOG": "note",
+  "NOTE": "note",
   "MED": "drug",
   "MEAL": "meal",
   "WAKE_UP": "wake up time",
