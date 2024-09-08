@@ -1,7 +1,7 @@
-import { LogTypes } from "./log"
+import { DataTypes } from "./log"
 
 export interface IMedBasic {
-  type: LogTypes
+  type: DataTypes
   key: string
   quantity: number
 }

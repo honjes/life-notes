@@ -1,10 +1,10 @@
-import { LogTypes } from "./log"
+import { DataTypes } from "./log"
 
 /**
  * All needed information to display a symptom Badge
  */
 export interface ISymptomOverview {
-  type: LogTypes
+  type: DataTypes
   key: string
   label: string
   /* HH:mm */

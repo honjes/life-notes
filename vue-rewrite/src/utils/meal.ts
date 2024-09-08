@@ -1,9 +1,9 @@
-import { LogTypes } from "@/types/log"
+import { DataTypes } from "@/types/log"
 import { IMeal } from "@/types/meal"
 
 export function buildMeal(key: string, time: string, detail: string): IMeal {
   return {
-    type: LogTypes.meals,
+    type: DataTypes.meals,
     key: key,
     time: time,
     detail: detail,
