@@ -10,11 +10,20 @@ export enum DataTypes {
   goToBed = "goToBed",
 }
 
-export interface ILog {
+/**
+ * Note object without time for the store
+ */
+export interface ILogBasic {
   type: DataTypes
-  time: string
   key: string
   detail: string
+}
+
+/**
+ * Object of a Note
+ */
+export interface ILog extends ILogBasic {
+  time: string
 }
 
 export interface ILogHistory {
