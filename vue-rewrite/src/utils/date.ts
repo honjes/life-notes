@@ -13,3 +13,6 @@ export function getDetailedDate(formattedDate: string): IDetailedDate {
 
   return { day, month, year, week, dayOfWeek, dayOfYear, weekOfMonth, date, formattedDate }
 }
+
+export const dateFormat = "yyyy-MM-dd"
+export const timeFormat = "HH:mm"

@@ -1,12 +1,8 @@
-import { IDay } from "@/types/day"
 import { defineStore } from "pinia"
 import { format, subDays } from "date-fns"
-import { getDetailedDate } from "@/utils/date"
+import { dateFormat, getDetailedDate } from "@/utils"
+import { IDay, IMeal, IMed, ILog, ISymptom, ISymptomLog } from "@/types"
 import { ref } from "vue"
-import { ISymptom, ISymptomLog } from "@/types/symptom"
-import { IMeal } from "@/types/meal"
-import { IMed } from "@/types/med"
-import { ILog } from "@/types/log"
 
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
@@ -43,7 +39,7 @@ export const useDayStore = defineStore("day", () => {
     const firstDay = subDays(new Date(), offset)
     const expectedDates = new Array<string>()
     for (let i = 0; i < limit; i++) {
-      expectedDates.push(format(subDays(firstDay, i), "yyyy-MM-dd"))
+      expectedDates.push(format(subDays(firstDay, i), dateFormat))
     }
 
     const response = await db.allDocs<IDay>({ include_docs: true, descending: true, keys: expectedDates })
