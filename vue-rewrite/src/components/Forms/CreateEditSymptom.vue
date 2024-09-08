@@ -103,8 +103,8 @@ if (props.edit) {
       </h3>
     </v-card-title>
     <v-card-text>
-      <v-form>
-        <v-text-field v-model="name" :label="t('SYMPTOM')" required></v-text-field>
+      <v-form class="flex flex-col gap-4">
+        <v-text-field v-model="name" :label="t('SYMPTOM')" required hide-details />
       </v-form>
     </v-card-text>
     <v-card-actions>

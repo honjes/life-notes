@@ -115,8 +115,7 @@ onBeforeMount(() => {
     </h3>
   </v-card-title>
   <v-card-text>
-    <v-form>
-      {{ time }}
+    <v-form class="flex flex-col gap-4">
       <TimePicker v-model="time" />
       <AutoComplete
         v-model="med"
@@ -126,7 +125,7 @@ onBeforeMount(() => {
         selectValue="key"
         @update:value="(value) => (quantity = (value as unknown as IMedBasic).quantity)"
       />
-      <v-text-field type="number" v-model="quantity" :label="t('QUANTITY')" />
+      <v-text-field type="number" v-model="quantity" :label="t('QUANTITY')" hideDetails />
     </v-form>
   </v-card-text>
   <v-card-actions props>

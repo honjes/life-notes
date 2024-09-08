@@ -72,10 +72,10 @@ async function addMealToDay() {
     </h3>
   </v-card-title>
   <v-card-text>
-    <v-form>
+    <v-form class="flex flex-col gap-4">
       <TimePicker v-model="time" />
-      <v-text-field v-model="mealLabel" :label="t('MEAL')" />
-      <v-text-field v-model="details" :label="t('DETAIL')" />
+      <v-text-field v-model="mealLabel" :label="t('MEAL')" hide-details />
+      <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
     </v-form>
   </v-card-text>
   <v-card-actions props>

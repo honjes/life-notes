@@ -104,7 +104,7 @@ async function addWakeUpGoToBedToDay() {
     </h3>
   </v-card-title>
   <v-card-text>
-    <v-form>
+    <v-form class="flex flex-col gap-4">
       <TimePicker v-model="time" />
     </v-form>
   </v-card-text>

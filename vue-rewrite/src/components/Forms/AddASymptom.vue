@@ -103,7 +103,7 @@ onBeforeMount(() => {
     </h3>
   </v-card-title>
   <v-card-text>
-    <v-form>
+    <v-form class="flex flex-col gap-4">
       <TimePicker v-model="time" />
       <div class="flex flex-row gap-4">
         <v-select
@@ -122,10 +122,10 @@ onBeforeMount(() => {
         <v-btn density="compact" size="large" icon="add" class="mt-3 h-fit" @click="goToAddASymptom" />
       </div>
       <div class="flex flex-row gap-4">
-        <v-slider :label="t('PAIN')" v-model="pain" min="0" max="5" step="1" thumb-label></v-slider>
+        <v-slider :label="t('PAIN')" v-model="pain" min="0" max="5" step="1" thumb-label hide-details />
         {{ pain }}
       </div>
-      <v-text-field v-model="details" :label="t('DETAIL')"></v-text-field>
+      <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
     </v-form>
   </v-card-text>
   <v-card-actions props>
