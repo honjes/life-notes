@@ -3,9 +3,10 @@
  * DayView component displays a day and the symptoms of that day also has possability to add data to a day
  * It also has a bottom sheet to add data to a day
  * @TODO: add posability to delete data
+ * @TODO: add posability to edit data/View data
  */
 import { DayView } from "@/types/day"
-import { DataTypes } from "@/types/log"
+import { DataTypes, ILog } from "@/types/log"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { AddASymptom, AddAMeal, AddWakeUpGoToBed, AddAMed, AddANote } from "@/components/Forms"
@@ -93,16 +94,30 @@ function openAddDataDialog(type: DataTypes, day: string) {
             <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
             <div><v-icon>spa</v-icon></div>
           </div>
-          <div v-if="log.type === DataTypes.meals" class="flex flex-row gap-2 bg-green-700 p-2 rounded-lg text-white">
+          <div
+            v-else-if="log.type === DataTypes.meals"
+            class="flex flex-row gap-2 bg-green-700 p-2 rounded-lg text-white"
+          >
             <div>{{ log.time }}</div>
             <div class="w-full">{{ (log as IMeal).key }}</div>
             <div><v-icon>dinner_dining</v-icon></div>
           </div>
-          <div v-if="log.type === DataTypes.meds" class="flex flex-row gap-2 bg-blue-700 p-2 rounded-lg text-white">
+          <div
+            v-else-if="log.type === DataTypes.meds"
+            class="flex flex-row gap-2 bg-blue-700 p-2 rounded-lg text-white"
+          >
             <div>{{ log.time }}</div>
             <div class="w-full">{{ (log as IMed).key }}</div>
             <div>{{ (log as IMed).quantity }}mg</div>
             <div><v-icon>medication</v-icon></div>
+          </div>
+          <div
+            v-else-if="log.type === DataTypes.note"
+            class="flex flex-row gap-2 bg-gray-600 p-2 rounded-lg text-white"
+          >
+            <div>{{ log.time }}</div>
+            <div class="w-full">{{ (log as ILog).key }}</div>
+            <div><v-icon>event_note</v-icon></div>
           </div>
         </div>
       </div>
