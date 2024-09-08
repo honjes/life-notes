@@ -44,6 +44,7 @@ export function buildSymptomOverview(symptom: ISymptom): ISymptomOverview[] {
     key: symptom.key,
     time: log.time,
     pain: log.pain,
+    detail: log.detail,
   }))
   return returnArray
 }

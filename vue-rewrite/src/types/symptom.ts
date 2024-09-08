@@ -10,6 +10,7 @@ export interface ISymptomOverview {
   /* HH:mm */
   time: string
   pain: number
+  detail: string
 }
 
 export interface ISymptomLog {
