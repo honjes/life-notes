@@ -2,14 +2,13 @@
 /*
  * DayView component displays a day and the symptoms of that day also has possability to add data to a day
  * It also has a bottom sheet to add data to a day
- * @TODO: add posability to add a note
  * @TODO: add posability to delete data
  */
 import { DayView } from "@/types/day"
 import { DataTypes } from "@/types/log"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
-import { AddASymptom, AddAMeal, AddWakeUpGoToBed, AddAMed } from "@/components/Forms"
+import { AddASymptom, AddAMeal, AddWakeUpGoToBed, AddAMed, AddANote } from "@/components/Forms"
 import { ISymptomOverview } from "@/types/symptom"
 import { IMeal } from "@/types/meal"
 import { IMed } from "@/types/med"
@@ -137,6 +136,7 @@ function openAddDataDialog(type: DataTypes, day: string) {
           @close="closeDialogAndBottomSheet"
         />
         <AddAMed :day="addDataDay" v-else-if="addDataType === DataTypes.meds" @close="closeDialogAndBottomSheet" />
+        <AddANote :day="addDataDay" v-else-if="addDataType === DataTypes.note" @close="closeDialogAndBottomSheet" />
       </v-card>
     </template>
   </v-dialog>
