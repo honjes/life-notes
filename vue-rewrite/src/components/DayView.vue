@@ -102,6 +102,7 @@ function openAddDataDialog(type: LogTypes, day: string) {
           <div v-if="log.type === LogTypes.meds" class="flex flex-row gap-2 bg-blue-700 p-2 rounded-lg text-white">
             <div>{{ log.time }}</div>
             <div class="w-full">{{ (log as IMed).key }}</div>
+            <div>{{ (log as IMed).quantity }}mg</div>
             <div><v-icon>medication</v-icon></div>
           </div>
         </div>
