@@ -1,4 +1,4 @@
-import { INoteBasic } from "@/types/log"
+import { INoteBasic } from "@/types"
 import { NotFoundError, NotFoundErrors } from "@/utils"
 import { defineStore } from "pinia"
 import { ref } from "vue"

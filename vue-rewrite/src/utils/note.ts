@@ -1,4 +1,4 @@
-import { DataTypes, INote, INoteBasic, INoteOverview } from "@/types/log"
+import { DataTypes, INote, INoteBasic, INoteOverview } from "@/types"
 
 /**
  * Creates a ILog object
