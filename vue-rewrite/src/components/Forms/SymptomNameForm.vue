@@ -96,7 +96,7 @@ if (props.edit) {
 </script>
 
 <template>
-  <card>
+  <v-card>
     <div v-if="!edit">
       <v-card-title>
         <h3 class="text-xl">
@@ -131,5 +131,5 @@ if (props.edit) {
         <v-btn variant="text" @click="editSymptom">{{ t("SAVE") }}</v-btn>
       </v-card-actions>
     </div>
-  </card>
+  </v-card>
 </template>
