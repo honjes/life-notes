@@ -93,7 +93,7 @@ onBeforeMount(() => {
 <template>
   <ion-page>
     <ion-content>
-      <ion-header collapse="condense">
+      <ion-header>
         <ion-toolbar>
           <ion-title class="flex justify-center" size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
         </ion-toolbar>
