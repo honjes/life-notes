@@ -1,4 +1,4 @@
-import { DataTypes, ILog } from "@/types/log"
+import { DataTypes, INote, INoteBasic, INoteOverview } from "@/types/log"
 
 /**
  * Creates a ILog object
@@ -7,12 +7,25 @@ import { DataTypes, ILog } from "@/types/log"
  * @param {string} detail - details
  * @returns {ILog}
  */
-export function buildNote(key: string, time: string, detail: string): ILog & { _id: string } {
+export function buildNote(key: string): INoteBasic & { _id: string } {
   return {
     _id: `note-${key}`,
     type: DataTypes.note,
     key: key,
-    time: time,
-    detail: detail,
   }
+}
+
+/**
+ * Builds a note overview
+ * @param {INote} note - note to build overview from
+ * @returns {INoteOverview}
+ */
+export function buildNoteOverview(note: INote): INoteOverview[] {
+  return note.log.map(log => ({
+    type: DataTypes.note,
+    key: note.key,
+    logKey: log.key,
+    time: log.time,
+    detail: log.detail,
+  }))
 }

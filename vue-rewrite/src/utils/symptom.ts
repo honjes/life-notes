@@ -1,8 +1,5 @@
-import { ContentType, DayView, IDay } from "@/types/day"
-import { DataTypes } from "@/types/log"
-import { ISymptom, ISymptomLog, ISymptomOverview } from "@/types/symptom"
-import { buildMedOverview } from "./med"
-import { randomNumber } from "."
+import { DataTypes, ISymptom, ISymptomLog, ISymptomOverview, ContentType, DayView, IDay } from "@/types"
+import { buildMedOverview, buildNoteOverview, randomNumber } from "."
 
 /**
  * Creates a symptom log
@@ -21,7 +18,8 @@ export function buildISymptomLog(time: string, pain: number, detail: string): IS
  * @returns DayView
  */
 export function buildDayView(day: IDay): DayView {
-  const content: ContentType[] = [...day.logs, ...day.meals]
+  const content: ContentType[] = [...day.meals]
+  day.logs.forEach(l => content.push(...buildNoteOverview(l)))
   day.meds.forEach(m => content.push(...buildMedOverview(m)))
   day.symptoms.forEach(s => content.push(...buildSymptomOverview(s)))
   content.sort((a, b) => a.time.localeCompare(b.time))
