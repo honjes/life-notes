@@ -103,6 +103,6 @@ onBeforeMount(() => {
   <v-card-actions props>
     <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
     <v-spacer></v-spacer>
-    <v-btn @click="addMealToDay">{{ t("ADD") }}</v-btn>
+    <v-btn @click="addMealToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
   </v-card-actions>
 </template>
