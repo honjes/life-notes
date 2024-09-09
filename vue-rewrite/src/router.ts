@@ -26,9 +26,9 @@ const routes: Array<RouteRecordRaw> = [
         name: "Calendar",
       },
       {
-        path: "symptom-list",
+        path: "symptoms",
         component: () => import("@/views/SymptomsList.vue"),
-        name: "Symptom List",
+        name: "Symptoms",
       },
       {
         path: "help",
@@ -41,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
         name: "Settings",
       },
     ],
+  },
+  {
+    path: "/notes",
+    component: () => import("@/views/NotesList.vue"),
+    name: "Notes",
   },
 ]
 

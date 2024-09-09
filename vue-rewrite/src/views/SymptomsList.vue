@@ -37,7 +37,7 @@ function showDeleteSymptom(symptom: ISymptom) {
  * @param symptom - symptom to remove
  */
 async function deleteSymptom(symptom?: ISymptom) {
-  if (symptom == null) {
+  if (!symptom) {
     await createToast(
       t("ACTION_TOAST", {
         action: t("DELETE"),

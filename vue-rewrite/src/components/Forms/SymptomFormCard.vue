@@ -36,7 +36,7 @@ const details = ref("")
 // closes Dialog and routes to symptom list
 function goToAddASymptom() {
   emits("close")
-  router.push({ name: "Symptom List" })
+  router.push({ name: "Symptoms" })
 }
 
 /*
