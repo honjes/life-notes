@@ -1,6 +1,6 @@
 import { ILog } from "./log"
 import { IMeal } from "./meal"
-import { IMed } from "./med"
+import { IMed, IMedOverview } from "./med"
 import { ISymptom, ISymptomOverview } from "./symptom"
 
 export interface IDayOverview {
@@ -21,7 +21,7 @@ export interface IDay extends IDayOverview {
   meals: IMeal[]
 }
 
-export type ContentType = ILog | ISymptomOverview | IMed | IMeal
+export type ContentType = ILog | ISymptomOverview | IMedOverview | IMeal
 
 export interface DayView {
   date: string

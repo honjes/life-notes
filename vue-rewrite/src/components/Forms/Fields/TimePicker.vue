@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+/**
+ * Component to select a time
+ * @TODO: time only changes when both imput are changed
+ */
 import { useI18n } from "vue-i18n"
 import { ref } from "vue"
 

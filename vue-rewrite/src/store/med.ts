@@ -4,6 +4,9 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 
 export const useMedStore = defineStore("med", () => {
+  /**
+   * @TODO make it possible to have 2 meds with diffrent amounts
+   */
   const db = new PouchDB<IMedBasic>("meds")
   // create indexes
   db.createIndex({ index: { fields: ["key"] } })
