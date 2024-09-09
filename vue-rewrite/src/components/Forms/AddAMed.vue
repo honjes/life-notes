@@ -27,7 +27,7 @@ const medListItems = ref<IMedBasic[]>([])
 
 // Form values
 const time = ref(format(new Date(), "HH:mm"))
-const med = ref<string>("")
+const medLabel = ref<string>("")
 const quantity = ref<number>(0)
 
 // Functions
@@ -36,7 +36,7 @@ const quantity = ref<number>(0)
  */
 async function addMedToDay() {
   // validation
-  if (med.value == undefined || med.value === "") {
+  if (medLabel.value == undefined || medLabel.value === "") {
     await createToast(t("FORM_REQUIRED", { field_name: t("Name"), data_type: t("MED") }), 2000, "error")
     return
   }
@@ -52,7 +52,7 @@ async function addMedToDay() {
   } catch (err: unknown) {
     // if it doesn't exist, add it
     if (err instanceof NotFoundError) {
-      IMedBasic = buildMed(med.value, quantity.value, time.value)
+      IMedBasic = buildMed(medLabel.value, quantity.value, time.value)
       await medStore.addMed(IMedBasic)
     } else {
       throw err
@@ -67,7 +67,7 @@ async function addMedToDay() {
           action: t("ADD"),
           successfully_failuar: t("SUCCESSFULLY"),
           data_type: t("MED"),
-          name: med.value,
+          name: medLabel.value,
         }),
         2000,
         "success"
@@ -80,7 +80,7 @@ async function addMedToDay() {
           action: t("ADD"),
           successfully_failuar: t("FAILED"),
           data_type: t("MED"),
-          name: med.value,
+          name: medLabel.value,
         }),
         2000,
         "error"
@@ -118,7 +118,7 @@ onBeforeMount(() => {
     <v-form class="flex flex-col gap-4">
       <TimePicker v-model="time" />
       <AutoComplete
-        v-model="med"
+        v-model="medLabel"
         :label="t('MED')"
         :items="medListItems"
         selectKey="key"
