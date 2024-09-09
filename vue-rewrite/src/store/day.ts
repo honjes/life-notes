@@ -199,7 +199,7 @@ export const useDayStore = defineStore("day", () => {
   /**
    * Adds a note to a day
    * @param {string} day - day to add
-   * @param {ILog} note - note to add
+   * @param {INote} note - note to add
    */
   async function addNote(day: string, note: ILog) {
     const iDay = await getDay(day)
