@@ -1,4 +1,4 @@
-import { DataTypes } from "./log"
+import { DataTypes } from "./note"
 
 export interface IMeal {
   type: DataTypes

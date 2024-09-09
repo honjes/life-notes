@@ -5,7 +5,7 @@ import { useDayStore } from "@/store"
 import { buildNote, createToast, NotFoundError, randomNumber } from "@/utils"
 import { onBeforeMount, ref } from "vue"
 import { TimePicker } from "./Fields"
-import { INoteBasic, INoteLog, INoteOverview } from "@/types/log"
+import { INoteBasic, INoteLog, INoteOverview } from "@/types/note"
 import AutoComplete from "./Fields/AutoComplete.vue"
 import { useNoteStore } from "@/store/note"
 

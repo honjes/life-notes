@@ -1,4 +1,4 @@
-import { DataTypes } from "./log"
+import { DataTypes } from "./note"
 
 export interface IMedBasic {
   type: DataTypes

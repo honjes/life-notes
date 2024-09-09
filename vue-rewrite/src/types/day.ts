@@ -1,4 +1,4 @@
-import { INote, INoteOverview } from "./log"
+import { INote, INoteOverview } from "./note"
 import { IMeal } from "./meal"
 import { IMed, IMedOverview } from "./med"
 import { ISymptom, ISymptomOverview } from "./symptom"

@@ -1,4 +1,4 @@
-import { DataTypes } from "./log"
+import { DataTypes } from "./note"
 
 /**
  * All needed information to display a symptom Badge
