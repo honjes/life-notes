@@ -6,6 +6,8 @@ import { DataTypes } from "./log"
 export interface ISymptomOverview {
   type: DataTypes
   key: string
+  /* key of the log */
+  logKey: string
   label: string
   /* HH:mm */
   time: string
@@ -14,6 +16,7 @@ export interface ISymptomOverview {
 }
 
 export interface ISymptomLog {
+  key: string
   time: string
   pain: number
   detail: string

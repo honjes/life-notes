@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n"
 import { onBeforeMount, ref } from "vue"
 import { format } from "date-fns"
-import { ISymptom } from "@/types/symptom"
+import { ISymptom, ISymptomLog, ISymptomOverview } from "@/types/symptom"
 import { useRouter } from "vue-router"
 import { useDayStore, useSymptomStore } from "@/store"
 import { buildISymptomLog, createToast } from "@/utils"
@@ -12,6 +12,7 @@ import { TimePicker } from "./Fields"
 const emits = defineEmits(["close"])
 const props = defineProps<{
   day: string
+  editData?: ISymptomOverview
 }>()
 
 // external components
@@ -47,8 +48,19 @@ async function addSymptomToDay() {
     return
   }
   const symptom = await symptomStore.getSymptomByLabel(symptomLabel.value)
+  let symptomLog: ISymptomLog
+  if (props.editData) {
+    symptomLog = {
+      key: props.editData.logKey,
+      time: time.value,
+      pain: pain.value,
+      detail: details.value,
+    }
+  } else {
+    symptomLog = buildISymptomLog(time.value, pain.value, details.value)
+  }
   dayStore
-    .addSymptom(props.day, symptom, buildISymptomLog(time.value, pain.value, details.value))
+    .addSymptom(props.day, symptom, symptomLog)
     .then(async () => {
       await createToast(
         t("ACTION_TOAST", {
@@ -93,13 +105,20 @@ onBeforeMount(() => {
   symptomStore.$subscribe(() => {
     updateSymptomList()
   })
+  // When editing a symptom, set the values
+  if (props.editData) {
+    symptomLabel.value = props.editData.label
+    time.value = props.editData.time
+    pain.value = props.editData.pain
+    details.value = props.editData.detail
+  }
 })
 </script>
 
 <template>
   <v-card-title>
     <h3 class="text-xl">
-      {{ t("ADD_EVENT_DIALOG_TITLE", { type: t("SYMPTOM"), monthShort, day }) }}
+      {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("SYMPTOM"), monthShort, day }) }}
     </h3>
   </v-card-title>
   <v-card-text>
@@ -131,6 +150,6 @@ onBeforeMount(() => {
   <v-card-actions props>
     <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
     <v-spacer></v-spacer>
-    <v-btn @click="addSymptomToDay">{{ t("ADD") }}</v-btn>
+    <v-btn @click="addSymptomToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
   </v-card-actions>
 </template>
