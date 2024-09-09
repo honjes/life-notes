@@ -9,7 +9,7 @@ import { DayView } from "@/types/day"
 import { DataTypes, INoteOverview } from "@/types/note"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
-import { AddASymptom, AddAMeal, AddWakeUpGoToBed, AddAMed, AddANote } from "@/components/Forms"
+import { SymptomFormCard, MealFormCard, WakeUpGoToBedFormCard, MedFormCard, NoteFormCard } from "@/components/Forms"
 import { ISymptomOverview } from "@/types/symptom"
 import { IMeal } from "@/types/meal"
 import { IMedOverview } from "@/types/med"
@@ -206,39 +206,37 @@ function editWakeUpGoToBed(type: DataTypes, data: string) {
   </v-dialog>
   <v-dialog v-model="showAddDataDialog" max-width="auto" @after-leave="closeDialogAndBottomSheet">
     <template v-slot:default>
-      <v-card>
-        <AddASymptom
-          v-if="addDataType === DataTypes.symptoms"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as ISymptomOverview): undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <AddAMeal
-          v-else-if="addDataType === DataTypes.meals"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as IMeal): undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <AddWakeUpGoToBed
-          v-else-if="addDataType === DataTypes.wakeUp || addDataType === DataTypes.goToBed"
-          :day="addDataDay"
-          :wakeUp="addDataType === DataTypes.wakeUp"
-          :editData="shouldEdit ? (editData as string): undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <AddAMed
-          v-else-if="addDataType === DataTypes.meds"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as IMedOverview): undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <AddANote
-          v-else-if="addDataType === DataTypes.note"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as INoteOverview): undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-      </v-card>
+      <SymptomFormCard
+        v-if="addDataType === DataTypes.symptoms"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as ISymptomOverview): undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <MealFormCard
+        v-else-if="addDataType === DataTypes.meals"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as IMeal): undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <WakeUpGoToBedFormCard
+        v-else-if="addDataType === DataTypes.wakeUp || addDataType === DataTypes.goToBed"
+        :day="addDataDay"
+        :wakeUp="addDataType === DataTypes.wakeUp"
+        :editData="shouldEdit ? (editData as string): undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <MedFormCard
+        v-else-if="addDataType === DataTypes.meds"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as IMedOverview): undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <NoteFormCard
+        v-else-if="addDataType === DataTypes.note"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as INoteOverview): undefined"
+        @close="closeDialogAndBottomSheet"
+      />
     </template>
   </v-dialog>
 </template>

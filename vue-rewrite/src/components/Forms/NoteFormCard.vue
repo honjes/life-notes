@@ -118,21 +118,23 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <v-card-title>
-    <h3 class="text-xl">
-      {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("NOTE"), monthShort, day }) }}
-    </h3>
-  </v-card-title>
-  <v-card-text>
-    <v-form class="flex flex-col gap-4">
-      <TimePicker v-model="time" />
-      <AutoComplete v-model="noteLabel" :label="t('NOTE')" :items="noteListItems" selectKey="key" selectValue="key" />
-      <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
-    </v-form>
-  </v-card-text>
-  <v-card-actions props>
-    <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-    <v-spacer></v-spacer>
-    <v-btn @click="addNoteToDay">{{ t("ADD") }}</v-btn>
-  </v-card-actions>
+  <card>
+    <v-card-title>
+      <h3 class="text-xl">
+        {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("NOTE"), monthShort, day }) }}
+      </h3>
+    </v-card-title>
+    <v-card-text>
+      <v-form class="flex flex-col gap-4">
+        <TimePicker v-model="time" />
+        <AutoComplete v-model="noteLabel" :label="t('NOTE')" :items="noteListItems" selectKey="key" selectValue="key" />
+        <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
+      </v-form>
+    </v-card-text>
+    <v-card-actions props>
+      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="addNoteToDay">{{ t("ADD") }}</v-btn>
+    </v-card-actions>
+  </card>
 </template>

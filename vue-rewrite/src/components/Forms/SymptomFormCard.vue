@@ -116,40 +116,44 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <v-card-title>
-    <h3 class="text-xl">
-      {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("SYMPTOM"), monthShort, day }) }}
-    </h3>
-  </v-card-title>
-  <v-card-text>
-    <v-form class="flex flex-col gap-4">
-      <TimePicker v-model="time" />
-      <div class="flex flex-row gap-4">
-        <v-select
-          v-model="symptomLabel"
-          :items="symptomList"
-          item-value="label"
-          item-title="label"
-          :label="t('SYMPTOM')"
-        >
-          <template v-slot:no-data>
-            <v-list-item>
-              {{ t("EMPTY_SYMPTOMS_1") }}
-            </v-list-item>
-          </template>
-        </v-select>
-        <v-btn density="compact" size="large" icon="add" class="mt-3 h-fit" @click="goToAddASymptom" />
-      </div>
-      <div class="flex flex-row gap-4">
-        <v-slider :label="t('PAIN')" v-model="pain" min="0" max="5" step="1" thumb-label hide-details />
-        {{ pain }}
-      </div>
-      <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
-    </v-form>
-  </v-card-text>
-  <v-card-actions props>
-    <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-    <v-spacer></v-spacer>
-    <v-btn @click="addSymptomToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
-  </v-card-actions>
+  <v-card>
+    <v-card-title>
+      <h3 class="text-xl">
+        {{
+          t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("SYMPTOM"), monthShort, day })
+        }}
+      </h3>
+    </v-card-title>
+    <v-card-text>
+      <v-form class="flex flex-col gap-4">
+        <TimePicker v-model="time" />
+        <div class="flex flex-row gap-4">
+          <v-select
+            v-model="symptomLabel"
+            :items="symptomList"
+            item-value="label"
+            item-title="label"
+            :label="t('SYMPTOM')"
+          >
+            <template v-slot:no-data>
+              <v-list-item>
+                {{ t("EMPTY_SYMPTOMS_1") }}
+              </v-list-item>
+            </template>
+          </v-select>
+          <v-btn density="compact" size="large" icon="add" class="mt-3 h-fit" @click="goToAddASymptom" />
+        </div>
+        <div class="flex flex-row gap-4">
+          <v-slider :label="t('PAIN')" v-model="pain" min="0" max="5" step="1" thumb-label hide-details />
+          {{ pain }}
+        </div>
+        <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
+      </v-form>
+    </v-card-text>
+    <v-card-actions props>
+      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="addSymptomToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>

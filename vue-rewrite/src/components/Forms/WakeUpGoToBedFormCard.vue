@@ -107,25 +107,27 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <v-card-title>
-    <h3 class="text-xl">
-      {{
-        t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", {
-          type: props.wakeUp ? t("WAKE_UP") : t("GO_TO_BED"),
-          monthShort,
-          day,
-        })
-      }}
-    </h3>
-  </v-card-title>
-  <v-card-text>
-    <v-form class="flex flex-col gap-4">
-      <TimePicker v-model="time" />
-    </v-form>
-  </v-card-text>
-  <v-card-actions props>
-    <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-    <v-spacer></v-spacer>
-    <v-btn @click="addWakeUpGoToBedToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
-  </v-card-actions>
+  <v-card>
+    <v-card-title>
+      <h3 class="text-xl">
+        {{
+          t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", {
+            type: props.wakeUp ? t("WAKE_UP") : t("GO_TO_BED"),
+            monthShort,
+            day,
+          })
+        }}
+      </h3>
+    </v-card-title>
+    <v-card-text>
+      <v-form class="flex flex-col gap-4">
+        <TimePicker v-model="time" />
+      </v-form>
+    </v-card-text>
+    <v-card-actions props>
+      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="addWakeUpGoToBedToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
