@@ -57,7 +57,7 @@ onBeforeMount(() => {
     <ion-content :fullscreen="true">
       <ion-content>
         <div>
-          <section name="symptoms" class="flex flex-row gap-2 w-full">
+          <section name="symptoms" class="w-full">
             <v-expansion-panels>
               <v-expansion-panel expand-icon="spa" collapse-icon="spa">
                 <v-expansion-panel-title>
@@ -69,20 +69,46 @@ onBeforeMount(() => {
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <div class="flex flex-col gap-4">
-                    <div>
-                      <v-select
-                        :items="symptomList"
-                        item-value="key"
-                        item-title="label"
-                        v-model="defaultSymptom"
-                        :label="t('DEFAULT_SYMPTOM_LABEL')"
-                        hide-details
-                        @update:model-value="setDefaultSymptom"
-                      />
-                    </div>
-                    <v-btn variant="text" @click="router.push({ name: 'Symptom List' })">{{
+                    <v-select
+                      :items="symptomList"
+                      item-value="key"
+                      item-title="label"
+                      v-model="defaultSymptom"
+                      :label="t('DEFAULT_SYMPTOM_LABEL')"
+                      hide-details
+                      @update:model-value="setDefaultSymptom"
+                    />
+                    <v-btn variant="text" @click="router.push({ name: 'Symptoms' })">{{
                       t("SYMPTOM_MANAGE_LINK")
                     }}</v-btn>
+                  </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-title>
+                  <div class="flex flex-row justify-between items-center w-full">
+                    <div>{{ t("SETTINGS_MEDS_TITLE") }}</div>
+                    <div>{{ t("SETTINGS_MEDS_SUBTITLE") }}</div>
+                    <v-icon>medication</v-icon>
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <div class="flex flex-col gap-4">
+                    <v-btn variant="text" @click="router.push({ name: 'Meds' })">{{ t("MEDS_MANAGE_LINK") }}</v-btn>
+                  </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-title>
+                  <div class="flex flex-row justify-between items-center w-full">
+                    <div>{{ t("SETTINGS_NOTES_TITLE") }}</div>
+                    <div>{{ t("SETTINGS_NOTES_SUBTITLE") }}</div>
+                    <v-icon>event_note</v-icon>
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <div class="flex flex-col gap-4">
+                    <v-btn variant="text" @click="router.push({ name: 'Notes' })">{{ t("NOTES_MANAGE_LINK") }}</v-btn>
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
@@ -97,5 +123,8 @@ onBeforeMount(() => {
 <style lang="scss">
 .v-expansion-panel-title__icon {
   display: none;
+}
+.v-expansion-panel--active:not(:first-child) {
+  margin-top: 0;
 }
 </style>
