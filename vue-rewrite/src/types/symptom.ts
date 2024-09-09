@@ -1,4 +1,4 @@
-import { DataTypes } from "./log"
+import { DataTypes } from "./note"
 
 /**
  * All needed information to display a symptom Badge
@@ -6,13 +6,17 @@ import { DataTypes } from "./log"
 export interface ISymptomOverview {
   type: DataTypes
   key: string
+  /* key of the log */
+  logKey: string
   label: string
   /* HH:mm */
   time: string
   pain: number
+  detail: string
 }
 
 export interface ISymptomLog {
+  key: string
   time: string
   pain: number
   detail: string

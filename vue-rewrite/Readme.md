@@ -35,5 +35,6 @@ This is a rewrite of the Life Notes app in Vue.js.
   - [ ] "SAVE"
   - [ ] "DELETE"
   - [ ] "NAME"
+  - [ ] "DATE"
   - [ ] "SUCCESSFULLY"
   - [ ] "FAILED"

@@ -1,8 +1,8 @@
-import AddASymptom from "./AddASymptom.vue"
-import AddAMeal from "./AddAMeal.vue"
-import AddWakeUpGoToBed from "./AddWakeUpGoToBed.vue"
-import CreateEditSymptom from "./CreateEditSymptom.vue"
-import AddAMed from "./AddAMed.vue"
-import AddANote from "./AddANote.vue"
+import SymptomFormCard from "./SymptomFormCard.vue"
+import MealFormCard from "./MealFormCard.vue"
+import WakeUpGoToBedFormCard from "./WakeUpGoToBedFormCard.vue"
+import SymptomNameForm from "./SymptomNameForm.vue"
+import MedFormCard from "./MedFormCard.vue"
+import NoteFormCard from "./NoteFormCard.vue"
 
-export { AddASymptom, AddAMeal, AddWakeUpGoToBed, CreateEditSymptom, AddAMed, AddANote }
+export { SymptomFormCard, MealFormCard, WakeUpGoToBedFormCard, SymptomNameForm, MedFormCard, NoteFormCard }

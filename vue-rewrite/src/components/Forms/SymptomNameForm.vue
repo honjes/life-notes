@@ -96,38 +96,40 @@ if (props.edit) {
 </script>
 
 <template>
-  <div v-if="!edit">
-    <v-card-title>
-      <h3 class="text-xl">
-        {{ t("ADD_SYMPTOM") }}
-      </h3>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="flex flex-col gap-4">
-        <v-text-field v-model="name" :label="t('SYMPTOM')" required hide-details />
-      </v-form>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn variant="text" @click="createNewSymptom">{{ t("SAVE") }}</v-btn>
-    </v-card-actions>
-  </div>
-  <div v-else>
-    <v-card-title>
-      <h3 class="text-xl">
-        {{ t("EDIT_SYMPTOM") }}
-      </h3>
-    </v-card-title>
-    <v-card-text>
-      <v-form>
-        <v-text-field v-model="name" :label="t('SYMPTOM')" required></v-text-field>
-      </v-form>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn variant="text" @click="editSymptom">{{ t("SAVE") }}</v-btn>
-    </v-card-actions>
-  </div>
+  <card>
+    <div v-if="!edit">
+      <v-card-title>
+        <h3 class="text-xl">
+          {{ t("ADD_SYMPTOM") }}
+        </h3>
+      </v-card-title>
+      <v-card-text>
+        <v-form class="flex flex-col gap-4">
+          <v-text-field v-model="name" :label="t('SYMPTOM')" required hide-details />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="createNewSymptom">{{ t("SAVE") }}</v-btn>
+      </v-card-actions>
+    </div>
+    <div v-else>
+      <v-card-title>
+        <h3 class="text-xl">
+          {{ t("EDIT_SYMPTOM") }}
+        </h3>
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field v-model="name" :label="t('SYMPTOM')" required></v-text-field>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="editSymptom">{{ t("SAVE") }}</v-btn>
+      </v-card-actions>
+    </div>
+  </card>
 </template>

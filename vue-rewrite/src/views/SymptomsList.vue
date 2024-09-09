@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CreateEditSymptom } from "@/components/Forms"
+import { SymptomNameForm } from "@/components/Forms"
 import useSymptomStore from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { createToast } from "@/utils/vue"
@@ -93,7 +93,7 @@ onBeforeMount(() => {
 <template>
   <ion-page>
     <ion-content>
-      <ion-header collapse="condense">
+      <ion-header>
         <ion-toolbar>
           <ion-title class="flex justify-center" size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
         </ion-toolbar>
@@ -120,16 +120,12 @@ onBeforeMount(() => {
         </div>
         <v-dialog v-model="showAddSymptomDialog" max-width="auto">
           <template v-slot:default>
-            <v-card>
-              <CreateEditSymptom @close="showAddSymptomDialog = false" />
-            </v-card>
+            <SymptomNameForm @close="showAddSymptomDialog = false" />
           </template>
         </v-dialog>
         <v-dialog v-model="showEditSymptomDialog" max-width="auto">
           <template v-slot:default>
-            <v-card>
-              <CreateEditSymptom edit :symptom="symptomToEdit" @close="showEditSymptomDialog = false" />
-            </v-card>
+            <SymptomNameForm edit :symptom="symptomToEdit" @close="showEditSymptomDialog = false" />
           </template>
         </v-dialog>
         <v-dialog v-model="showDeleteSymptomDialog" max-width="auto">

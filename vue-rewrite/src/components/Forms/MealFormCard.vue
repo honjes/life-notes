@@ -3,13 +3,15 @@ import { useI18n } from "vue-i18n"
 import { format } from "date-fns"
 import { useDayStore } from "@/store"
 import { buildMeal, createToast } from "@/utils"
-import { ref } from "vue"
+import { onBeforeMount, ref } from "vue"
 import { TimePicker } from "./Fields"
+import { IMeal } from "@/types"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
 const props = defineProps<{
   day: string
+  editData?: IMeal
 }>()
 
 // external components
@@ -35,8 +37,18 @@ async function addMealToDay() {
     await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("MEAL") }), 2000, "error")
     return
   }
+  let IMealBasic: IMeal
+  if (props.editData) {
+    IMealBasic = {
+      ...props.editData,
+      time: time.value,
+      detail: details.value,
+    }
+  } else {
+    IMealBasic = buildMeal(mealLabel.value, time.value, details.value)
+  }
   dayStore
-    .addMeal(props.day, buildMeal(mealLabel.value, time.value, details.value))
+    .addMeal(props.day, IMealBasic)
     .then(async () => {
       await createToast(
         t("ACTION_TOAST", {
@@ -63,24 +75,36 @@ async function addMealToDay() {
       )
     })
 }
+
+// Init
+onBeforeMount(() => {
+  // When editing a meal, set the values
+  if (props.editData) {
+    mealLabel.value = props.editData.key
+    time.value = props.editData.time
+    details.value = props.editData.detail
+  }
+})
 </script>
 
 <template>
-  <v-card-title>
-    <h3 class="text-xl">
-      {{ t("ADD_EVENT_DIALOG_TITLE", { type: t("MEAL"), monthShort, day }) }}
-    </h3>
-  </v-card-title>
-  <v-card-text>
-    <v-form class="flex flex-col gap-4">
-      <TimePicker v-model="time" />
-      <v-text-field v-model="mealLabel" :label="t('MEAL')" hide-details />
-      <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
-    </v-form>
-  </v-card-text>
-  <v-card-actions props>
-    <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-    <v-spacer></v-spacer>
-    <v-btn @click="addMealToDay">{{ t("ADD") }}</v-btn>
-  </v-card-actions>
+  <v-card>
+    <v-card-title>
+      <h3 class="text-xl">
+        {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("MEAL"), monthShort, day }) }}
+      </h3>
+    </v-card-title>
+    <v-card-text>
+      <v-form class="flex flex-col gap-4">
+        <TimePicker v-model="time" />
+        <v-text-field v-model="mealLabel" :label="t('MEAL')" hide-details />
+        <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
+      </v-form>
+    </v-card-text>
+    <v-card-actions props>
+      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="addMealToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>

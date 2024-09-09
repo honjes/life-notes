@@ -1,10 +1,10 @@
-import { ILogBasic } from "@/types/log"
+import { INoteBasic } from "@/types"
 import { NotFoundError, NotFoundErrors } from "@/utils"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
 export const useNoteStore = defineStore("note", () => {
-  const db = new PouchDB<ILogBasic>("notes")
+  const db = new PouchDB<INoteBasic>("notes")
   // create indexes
   db.createIndex({ index: { fields: ["key"] } })
 
@@ -13,12 +13,12 @@ export const useNoteStore = defineStore("note", () => {
 
   /**
    * returns all notes
-   * @returns {Promise<ILogBasic[]>}
+   * @returns {Promise<INoteBasic[]>}
    */
-  async function getNotes(): Promise<ILogBasic[]> {
+  async function getNotes(): Promise<INoteBasic[]> {
     return (
       (await db.allDocs({ include_docs: true, descending: true })).rows
-        .map(row => row.doc as ILogBasic)
+        .map(row => row.doc as INoteBasic)
         // @ts-expect-error - ignore rows that include language (probably the index reference of the db)
         .filter(s => s.language !== "query")
     )
@@ -27,9 +27,9 @@ export const useNoteStore = defineStore("note", () => {
   /**
    * returns a note by key
    * @param {string} key - note key
-   * @returns {Promise<ILogBasic>}
+   * @returns {Promise<INoteBasic>}
    */
-  async function getNote(key: string): Promise<ILogBasic> {
+  async function getNote(key: string): Promise<INoteBasic> {
     try {
       return await db.get(`note-${key}`)
     } catch (err: unknown) {
@@ -44,9 +44,9 @@ export const useNoteStore = defineStore("note", () => {
 
   /**
    * add a note to the database
-   * @param {ILogBasic} note - note to add
+   * @param {INoteBasic} note - note to add
    */
-  async function addNote(note: ILogBasic) {
+  async function addNote(note: INoteBasic) {
     try {
       await db.put(note)
       // update store

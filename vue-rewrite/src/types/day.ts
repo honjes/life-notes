@@ -1,6 +1,6 @@
-import { ILog } from "./log"
+import { INote, INoteOverview } from "./note"
 import { IMeal } from "./meal"
-import { IMed } from "./med"
+import { IMed, IMedOverview } from "./med"
 import { ISymptom, ISymptomOverview } from "./symptom"
 
 export interface IDayOverview {
@@ -15,13 +15,13 @@ export interface IDayOverview {
 }
 
 export interface IDay extends IDayOverview {
-  logs: ILog[]
+  logs: INote[]
   symptoms: ISymptom[]
   meds: IMed[]
   meals: IMeal[]
 }
 
-export type ContentType = ILog | ISymptomOverview | IMed | IMeal
+export type ContentType = INoteOverview | ISymptomOverview | IMedOverview | IMeal
 
 export interface DayView {
   date: string

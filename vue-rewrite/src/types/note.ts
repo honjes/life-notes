@@ -13,17 +13,28 @@ export enum DataTypes {
 /**
  * Note object without time for the store
  */
-export interface ILogBasic {
+export interface INoteBasic {
   type: DataTypes
   key: string
+}
+
+export interface INoteOverview extends INoteBasic {
+  logKey: string
+  time: string
   detail: string
 }
 
 /**
  * Object of a Note
  */
-export interface ILog extends ILogBasic {
+export interface INote extends INoteBasic {
+  log: INoteLog[]
+}
+
+export interface INoteLog {
+  key: string
   time: string
+  detail: string
 }
 
 export interface ILogHistory {

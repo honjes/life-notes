@@ -1,12 +1,8 @@
-import { IDay } from "@/types/day"
 import { defineStore } from "pinia"
 import { format, subDays } from "date-fns"
-import { getDetailedDate } from "@/utils/date"
+import { buildMed, dateFormat, getDetailedDate } from "@/utils"
+import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog } from "@/types"
 import { ref } from "vue"
-import { ISymptom, ISymptomLog } from "@/types/symptom"
-import { IMeal } from "@/types/meal"
-import { IMed } from "@/types/med"
-import { ILog } from "@/types/log"
 
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
@@ -43,7 +39,7 @@ export const useDayStore = defineStore("day", () => {
     const firstDay = subDays(new Date(), offset)
     const expectedDates = new Array<string>()
     for (let i = 0; i < limit; i++) {
-      expectedDates.push(format(subDays(firstDay, i), "yyyy-MM-dd"))
+      expectedDates.push(format(subDays(firstDay, i), dateFormat))
     }
 
     const response = await db.allDocs<IDay>({ include_docs: true, descending: true, keys: expectedDates })
@@ -92,8 +88,15 @@ export const useDayStore = defineStore("day", () => {
     const symptomIndex = iDay.symptoms.findIndex(s => s.key === symptom.key)
     // add log to symptom if it exists
     if (symptomIndex != -1) {
-      // add log to symptom
-      ;(iDay.symptoms[symptomIndex] as ISymptom).logs.push(log)
+      // check if log already exists
+      const logIndex = iDay.symptoms[symptomIndex].logs.findIndex(l => l.key === log.key)
+      if (logIndex != -1) {
+        // update log
+        iDay.symptoms[symptomIndex].logs[logIndex] = log
+      } else {
+        // add log to symptom
+        iDay.symptoms[symptomIndex].logs.push(log)
+      }
 
       // update Day
       try {
@@ -134,8 +137,15 @@ export const useDayStore = defineStore("day", () => {
   async function addMeal(day: string, meal: IMeal) {
     const iDay = await getDay(day)
 
-    // add meal to day
-    iDay.meals.push(meal)
+    // check if meal already exists
+    const mealIndex = iDay.meals.findIndex(m => m.key === meal.key)
+    if (mealIndex != -1) {
+      // update meal
+      iDay.meals[mealIndex] = meal
+    } else {
+      // add meal to day
+      iDay.meals.push(meal)
+    }
 
     // update Day
     try {
@@ -154,11 +164,25 @@ export const useDayStore = defineStore("day", () => {
    * @param {string} day - day to add
    * @param {IMed} med - med to add
    */
-  async function addMed(day: string, med: IMed) {
+  async function addMed(day: string, med: IMed, log: IMedLog) {
     const iDay = await getDay(day)
 
-    // add med to day
-    iDay.meds.push(med)
+    // check if med already exists
+    const medIndex = iDay.meds.findIndex(m => m.key === med.key)
+    if (medIndex != -1) {
+      // check if log already exists
+      const logIndex = iDay.meds[medIndex].log.findIndex(t => t.key === log.key)
+      if (logIndex != -1) {
+        // update med
+        iDay.meds[medIndex].log[logIndex].time = log.time
+      } else {
+        // add med to day
+        iDay.meds[medIndex].log.push(log)
+      }
+    } else {
+      // add med to day
+      iDay.meds.push(buildMed(med.key, med.quantity, log))
+    }
 
     // update Day
     try {
@@ -175,13 +199,28 @@ export const useDayStore = defineStore("day", () => {
   /**
    * Adds a note to a day
    * @param {string} day - day to add
-   * @param {ILog} note - note to add
+   * @param {INote} note - note to add
    */
-  async function addNote(day: string, note: ILog) {
+  async function addNote(day: string, note: INoteBasic, log: INoteLog) {
     const iDay = await getDay(day)
 
-    // add note to day
-    iDay.logs.push(note)
+    // check if note already exists
+    const noteIndex = iDay.logs.findIndex(l => l.key === note.key)
+    if (noteIndex != -1) {
+      // check if log already exists
+      const logIndex = iDay.logs[noteIndex].log.findIndex(t => t.key === log.key)
+      if (logIndex != -1) {
+        // update note
+        iDay.logs[noteIndex].log[logIndex].time = log.time
+        iDay.logs[noteIndex].log[logIndex].detail = log.detail
+      } else {
+        // add note to day
+        iDay.logs[noteIndex].log.push(log)
+      }
+    } else {
+      // add note to day
+      iDay.logs.push({ ...note, log: [log] })
+    }
 
     // update Day
     try {

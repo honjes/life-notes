@@ -1,4 +1,4 @@
-import { DataTypes } from "./log"
+import { DataTypes } from "./note"
 
 export interface IMedBasic {
   type: DataTypes
@@ -7,6 +7,16 @@ export interface IMedBasic {
 }
 
 export interface IMed extends IMedBasic {
+  log: IMedLog[]
+}
+
+export interface IMedLog {
+  key: string
+  time: string
+}
+
+export interface IMedOverview extends IMedBasic {
+  logKey: string
   time: string
 }
 
