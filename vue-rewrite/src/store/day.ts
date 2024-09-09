@@ -137,8 +137,15 @@ export const useDayStore = defineStore("day", () => {
   async function addMeal(day: string, meal: IMeal) {
     const iDay = await getDay(day)
 
-    // add meal to day
-    iDay.meals.push(meal)
+    // check if meal already exists
+    const mealIndex = iDay.meals.findIndex(m => m.key === meal.key)
+    if (mealIndex != -1) {
+      // update meal
+      iDay.meals[mealIndex] = meal
+    } else {
+      // add meal to day
+      iDay.meals.push(meal)
+    }
 
     // update Day
     try {
