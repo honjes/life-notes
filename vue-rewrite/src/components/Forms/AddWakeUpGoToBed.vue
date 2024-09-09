@@ -3,7 +3,7 @@ import { useI18n } from "vue-i18n"
 import { format } from "date-fns"
 import { useDayStore } from "@/store"
 import { createToast } from "@/utils"
-import { ref } from "vue"
+import { onBeforeMount, ref } from "vue"
 import { TimePicker } from "./Fields"
 
 // Vue Definitions
@@ -11,6 +11,7 @@ const emits = defineEmits(["close"])
 const props = defineProps<{
   day: string
   wakeUp?: boolean
+  editData?: string
 }>()
 
 // external components
@@ -95,12 +96,26 @@ async function addWakeUpGoToBedToDay() {
       })
   }
 }
+
+// Init
+onBeforeMount(() => {
+  // When editing a wake up or go to bed, set the values
+  if (props.editData) {
+    time.value = props.editData
+  }
+})
 </script>
 
 <template>
   <v-card-title>
     <h3 class="text-xl">
-      {{ t("ADD_EVENT_DIALOG_TITLE", { type: props.wakeUp ? t("WAKE_UP") : t("GO_TO_BED"), monthShort, day }) }}
+      {{
+        t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", {
+          type: props.wakeUp ? t("WAKE_UP") : t("GO_TO_BED"),
+          monthShort,
+          day,
+        })
+      }}
     </h3>
   </v-card-title>
   <v-card-text>

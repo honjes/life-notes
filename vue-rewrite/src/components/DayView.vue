@@ -53,6 +53,24 @@ function openAddDataDialog(type: DataTypes, day: string) {
   addDataDay.value = day
   showAddDataDialog.value = true
 }
+
+/**
+ * Edit wake up or go to bed
+ * @param {DataType} type - wakeup or go to bed
+ * @param {string} data - data to edit
+ */
+function editWakeUpGoToBed(type: DataTypes, data: string) {
+  showDetailedDialog.value = false
+  editData.value = data
+  showAddDataDialog.value = true
+  addDataDay.value = props.day.date
+  addDataType.value = type
+  if (type === DataTypes.wakeUp && props.day.wakeUp !== "") {
+    shouldEdit.value = true
+  } else if (type === DataTypes.goToBed && props.day.goToBed !== "") {
+    shouldEdit.value = true
+  }
+}
 </script>
 
 <template>
@@ -124,14 +142,14 @@ function openAddDataDialog(type: DataTypes, day: string) {
       <div class="flex flex-col w-1/5 justify-between group-h-full">
         <div
           class="h-20 rounded-bl-full bg-gray-500 flex flex-col justify-start gap-2 items-end pr-2 text-white"
-          @click="openAddDataDialog(DataTypes.wakeUp, day.date)"
+          @click="editWakeUpGoToBed(DataTypes.wakeUp, day.date)"
         >
           <p class="min-h-6">{{ day.wakeUp }}</p>
           <v-icon>alarm</v-icon>
         </div>
         <div
           class="h-20 rounded-tl-full bg-gray-500 flex flex-col justify-end gap-2 items-end pr-2 text-white"
-          @click="openAddDataDialog(DataTypes.goToBed, day.date)"
+          @click="editWakeUpGoToBed(DataTypes.goToBed, day.date)"
         >
           <v-icon>bedtime</v-icon>
           <p class="min-h-6">{{ day.goToBed }}</p>
