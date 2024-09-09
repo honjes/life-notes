@@ -1,4 +1,4 @@
-import { DataTypes } from "@/types/log"
+import { DataTypes } from "@/types"
 import { IMed, IMedBasic, IMedLog, IMedOverview } from "@/types/med"
 import { randomNumber } from "."
 
