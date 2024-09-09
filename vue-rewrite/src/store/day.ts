@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { format, subDays } from "date-fns"
-import { dateFormat, getDetailedDate } from "@/utils"
-import { IDay, IMeal, IMed, ILog, ISymptom, ISymptomLog } from "@/types"
+import { buildMed, dateFormat, getDetailedDate } from "@/utils"
+import { IDay, IMeal, ILog, ISymptom, ISymptomLog, IMed, IMedLog } from "@/types"
 import { ref } from "vue"
 
 export const useDayStore = defineStore("day", () => {
@@ -164,11 +164,25 @@ export const useDayStore = defineStore("day", () => {
    * @param {string} day - day to add
    * @param {IMed} med - med to add
    */
-  async function addMed(day: string, med: IMed) {
+  async function addMed(day: string, med: IMed, log: IMedLog) {
     const iDay = await getDay(day)
 
-    // add med to day
-    iDay.meds.push(med)
+    // check if med already exists
+    const medIndex = iDay.meds.findIndex(m => m.key === med.key)
+    if (medIndex != -1) {
+      // check if log already exists
+      const logIndex = iDay.meds[medIndex].log.findIndex(t => t.key === log.key)
+      if (logIndex != -1) {
+        // update med
+        iDay.meds[medIndex].log[logIndex].time = log.time
+      } else {
+        // add med to day
+        iDay.meds[medIndex].log.push(log)
+      }
+    } else {
+      // add med to day
+      iDay.meds.push(buildMed(med.key, med.quantity, log))
+    }
 
     // update Day
     try {

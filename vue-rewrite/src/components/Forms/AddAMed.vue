@@ -5,14 +5,15 @@ import { useDayStore } from "@/store"
 import { createToast, NotFoundError } from "@/utils"
 import { onBeforeMount, ref } from "vue"
 import { TimePicker, AutoComplete } from "./Fields"
-import { IMedBasic } from "@/types/med"
+import { IMed, IMedBasic, IMedLog, IMedOverview } from "@/types/med"
 import { useMedStore } from "@/store/med"
-import { buildMed } from "@/utils/med"
+import { buildMed, buildMedForDb, buildMedLog } from "@/utils/med"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
 const props = defineProps<{
   day: string
+  editData?: IMedOverview
 }>()
 
 // external components
@@ -45,22 +46,28 @@ async function addMedToDay() {
     return
   }
 
+  let iMedLog: IMedLog
+  if (props.editData) {
+    iMedLog = { key: props.editData.logKey, time: time.value }
+  } else {
+    iMedLog = buildMedLog(time.value)
+  }
+  const iMed: IMed = buildMed(medLabel.value, quantity.value, iMedLog)
   // check if med already exists
-  let IMedBasic: IMedBasic
   try {
-    IMedBasic = await medStore.getMed(med.value)
+    await medStore.getMed(medLabel.value)
   } catch (err: unknown) {
     // if it doesn't exist, add it
     if (err instanceof NotFoundError) {
-      IMedBasic = buildMed(medLabel.value, quantity.value, time.value)
-      await medStore.addMed(IMedBasic)
+      await medStore.addMed(buildMedForDb(medLabel.value, quantity.value))
     } else {
       throw err
     }
   }
+
   // add med to day
   dayStore
-    .addMed(props.day, { ...IMedBasic, time: time.value })
+    .addMed(props.day, iMed, iMedLog)
     .then(async () => {
       await createToast(
         t("ACTION_TOAST", {
@@ -95,6 +102,12 @@ async function updateMedList() {
   const meds = await medStore.getMeds()
 
   medListItems.value = meds
+  // When editing a med, set the values
+  if (props.editData) {
+    time.value = props.editData.time
+    medLabel.value = props.editData.key
+    quantity.value = props.editData.quantity
+  }
 }
 
 // Init
@@ -111,7 +124,7 @@ onBeforeMount(() => {
 <template>
   <v-card-title>
     <h3 class="text-xl">
-      {{ t("ADD_EVENT_DIALOG_TITLE", { type: t("MED"), monthShort, day }) }}
+      {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("MED"), monthShort, day }) }}
     </h3>
   </v-card-title>
   <v-card-text>
@@ -131,6 +144,6 @@ onBeforeMount(() => {
   <v-card-actions props>
     <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
     <v-spacer></v-spacer>
-    <v-btn @click="addMedToDay">{{ t("ADD") }}</v-btn>
+    <v-btn @click="addMedToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
   </v-card-actions>
 </template>
