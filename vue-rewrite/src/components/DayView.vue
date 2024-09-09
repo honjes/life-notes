@@ -14,6 +14,9 @@ import { ISymptomOverview } from "@/types/symptom"
 import { IMeal } from "@/types/meal"
 import { IMedOverview } from "@/types/med"
 import DetailedDataDialog from "./DetailedDataDialog.vue"
+import { getDay, getMonth } from "date-fns"
+import { useDayStore } from "@/store"
+import { createToast } from "@/utils"
 
 // Vue Defenitions
 const props = defineProps<{
@@ -22,6 +25,7 @@ const props = defineProps<{
 
 // External Components
 const { t } = useI18n()
+const dayStore = useDayStore()
 
 // Variables
 // Bottom sheet variables
@@ -39,6 +43,11 @@ const showBottomSheet = ref(false)
 const editData = ref<INoteOverview | IMedOverview | IMeal | ISymptomOverview | string>()
 const shouldEdit = ref(false)
 const showDetailedDialog = ref(false)
+// Delete View
+const deleteData = ref<INoteOverview | IMedOverview | IMeal | ISymptomOverview>()
+const showDeleteDialog = ref(false)
+const deleteDataType = ref<DataTypes>(DataTypes.symptoms)
+const showDeleteIcon = ref(false)
 
 // Functions
 /**
@@ -101,6 +110,30 @@ function editWakeUpGoToBed(type: DataTypes, data: string) {
     shouldEdit.value = true
   }
 }
+
+/**
+ * Opens a dialog to delete a data
+ * @param {INoteOverview | IMedOverview | IMeal | ISymptomOverview} data - data to delete
+ */
+function showDeleteDilog(data: INoteOverview | IMedOverview | IMeal | ISymptomOverview) {
+  deleteData.value = data
+  showDeleteDialog.value = true
+  deleteDataType.value = data.type
+}
+
+/**
+ * Deletes a data item from a day
+ */
+async function deleteEvent() {
+  showDeleteDialog.value = false
+  createToast(t("TIMELINE_DELETE_EVENT_SNACKBAR", { type: t(deleteDataType.value) }), 2000, "success")
+  dayStore.deleteData(
+    props.day.date,
+    deleteDataType.value,
+    (deleteData.value as ISymptomOverview).key,
+    deleteDataType.value === DataTypes.meals ? undefined : (deleteData.value as ISymptomOverview).logKey
+  )
+}
 </script>
 
 <template>
@@ -130,49 +163,54 @@ function editWakeUpGoToBed(type: DataTypes, data: string) {
             </v-list>
           </v-card>
         </v-bottom-sheet>
-        <v-btn variant="text" icon="delete_sweep" />
+        <v-btn variant="text" icon="delete_sweep" @click="showDeleteIcon = !showDeleteIcon" />
       </div>
     </section>
     <section name="content" class="group flex flex-row w-full justify-between pl-4 min-h-112">
       <div class="flex flex-col gap-2 w-3/5 py-4">
         <div v-for="log in day.content" :key="log.key">
-          <div
-            v-if="log.type === DataTypes.symptoms"
-            class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg text-white"
-            @click="openDetailedDialog(log)"
-          >
-            <div>{{ log.time }}</div>
-            <div class="w-full">{{ (log as ISymptomOverview).label }}</div>
-            <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
-            <div><v-icon>spa</v-icon></div>
+          <div v-if="log.type === DataTypes.symptoms" class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg text-white">
+            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+              <div>{{ log.time }}</div>
+              <div class="w-full">{{ (log as ISymptomOverview).label }}</div>
+              <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
+              <div><v-icon>spa</v-icon></div>
+            </div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
           </div>
           <div
             v-else-if="log.type === DataTypes.meals"
             class="flex flex-row gap-2 bg-green-700 p-2 rounded-lg text-white"
-            @click="openDetailedDialog(log)"
           >
-            <div>{{ log.time }}</div>
-            <div class="w-full">{{ (log as IMeal).key }}</div>
-            <div><v-icon>dinner_dining</v-icon></div>
+            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+              <div>{{ log.time }}</div>
+              <div class="w-full">{{ (log as IMeal).key }}</div>
+              <div><v-icon>dinner_dining</v-icon></div>
+            </div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
           </div>
           <div
             v-else-if="log.type === DataTypes.meds"
             class="flex flex-row gap-2 bg-blue-700 p-2 rounded-lg text-white"
-            @click="openDetailedDialog(log)"
           >
-            <div>{{ log.time }}</div>
-            <div class="w-full">{{ (log as IMedOverview).key }}</div>
-            <div>{{ (log as IMedOverview).quantity }}mg</div>
-            <div><v-icon>medication</v-icon></div>
+            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+              <div>{{ log.time }}</div>
+              <div class="w-full">{{ (log as IMedOverview).key }}</div>
+              <div>{{ (log as IMedOverview).quantity }}mg</div>
+              <div><v-icon>medication</v-icon></div>
+            </div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
           </div>
           <div
             v-else-if="log.type === DataTypes.note"
-            class="flex flex-row gap-2 bg-gray-600 p-2 rounded-lg text-white"
-            @click="openDetailedDialog(log)"
+            class="flex flex-row gap-2 w-full bg-gray-600 p-2 rounded-lg text-white"
           >
-            <div>{{ log.time }}</div>
-            <div class="w-full">{{ (log as INoteOverview).key }}</div>
-            <div><v-icon>event_note</v-icon></div>
+            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+              <div>{{ log.time }}</div>
+              <div class="w-full">{{ (log as INoteOverview).key }}</div>
+              <div><v-icon>event_note</v-icon></div>
+            </div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
           </div>
         </div>
       </div>
@@ -237,6 +275,34 @@ function editWakeUpGoToBed(type: DataTypes, data: string) {
         :editData="shouldEdit ? (editData as INoteOverview): undefined"
         @close="closeDialogAndBottomSheet"
       />
+    </template>
+  </v-dialog>
+  <v-dialog v-model="showDeleteDialog" max-width="auto">
+    <template v-slot:default>
+      <v-card>
+        <v-card-title>
+          <h3 class="text-xl">
+            {{ t("DELETE_EVENT_DIALOG_TITLE", { type: t(deleteDataType) }) }}
+          </h3>
+        </v-card-title>
+        <v-card-text>
+          <p>
+            {{
+              t("DELETE_EVENT_DIALOG_CONTENT", {
+                type: t(deleteDataType),
+                time: deleteData?.time,
+                month: t("MONTH-" + (getMonth(day.date) + 1)),
+                day: getDay(day.date),
+              })
+            }}
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn variant="text" @click="showDeleteDialog = false">{{ t("CANCEL") }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="deleteEvent">{{ t("DELETE") }}</v-btn>
+        </v-card-actions>
+      </v-card>
     </template>
   </v-dialog>
 </template>

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { format, subDays } from "date-fns"
 import { buildMed, dateFormat, getDetailedDate } from "@/utils"
-import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog } from "@/types"
+import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog, DataTypes } from "@/types"
 import { ref } from "vue"
 
 export const useDayStore = defineStore("day", () => {
@@ -280,5 +280,70 @@ export const useDayStore = defineStore("day", () => {
     }
   }
 
-  return { updates, dayUpdate, getDays, getDay: getDay, addSymptom, addMeal, addMed, addNote, addWakeUp, addGoToBed }
+  /**
+   * Deletes Data from a day
+   * @param {string} day - day to delete data from
+   * @param {DataTypes} type - type of data to delete
+   * @param {string} key - key of data to delete
+   * @param {string} logKey - key of log to delete (required for symptoms, meds and notes)
+   */
+  async function deleteData(day: string, type: DataTypes, key: string, logKey?: string): Promise<void> {
+    const iDay = await getDay(day)
+
+    switch (type) {
+      case DataTypes.symptoms: {
+        const symptomIndex = iDay.symptoms.findIndex(s => s.key !== key)
+        if (symptomIndex != -1) {
+          // delete symptom log
+          iDay.symptoms[symptomIndex].logs = iDay.symptoms[symptomIndex].logs.filter(l => l.key !== logKey)
+        }
+        break
+      }
+      case DataTypes.meds: {
+        // delete med log
+        const medIndex = iDay.meds.findIndex(m => m.key === key)
+        if (medIndex != -1) {
+          iDay.meds[medIndex].log = iDay.meds[medIndex].log.filter(l => l.key !== logKey)
+        }
+        break
+      }
+      case DataTypes.meals: {
+        iDay.meals = iDay.meals.filter(m => m.key !== key)
+        break
+      }
+      case DataTypes.note: {
+        // delete note log
+        const noteIndex = iDay.logs.findIndex(l => l.key === key)
+        if (noteIndex != -1) {
+          iDay.logs[noteIndex].log = iDay.logs[noteIndex].log.filter(l => l.key !== logKey)
+        }
+        break
+      }
+      default:
+        throw new Error("Unknown data type")
+    }
+    // update store
+    try {
+      await db.put(iDay)
+      updates.value++
+      dayUpdate.value = [day]
+    } catch (err) {
+      console.error("delete data error: ", err)
+      throw err
+    }
+  }
+
+  return {
+    updates,
+    dayUpdate,
+    getDays,
+    getDay: getDay,
+    addSymptom,
+    addMeal,
+    addMed,
+    addNote,
+    addWakeUp,
+    addGoToBed,
+    deleteData,
+  }
 })
