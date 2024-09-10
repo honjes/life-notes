@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * Settings page
- * @TODO: make Expansion Panels transition smooth
+ * @TODO make Expansion Panels transition smooth
+ * @TODO style borders for backdrop and a nicer color
  */
 import { useSymptomStore, useMainStore } from "@/store"
 import { ISymptom } from "@/types"
@@ -122,13 +123,6 @@ onBeforeMount(() => {
 
 <style lang="scss">
 .v-expansion-panel-title__icon {
-  display: none;
-}
-.v-expansion-panel--active:not(:first-child),
-.v-expansion-panel--active + .v-expansion-panel {
-  margin-top: 0;
-}
-.v-expansion-panel:not(:first-child)::after {
   display: none;
 }
 </style>
