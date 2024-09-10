@@ -62,9 +62,11 @@ onBeforeMount(() => {
             <v-expansion-panels>
               <v-expansion-panel class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
-                  <div class="flex flex-row justify-between items-center w-full">
-                    <div>{{ t("SETTINGS_SYMPTOMS_TITLE") }}</div>
-                    <div>{{ t("SETTINGS_SYMPTOMS_SUBTITLE") }}</div>
+                  <div class="flex flex-row items-center w-full">
+                    <div class="w-full flex flex-row items-center">
+                      <div class="w-2/5">{{ t("SETTINGS_SYMPTOMS_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_SYMPTOMS_SUBTITLE") }}</div>
+                    </div>
                     <v-icon>spa</v-icon>
                   </div>
                 </v-expansion-panel-title>
@@ -87,9 +89,11 @@ onBeforeMount(() => {
               </v-expansion-panel>
               <v-expansion-panel class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
-                  <div class="flex flex-row justify-between items-center w-full">
-                    <div>{{ t("SETTINGS_MEDS_TITLE") }}</div>
-                    <div>{{ t("SETTINGS_MEDS_SUBTITLE") }}</div>
+                  <div class="flex flex-row items-center w-full">
+                    <div class="flex flex-row w-full">
+                      <div class="w-2/5">{{ t("SETTINGS_MEDS_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_MEDS_SUBTITLE") }}</div>
+                    </div>
                     <v-icon>medication</v-icon>
                   </div>
                 </v-expansion-panel-title>
@@ -101,9 +105,11 @@ onBeforeMount(() => {
               </v-expansion-panel>
               <v-expansion-panel class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
-                  <div class="flex flex-row justify-between items-center w-full">
-                    <div>{{ t("SETTINGS_NOTES_TITLE") }}</div>
-                    <div>{{ t("SETTINGS_NOTES_SUBTITLE") }}</div>
+                  <div class="flex flex-row items-center w-full">
+                    <div class="flex flex-row items-center w-full">
+                      <div class="w-2/5">{{ t("SETTINGS_NOTES_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_NOTES_SUBTITLE") }}</div>
+                    </div>
                     <v-icon>event_note</v-icon>
                   </div>
                 </v-expansion-panel-title>
