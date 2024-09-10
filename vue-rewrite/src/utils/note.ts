@@ -15,7 +15,7 @@ export function buildNote(key: string): INoteBasic & { _id: string } {
     type: DataTypes.note,
     key: key,
     occurrences: 0,
-    lastEntry: format(new Date(), dateFormat),
+    lastEntry: format(new Date("01-01-2000"), dateFormat),
   }
 }
 

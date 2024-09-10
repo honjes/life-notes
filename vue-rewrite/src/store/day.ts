@@ -232,6 +232,7 @@ export const useDayStore = defineStore("day", () => {
     // update Day
     try {
       await db.put(iDay)
+      await noteStore.addOccurrence(note.key, day)
       // update store
       updates.value++
       dayUpdate.value = [day]

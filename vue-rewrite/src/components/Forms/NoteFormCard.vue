@@ -64,7 +64,6 @@ async function addNoteToDay() {
   dayStore
     .addNote(props.day, iLogBasic, iLogLog)
     .then(async () => {
-      await noteStore.addOccurrence(iLogBasic, `${props.day} ${iLogLog.time}`)
       await createToast(
         t("ACTION_TOAST", {
           action: t("ADD"),
