@@ -4,7 +4,7 @@
  * @TODO make Expansion Panels transition smooth
  * @TODO style borders for backdrop and a nicer color
  */
-import { useSymptomStore, useMainStore } from "@/store"
+import { useSymptomStore, useMainStore, Languages } from "@/store"
 import { ISymptom } from "@/types"
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
 import { onBeforeMount, ref } from "vue"
@@ -20,6 +20,17 @@ const mainStore = useMainStore()
 // Variables
 const defaultSymptom = ref<string>(mainStore.settings.defaultSymptom)
 const symptomList = ref<ISymptom[]>([])
+const selectedLanguage = ref<string>(mainStore.settings.language)
+const languageList = ref<{ lang: Languages; label: string }[]>([
+  {
+    lang: Languages.FR,
+    label: t("FRENCH"),
+  },
+  {
+    lang: Languages.EN,
+    label: t("ENGLISH"),
+  },
+])
 
 // Functions
 async function setDefaultSymptom(symptomKey: string) {
@@ -28,7 +39,17 @@ async function setDefaultSymptom(symptomKey: string) {
     await mainStore.setDefaultSymptom(newDefaultSymptom)
   }
 }
+/**
+ * Update the app language
+ * @param {string} language - language to set
+ */
+async function setLanguage(language: string) {
+  await mainStore.setLanguage(language as Languages)
+}
 
+/**
+ * Update the symptom list
+ */
 async function updateSymptomList() {
   const symptoms = await symptomStore.getSymptoms()
   symptomList.value = symptoms
@@ -42,8 +63,13 @@ onBeforeMount(() => {
   symptomStore.$subscribe(() => {
     updateSymptomList()
   })
-  mainStore.$subscribe(() => {
-    defaultSymptom.value = mainStore.settings.defaultSymptom
+  // only subscribe until initalised
+  const unsubscribe = mainStore.$subscribe(() => {
+    if (mainStore.initalised) {
+      defaultSymptom.value = mainStore.settings.defaultSymptom
+      selectedLanguage.value = mainStore.settings.language
+      unsubscribe()
+    }
   })
 })
 </script>
@@ -116,6 +142,30 @@ onBeforeMount(() => {
                 <v-expansion-panel-text>
                   <div class="flex flex-col gap-4">
                     <v-btn variant="text" @click="router.push({ name: 'Notes' })">{{ t("NOTES_MANAGE_LINK") }}</v-btn>
+                  </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <v-expansion-panel class="border-y-2 border-gray-600">
+                <v-expansion-panel-title>
+                  <div class="flex flex-row justify-between items-center w-full">
+                    <div class="flex flex-row items-center w-full">
+                      <div class="w-2/5">{{ t("SETTINGS_LANGUAGE_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_LANGUAGE_SUBTITLE") }}</div>
+                    </div>
+                    <v-icon>language</v-icon>
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <div class="flex flex-col gap-4">
+                    <v-select
+                      :items="languageList"
+                      item-value="lang"
+                      item-title="label"
+                      v-model="selectedLanguage"
+                      :label="t('LANGUAGE')"
+                      hide-details
+                      @update:model-value="setLanguage"
+                    />
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
