@@ -27,6 +27,7 @@ This is a rewrite of the Life Notes app in Vue.js.
 
 ## TODO
 
+- [ ] make the data items more similar to each other (make label on all items ...)
 - Complete French translation
   - [ ] "ACTION_TOAST"
   - [ ] "ADD_SYMPTOM_NAME"

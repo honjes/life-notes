@@ -59,7 +59,7 @@ onBeforeMount(() => {
         <div>
           <section name="symptoms" class="w-full">
             <v-expansion-panels>
-              <v-expansion-panel expand-icon="spa" collapse-icon="spa">
+              <v-expansion-panel class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
                   <div class="flex flex-row justify-between items-center w-full">
                     <div>{{ t("SETTINGS_SYMPTOMS_TITLE") }}</div>
@@ -84,7 +84,7 @@ onBeforeMount(() => {
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
-              <v-expansion-panel>
+              <v-expansion-panel class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
                   <div class="flex flex-row justify-between items-center w-full">
                     <div>{{ t("SETTINGS_MEDS_TITLE") }}</div>
@@ -98,7 +98,7 @@ onBeforeMount(() => {
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
-              <v-expansion-panel>
+              <v-expansion-panel class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
                   <div class="flex flex-row justify-between items-center w-full">
                     <div>{{ t("SETTINGS_NOTES_TITLE") }}</div>
@@ -124,7 +124,11 @@ onBeforeMount(() => {
 .v-expansion-panel-title__icon {
   display: none;
 }
-.v-expansion-panel--active:not(:first-child) {
+.v-expansion-panel--active:not(:first-child),
+.v-expansion-panel--active + .v-expansion-panel {
   margin-top: 0;
+}
+.v-expansion-panel:not(:first-child)::after {
+  display: none;
 }
 </style>
