@@ -61,18 +61,19 @@ export const useNoteStore = defineStore("note", () => {
 
   /**
    * Adds a note occurrence
-   * @param {INoteBasic} note - note to add
+   * @param {string} key - key of the note
    * @TODO check if there the current time is realy the last entry
    */
-  async function addOccurrence(note: INoteBasic, newTime: string) {
+  async function addOccurrence(key: string, newTime: string) {
     try {
+      const note = await db.get(`note-${key}`)
       const newNote = { ...note }
       newNote.occurrences++
-      if (isAfter(new Date(newNote.lastEntry), new Date(newTime))) {
+      if (isAfter(new Date(newTime), new Date(newNote.lastEntry))) {
         newNote.lastEntry = newTime
       }
 
-      await db.upsert(`note-${note.key}`, () => ({ ...note, occurrences: note.occurrences + 1 }))
+      await db.upsert(`note-${note.key}`, () => newNote)
       // update store
       updates.value++
       noteUpdate.value = [note.key]
