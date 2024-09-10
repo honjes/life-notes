@@ -40,12 +40,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/Settings.vue"),
         name: "Settings",
       },
+      {
+        path: "/notes",
+        component: () => import("@/views/NotesList.vue"),
+        name: "Notes",
+      },
     ],
-  },
-  {
-    path: "/notes",
-    component: () => import("@/views/NotesList.vue"),
-    name: "Notes",
   },
 ]
 

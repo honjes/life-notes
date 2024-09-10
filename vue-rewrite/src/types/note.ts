@@ -16,6 +16,8 @@ export enum DataTypes {
 export interface INoteBasic {
   type: DataTypes
   key: string
+  occurrences: number
+  lastEntry: string
 }
 
 export interface INoteOverview extends INoteBasic {
@@ -37,7 +39,7 @@ export interface INoteLog {
   detail: string
 }
 
-export interface ILogHistory {
+export interface INoteHistory {
   key: string
   occurrences: number
   lastEntry: string

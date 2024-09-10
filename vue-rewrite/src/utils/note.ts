@@ -1,4 +1,6 @@
 import { DataTypes, INote, INoteBasic, INoteOverview } from "@/types"
+import { dateFormat } from "./date"
+import { format } from "date-fns"
 
 /**
  * Creates a ILog object
@@ -12,6 +14,8 @@ export function buildNote(key: string): INoteBasic & { _id: string } {
     _id: `note-${key}`,
     type: DataTypes.note,
     key: key,
+    occurrences: 0,
+    lastEntry: format(new Date(), dateFormat),
   }
 }
 
@@ -24,6 +28,8 @@ export function buildNoteOverview(note: INote): INoteOverview[] {
   return note.log.map(log => ({
     type: DataTypes.note,
     key: note.key,
+    occurrences: note.occurrences,
+    lastEntry: note.lastEntry,
     logKey: log.key,
     time: log.time,
     detail: log.detail,

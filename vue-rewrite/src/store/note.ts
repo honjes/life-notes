@@ -1,5 +1,6 @@
 import { INoteBasic } from "@/types"
 import { NotFoundError, NotFoundErrors } from "@/utils"
+import { isAfter } from "date-fns"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
@@ -58,5 +59,50 @@ export const useNoteStore = defineStore("note", () => {
     }
   }
 
-  return { updates, noteUpdate, getNotes, getNote, addNote }
+  /**
+   * Adds a note occurrence
+   * @param {INoteBasic} note - note to add
+   * @TODO check if there the current time is realy the last entry
+   */
+  async function addOccurrence(note: INoteBasic, newTime: string) {
+    try {
+      const newNote = { ...note }
+      newNote.occurrences++
+      if (isAfter(new Date(newNote.lastEntry), new Date(newTime))) {
+        newNote.lastEntry = newTime
+      }
+
+      await db.upsert(`note-${note.key}`, () => ({ ...note, occurrences: note.occurrences + 1 }))
+      // update store
+      updates.value++
+      noteUpdate.value = [note.key]
+    } catch (err) {
+      console.error("add note occurrence error: ", err)
+      throw err
+    }
+  }
+
+  /**
+   * Removes a note occurrence
+   * @params {string} key - note key
+   * @TODO check for the last occurrence
+   */
+  async function removeOccurrence(key: string) {
+    try {
+      const note = await db.get(`note-${key}`)
+      if (note.occurrences > 1) {
+        await db.upsert(`note-${key}`, () => ({ ...note, occurrences: note.occurrences - 1 }))
+      } else {
+        await db.remove(note)
+      }
+      // update store
+      updates.value++
+      noteUpdate.value = [key]
+    } catch (err) {
+      console.error("remove note occurrence error: ", err)
+      throw err
+    }
+  }
+
+  return { updates, noteUpdate, getNotes, getNote, addNote, addOccurrence, removeOccurrence }
 })

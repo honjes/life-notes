@@ -3,11 +3,15 @@ import { format, subDays } from "date-fns"
 import { buildMed, dateFormat, getDetailedDate } from "@/utils"
 import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog, DataTypes } from "@/types"
 import { ref } from "vue"
+import { useNoteStore } from "./note"
 
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
   const updates = ref(0)
   const dayUpdate = ref<string[]>([])
+
+  // stores
+  const noteStore = useNoteStore()
 
   /**
    * Returns an empty IDay object for a given date
@@ -317,6 +321,8 @@ export const useDayStore = defineStore("day", () => {
         if (noteIndex != -1) {
           iDay.logs[noteIndex].log = iDay.logs[noteIndex].log.filter(l => l.key !== logKey)
         }
+        // delete note
+        noteStore.removeOccurrence(key)
         break
       }
       default:
