@@ -28,6 +28,7 @@ This is a rewrite of the Life Notes app in Vue.js.
 ## TODO
 
 - [ ] make the data items more similar to each other (make label on all items ...)
+- [ ] use the time format from the settings
 - Complete French translation
   - [ ] "ACTION_TOAST"
   - [ ] "ADD_SYMPTOM_NAME"

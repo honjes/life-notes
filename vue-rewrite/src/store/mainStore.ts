@@ -1,21 +1,12 @@
-import { ISymptom } from "@/types"
+import { ISettings, ISymptom, Languages, TimeFormats } from "@/types"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 
-export enum Languages {
-  FR = "fr",
-  EN = "en",
-}
-
-export interface ISettings {
-  defaultSymptom: string
-  language: Languages
-}
-
 const settingsDefault: ISettings = {
   defaultSymptom: "none",
   language: Languages.EN,
+  timeFormat: TimeFormats.h24,
 }
 
 export const useMainStore = defineStore("main", () => {
@@ -70,5 +61,15 @@ export const useMainStore = defineStore("main", () => {
     await updateSettings()
   }
 
-  return { settings, initalised, setDefaultSymptom, setLanguage }
+  /**
+   * sets the time format
+   * @param {TimeFormats} timeFormat - time format to set
+   */
+  async function setTimeFormat(timeFormat: TimeFormats) {
+    settings.value.timeFormat = timeFormat
+
+    await updateSettings()
+  }
+
+  return { settings, initalised, setDefaultSymptom, setLanguage, setTimeFormat }
 })

@@ -4,8 +4,8 @@
  * @TODO make Expansion Panels transition smooth
  * @TODO style borders for backdrop and a nicer color
  */
-import { useSymptomStore, useMainStore, Languages } from "@/store"
-import { ISymptom } from "@/types"
+import { useSymptomStore, useMainStore } from "@/store"
+import { ISymptom, Languages, TimeFormats } from "@/types"
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
 import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
@@ -22,6 +22,17 @@ const defaultSymptom = ref<string>(mainStore.settings.defaultSymptom)
 const symptomList = ref<ISymptom[]>([])
 const selectedLanguage = ref<string>(mainStore.settings.language)
 const languageList = ref<{ lang: Languages; label: string }[]>([])
+const selectedTimeFormat = ref<string>(mainStore.settings.timeFormat)
+const timeFormatList = ref<{ timeFormat: TimeFormats; label: string }[]>([
+  {
+    timeFormat: TimeFormats.h24,
+    label: t("24H"),
+  },
+  {
+    timeFormat: TimeFormats.h12,
+    label: t("12H"),
+  },
+])
 
 // Functions
 async function setDefaultSymptom(symptomKey: string) {
@@ -38,6 +49,14 @@ async function setDefaultSymptom(symptomKey: string) {
 async function setLanguage(language: string) {
   await mainStore.setLanguage(language as Languages)
   updateLanguageList()
+}
+
+/**
+ * Update the time format
+ * @param {string} timeFormat - time format to set
+ */
+async function setTimeFormat(timeFormat: string) {
+  await mainStore.setTimeFormat(timeFormat as TimeFormats)
 }
 
 /**
@@ -78,6 +97,7 @@ onBeforeMount(() => {
     if (mainStore.initalised) {
       defaultSymptom.value = mainStore.settings.defaultSymptom
       selectedLanguage.value = mainStore.settings.language
+      selectedTimeFormat.value = mainStore.settings.timeFormat
       unsubscribe()
     }
   })
@@ -94,6 +114,7 @@ onBeforeMount(() => {
     <ion-content :fullscreen="true">
       <ion-content>
         <div>
+          {{ mainStore.settings }}
           <section name="symptoms" class="w-full">
             <v-expansion-panels>
               <v-expansion-panel class="border-y-2 border-gray-600">
@@ -175,6 +196,30 @@ onBeforeMount(() => {
                       :label="t('LANGUAGE')"
                       hide-details
                       @update:model-value="setLanguage"
+                    />
+                  </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <v-expansion-panel class="border-y-2 border-gray-600">
+                <v-expansion-panel-title>
+                  <div class="flex flex-row justify-between items-center w-full">
+                    <div class="flex flex-row items-center w-full">
+                      <div class="w-2/5">{{ t("SETTINGS_TIME_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_TIME_SUBTITLE") }}</div>
+                    </div>
+                    <v-icon>access_time</v-icon>
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <div class="flex flex-col gap-4">
+                    <v-select
+                      :items="timeFormatList"
+                      item-value="timeFormat"
+                      item-title="label"
+                      v-model="selectedTimeFormat"
+                      :label="t('TIME_FORMAT')"
+                      hide-details
+                      @update:model-value="setTimeFormat"
                     />
                   </div>
                 </v-expansion-panel-text>
