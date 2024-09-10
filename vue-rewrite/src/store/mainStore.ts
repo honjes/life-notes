@@ -43,7 +43,6 @@ export const useMainStore = defineStore("main", () => {
 
   async function updateSettings() {
     try {
-      console.log("update settings: ", settings.value)
       await db.upsert(settingsDocId, () => ({ ...settings.value }))
     } catch (err) {
       console.error("update settings error: ", err)

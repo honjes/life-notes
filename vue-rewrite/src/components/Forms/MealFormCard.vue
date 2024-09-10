@@ -33,7 +33,6 @@ const details = ref("")
  */
 async function addMealToDay() {
   if (mealLabel.value == undefined || mealLabel.value === "") {
-    console.log("no meal label")
     await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("MEAL") }), 2000, "error")
     return
   }

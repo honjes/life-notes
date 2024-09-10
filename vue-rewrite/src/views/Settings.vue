@@ -21,16 +21,7 @@ const mainStore = useMainStore()
 const defaultSymptom = ref<string>(mainStore.settings.defaultSymptom)
 const symptomList = ref<ISymptom[]>([])
 const selectedLanguage = ref<string>(mainStore.settings.language)
-const languageList = ref<{ lang: Languages; label: string }[]>([
-  {
-    lang: Languages.FR,
-    label: t("FRENCH"),
-  },
-  {
-    lang: Languages.EN,
-    label: t("ENGLISH"),
-  },
-])
+const languageList = ref<{ lang: Languages; label: string }[]>([])
 
 // Functions
 async function setDefaultSymptom(symptomKey: string) {
@@ -39,12 +30,30 @@ async function setDefaultSymptom(symptomKey: string) {
     await mainStore.setDefaultSymptom(newDefaultSymptom)
   }
 }
+
 /**
  * Update the app language
  * @param {string} language - language to set
  */
 async function setLanguage(language: string) {
   await mainStore.setLanguage(language as Languages)
+  updateLanguageList()
+}
+
+/**
+ * Update the language list
+ */
+function updateLanguageList() {
+  languageList.value = [
+    {
+      lang: Languages.FR,
+      label: t("FRENCH"),
+    },
+    {
+      lang: Languages.EN,
+      label: t("ENGLISH"),
+    },
+  ]
 }
 
 /**
@@ -57,6 +66,7 @@ async function updateSymptomList() {
 
 // Init
 onBeforeMount(() => {
+  updateLanguageList()
   updateSymptomList()
 
   // Subscribe to store changes
