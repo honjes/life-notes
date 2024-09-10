@@ -4,6 +4,7 @@ import { buildMed, dateFormat, getDetailedDate } from "@/utils"
 import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog, DataTypes } from "@/types"
 import { ref } from "vue"
 import { useNoteStore } from "./note"
+import { useMedStore } from "./med"
 
 export const useDayStore = defineStore("day", () => {
   const db = new PouchDB("days")
@@ -12,6 +13,7 @@ export const useDayStore = defineStore("day", () => {
 
   // stores
   const noteStore = useNoteStore()
+  const medStore = useMedStore()
 
   /**
    * Returns an empty IDay object for a given date
@@ -191,6 +193,7 @@ export const useDayStore = defineStore("day", () => {
     // update Day
     try {
       await db.put(iDay)
+      await medStore.addOccurrence(med.key, `${day}`)
       // update store
       updates.value++
       dayUpdate.value = [day]
@@ -309,6 +312,8 @@ export const useDayStore = defineStore("day", () => {
         if (medIndex != -1) {
           iDay.meds[medIndex].log = iDay.meds[medIndex].log.filter(l => l.key !== logKey)
         }
+        // delete med occurrence
+        medStore.removeOccurrence(key)
         break
       }
       case DataTypes.meals: {

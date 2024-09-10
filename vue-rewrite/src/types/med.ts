@@ -4,6 +4,8 @@ export interface IMedBasic {
   type: DataTypes
   key: string
   quantity: number
+  occurrences: number
+  lastEntry: string
 }
 
 export interface IMed extends IMedBasic {
