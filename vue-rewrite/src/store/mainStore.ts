@@ -31,6 +31,7 @@ export const useMainStore = defineStore("main", () => {
     .then(settingsResponse => {
       if (settingsResponse) {
         settings.value = settingsResponse
+        locale.value = settings.value.language
       }
       initalised.value = true
     })
