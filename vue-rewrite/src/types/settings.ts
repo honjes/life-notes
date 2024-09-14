@@ -1,3 +1,6 @@
+import { IDay } from "./day"
+import { ISymptom } from "./symptom"
+
 export enum Languages {
   FR = "fr",
   EN = "en",
@@ -12,4 +15,10 @@ export interface ISettings {
   defaultSymptom: string
   language: Languages
   timeFormat: TimeFormats
+}
+
+export interface IBackup {
+  days: IDay[]
+  symptoms: ISymptom[]
+  settings: ISettings
 }

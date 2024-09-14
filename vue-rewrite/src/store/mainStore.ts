@@ -1,7 +1,9 @@
-import { ISettings, ISymptom, Languages, TimeFormats } from "@/types"
+import { IBackup, ISettings, ISymptom, Languages, TimeFormats } from "@/types"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
+import { useDayStore } from "./day"
+import useSymptomStore from "./symptom"
 
 const settingsDefault: ISettings = {
   defaultSymptom: "none",
@@ -10,12 +12,17 @@ const settingsDefault: ISettings = {
 }
 
 export const useMainStore = defineStore("main", () => {
-  const db = new PouchDB<ISettings>("main")
+  // External Components
+  const { locale } = useI18n()
+  const dayStore = useDayStore()
+  const symptomStore = useSymptomStore()
 
+  // Variables
+  const db = new PouchDB<ISettings | IBackup>("main")
   const settingsDocId = "settings"
+  const backupDocId = "backup"
   const initalised = ref(false)
   const settings = ref<ISettings>(settingsDefault)
-  const { locale } = useI18n()
 
   // init settings
   db.get<ISettings>(settingsDocId)
@@ -71,5 +78,19 @@ export const useMainStore = defineStore("main", () => {
     await updateSettings()
   }
 
-  return { settings, initalised, setDefaultSymptom, setLanguage, setTimeFormat }
+  /**
+   * Generates a backup
+   * @returns {Promise<IBackup>} backup
+   */
+  async function generateBackup(): Promise<IBackup> {
+    const backup: IBackup = {
+      days: await dayStore.getAllDays(),
+      symptoms: await symptomStore.getSymptoms(),
+      settings: settings.value,
+    }
+    db.upsert(backupDocId, () => backup)
+    return backup
+  }
+
+  return { settings, initalised, setDefaultSymptom, setLanguage, setTimeFormat, generateBackup }
 })

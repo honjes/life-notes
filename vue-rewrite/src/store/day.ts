@@ -7,7 +7,7 @@ import { useNoteStore } from "./note"
 import { useMedStore } from "./med"
 
 export const useDayStore = defineStore("day", () => {
-  const db = new PouchDB("days")
+  const db = new PouchDB<IDay>("days")
   const updates = ref(0)
   const dayUpdate = ref<string[]>([])
 
@@ -33,6 +33,13 @@ export const useDayStore = defineStore("day", () => {
       wakeUp: "",
       goToBed: "",
     }
+  }
+
+  /**
+   * gets all days in db
+   */
+  async function getAllDays(): Promise<IDay[]> {
+    return (await db.allDocs({ include_docs: true, descending: true })).rows.map(row => row.doc as IDay)
   }
 
   /**
@@ -350,6 +357,7 @@ export const useDayStore = defineStore("day", () => {
     dayUpdate,
     getDays,
     getDay: getDay,
+    getAllDays,
     addSymptom,
     addMeal,
     addMed,
