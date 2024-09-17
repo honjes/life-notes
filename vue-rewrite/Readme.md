@@ -16,13 +16,35 @@ This is a rewrite of the Life Notes app in Vue.js.
 3. Run `npm install`
 4. Run `ionic serve`
 
+## How to develop
+
+### Requirements
+
+- [Node.js](https://nodejs.org/en/download/package-manager) Current
+- [Ionic Cli](https://ionicframework.com/docs/intro/cli)
+- [Android Studio](https://developer.android.com/studio)
+
+### Steps (Run in browser)
+
+1. Clone the repository
+2. Navigate to the `vue-rewrite` folder
+3. Run `npm install`
+4. Run `ionic serve`
+
+### Steps (Run on Device)
+
+#### Android
+
+1. Run `ionic build`
+2. Run `ionic cap run android`
+
 ## How to build
 
 ### Android
 
 1. Run `npm run build`
-2. (if first build) Run `npx cap add android`
-3. Run `npx cap open android`
+2. (if first build) Run `ioniccap add android`
+3. Run `ionic cap open android`
 4. Build the app with android studio
 
 ## TODO
