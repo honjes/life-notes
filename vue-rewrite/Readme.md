@@ -36,7 +36,8 @@ This is a rewrite of the Life Notes app in Vue.js.
 #### Android
 
 1. Run `ionic build`
-2. Run `ionic cap run android`
+2. (if first build) Run `ionic cap add android`
+3. Run `ionic cap run android`
 
 ## How to build
 
