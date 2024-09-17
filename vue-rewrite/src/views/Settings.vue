@@ -3,6 +3,7 @@
  * Settings page
  * @TODO make Expansion Panels transition smooth
  * @TODO style borders for backdrop and a nicer color
+ * @TODO style the paddings of the expansion panels (expacially for import / export)
  */
 import { useSymptomStore, useMainStore } from "@/store"
 import { ISymptom, Languages, TimeFormats } from "@/types"
@@ -33,6 +34,10 @@ const timeFormatList = ref<{ timeFormat: TimeFormats; label: string }[]>([
     label: t("12H"),
   },
 ])
+// Modals
+const importModal = ref(false)
+const importType = ref<"auto" | "manual" | "web">("auto")
+const exportModal = ref(false)
 
 // Functions
 async function setDefaultSymptom(symptomKey: string) {
@@ -81,6 +86,37 @@ function updateLanguageList() {
 async function updateSymptomList() {
   const symptoms = await symptomStore.getSymptoms()
   symptomList.value = symptoms
+}
+
+/**
+ * Opens the import dialog
+ * @param {"auto" | "manual"} type - type of import
+ */
+function openImportDialog(type: "auto" | "manual" | "web") {
+  importType.value = type
+  importModal.value = true
+}
+
+/**
+ * Imports a save
+ */
+async function importSave() {
+  if (importType.value === "auto") {
+    // TODO: Import last auto save
+  } else if (importType.value === "manual") {
+    // TODO: Import last manual save
+  } else {
+    // TODO: Import Save from selected source
+  }
+  importModal.value = false
+}
+
+/**
+ * Exports a save
+ */
+async function exportSave() {
+  // TODO: Export save
+  exportModal.value = false
 }
 
 // Init
@@ -200,7 +236,7 @@ onBeforeMount(() => {
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
-              <v-expansion-panel class="border-y-2 border-gray-600">
+              <v-expansion-panel name="Time" class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
                   <div class="flex flex-row justify-between items-center w-full">
                     <div class="flex flex-row items-center w-full">
@@ -224,15 +260,103 @@ onBeforeMount(() => {
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
+              <v-expansion-panel name="Import / Export" class="border-y-2 border-gray-600">
+                <v-expansion-panel-title>
+                  <div class="flex flex-row justify-between items-center w-full">
+                    <div class="flex flex-row items-center w-full">
+                      <div class="w-2/5">{{ t("SETTINGS_IMPORT_EXPORT_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_IMPORT_EXPORT_SUBTITLE") }}</div>
+                    </div>
+                    <v-icon>swap_vert</v-icon>
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-list>
+                    <v-list-item>
+                      <v-expansion-panels>
+                        <v-expansion-panel>
+                          <v-expansion-panel-title>
+                            <div class="flex flex-row items-center gap-2">
+                              <v-icon>library_add</v-icon>
+                              {{ t("IMPORT") }}
+                            </div>
+                          </v-expansion-panel-title>
+                          <v-expansion-panel-text>
+                            <v-list>
+                              <v-list-item @click="openImportDialog('auto')">
+                                {{ t("LOAD_AUTO_SAVE") }}
+                              </v-list-item>
+                              <v-list-item @click="openImportDialog('manual')">
+                                {{ t("LOAD_MANUAL_SAVE") }}
+                              </v-list-item>
+                              <v-list-item @click="openImportDialog('web')">
+                                {{ t("LOAD_WEB_SAVE") }}
+                              </v-list-item>
+                            </v-list>
+                          </v-expansion-panel-text>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-title class="flex flex-row items-center gap-2" @click="exportModal = true">
+                        <v-icon>save_alt</v-icon>{{ t("SAVE") }}
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
             </v-expansion-panels>
           </section>
         </div>
       </ion-content>
     </ion-content>
   </ion-page>
+  <v-dialog v-model="importModal" max-width="auto">
+    <template v-slot:default>
+      <v-card>
+        <v-card-title>{{ t("IMPORT_DIALOG_TITLE") }}</v-card-title>
+        <v-card-text class="flex flex-col gap-4">
+          <p>{{ t("IMPORT_DIALOG_CONTENT_1") }}</p>
+          <p>{{ t("IMPORT_DIALOG_CONTENT_2") }}</p>
+          <p>{{ t("IMPORT_DIALOG_CONTENT_3") }}</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn variant="text" @click="importModal = false">{{ t("NO") }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="importSave">{{ t("YES") }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
+  <v-dialog v-model="exportModal" max-width="auto">
+    <template v-slot:default>
+      <v-card>
+        <v-card-title>
+          <h3 class="text-xl">
+            {{ t("EXPORT_DIALOG_TITLE", { data_type: t("SYMPTOMS") }) }}
+          </h3>
+        </v-card-title>
+        <v-card-text class="flex flex-col gap-4">
+          <p>{{ t("EXPORT_DIALOG_CONTENT_1") }}</p>
+          <p>{{ t("EXPORT_DIALOG_CONTENT_2") }}</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn variant="text" @click="exportModal = false">{{ t("NO") }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="exportSave">{{ t("YES") }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
 </template>
 
 <style lang="scss">
+.v-expansion-panel[name="Import / Export"] {
+  .v-expansion-panel-text .v-expansion-panel-title {
+    padding: 0;
+  }
+}
+
 .v-expansion-panel-title__icon {
   display: none;
 }

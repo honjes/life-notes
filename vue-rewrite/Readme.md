@@ -22,7 +22,11 @@ This is a rewrite of the Life Notes app in Vue.js.
 
 - [Node.js](https://nodejs.org/en/download/package-manager) Current
 - [Ionic Cli](https://ionicframework.com/docs/intro/cli)
+
+##### For Dev on Android
+
 - [Android Studio](https://developer.android.com/studio)
+- [Java](https://www.java.com/en/download/)
 
 ### Steps (Run in browser)
 
@@ -35,9 +39,9 @@ This is a rewrite of the Life Notes app in Vue.js.
 
 #### Android
 
-1. Run `ionic build`
-2. (if first build) Run `ionic cap add android`
-3. Run `ionic cap run android`
+1. (if first build) Run `ionic cap add android`
+2. Run `ionic cap open android`
+3. run with android studio [Described here](https://capacitorjs.com/docs/android#running-with-android-studio)
 
 ## How to build
 
