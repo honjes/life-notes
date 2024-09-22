@@ -59,6 +59,7 @@
   "QUANTITY": "Dose",
   "SUCCESSFULLY": "successfully",
   "FAILED": "failed",
+  "NO_ERROR_LOGS": "Aucun log d'erreur",
   "EDIT_EVENT_DIALOG_TITLE": "Éditer ce { type } pour le { day } { monthShort }",
   "ADD_EVENT_DIALOG_TITLE": "Ajouter un { type } pour le { day } { monthShort }",
   "DELETE_EVENT_DIALOG_TITLE": "Supprimer ce { type }",

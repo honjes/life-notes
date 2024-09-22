@@ -3,6 +3,7 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { useDayStore } from "./day"
+import { Directory, Encoding, Filesystem } from "@capacitor/filesystem"
 import useSymptomStore from "./symptom"
 
 const settingsDefault: ISettings = {
@@ -23,6 +24,9 @@ export const useMainStore = defineStore("main", () => {
   const backupDocId = "backup"
   const initalised = ref(false)
   const settings = ref<ISettings>(settingsDefault)
+  const errorLogs = ref<string[]>([])
+
+  //TODO: check for permissions
 
   // init settings
   db.get<ISettings>(settingsDocId)
@@ -92,5 +96,18 @@ export const useMainStore = defineStore("main", () => {
     return backup
   }
 
-  return { settings, initalised, setDefaultSymptom, setLanguage, setTimeFormat, generateBackup }
+  /**
+   * Save the backup to the filesystem
+   */
+  async function saveBackup() {
+    const backup = await generateBackup()
+    await Filesystem.writeFile({
+      path: "backup.json",
+      data: JSON.stringify(backup),
+      directory: Directory.Documents,
+      encoding: Encoding.UTF8,
+    })
+  }
+
+  return { settings, initalised, setDefaultSymptom, setLanguage, setTimeFormat, generateBackup, saveBackup, errorLogs }
 })

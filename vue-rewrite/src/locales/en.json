@@ -59,6 +59,7 @@
   "QUANTITY": "Quantity",
   "SUCCESSFULLY": "successfully",
   "FAILED": "failed",
+  "NO_ERROR_LOGS": "No error logs",
   "EDIT_EVENT_DIALOG_TITLE": "Edit this { type } for { monthShort }, { day }",
   "ADD_EVENT_DIALOG_TITLE": "Add a { type } for { monthShort }, { day }",
   "DELETE_EVENT_DIALOG_TITLE": "Delete { type }",

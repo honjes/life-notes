@@ -6,17 +6,20 @@
  * @TODO style the paddings of the expansion panels (expacially for import / export)
  */
 import { useSymptomStore, useMainStore } from "@/store"
-import { ISymptom, Languages, TimeFormats } from "@/types"
+import { IBackup, ISymptom, Languages, TimeFormats } from "@/types"
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
+import { storeToRefs } from "pinia"
 import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { useRouter } from "vue-router"
+import { Clipboard } from "@capacitor/clipboard"
 
 // External Components
 const { t } = useI18n()
 const router = useRouter()
 const symptomStore = useSymptomStore()
 const mainStore = useMainStore()
+const { errorLogs } = storeToRefs(mainStore)
 
 // Variables
 const defaultSymptom = ref<string>(mainStore.settings.defaultSymptom)
@@ -34,6 +37,8 @@ const timeFormatList = ref<{ timeFormat: TimeFormats; label: string }[]>([
     label: t("12H"),
   },
 ])
+const backup = ref<IBackup>()
+const copied = ref(false)
 // Modals
 const importModal = ref(false)
 const importType = ref<"auto" | "manual" | "web">("auto")
@@ -117,6 +122,23 @@ async function importSave() {
 async function exportSave() {
   // TODO: Export save
   exportModal.value = false
+}
+
+/**
+ * Generates a backup
+ */
+async function generateBackup() {
+  backup.value = await mainStore.generateBackup()
+}
+
+/**
+ * Writes the backup to the clipboard
+ */
+async function writeBackupToClipboard() {
+  await Clipboard.write({
+    string: JSON.stringify(backup.value),
+  })
+  copied.value = true
 }
 
 // Init
@@ -303,6 +325,66 @@ onBeforeMount(() => {
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+              <v-expansion-panel class="border-y-2 border-gray-600">
+                <v-expansion-panel-title>
+                  <div class="flex flex-row justify-between items-center w-full">
+                    <div class="flex flex-row items-center w-full">
+                      <div class="flex flex-row items-center w-full">
+                        <div class="w-2/5">{{ t("SETTINGS_ADVANCED_TITLE") }}</div>
+                        <div>{{ t("SETTINGS_ADVANCED_SUBTITLE") }}</div>
+                      </div>
+                      <v-icon>expand</v-icon>
+                    </div>
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-expansion-panels>
+                    <v-expansion-panel class="border-y-2 border-gray-600">
+                      <v-expansion-panel-title>
+                        <div class="flex flex-row items-center w-full">
+                          <div class="w-2/5">{{ t("SETTINGS_MANUAL_SAVE_TITLE") }}</div>
+                          <div>{{ t("SETTINGS_MANUAL_SAVE_SUBTITLE") }}</div>
+                        </div>
+                      </v-expansion-panel-title>
+                      <v-expansion-panel-text>
+                        <div class="flex flex-col gap-4">
+                          <v-button
+                            class="text-center py-1 bg-blue-800 rounded"
+                            variant="tonal"
+                            @click="generateBackup()"
+                          >
+                            {{ t("SETTINGS_MANUAL_SAVE_BUTTON") }}
+                          </v-button>
+                          <div v-if="backup" class="flex flex-col gap-4">
+                            <v-button @click="writeBackupToClipboard()"
+                              ><v-icon>file_copy</v-icon> {{ copied ? t("COPIED") : t("COPY") }}</v-button
+                            >
+                            <div>
+                              {{ backup }}
+                            </div>
+                          </div>
+                        </div>
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                    <v-expansion-panel class="border-y-2 border-gray-600">
+                      <v-expansion-panel-title>
+                        <div class="flex flex-row items-center w-full">
+                          <div class="w-2/5">{{ t("SETTINGS_ERROR_LOGS_TITLE") }}</div>
+                          <div>{{ t("SETTINGS_ERROR_LOGS_SUBTITLE") }}</div>
+                        </div>
+                      </v-expansion-panel-title>
+                      <v-expansion-panel-text>
+                        <div v-if="errorLogs.length === 0" class="flex flex-row justify-center px-4">
+                          {{ t("NO_ERROR_LOGS") }}
+                        </div>
+                        <div v-else class="flex flex-col gap-4">
+                          <div v-for="error in errorLogs" :key="error">{{ error }}</div>
+                        </div>
+                      </v-expansion-panel-text>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>

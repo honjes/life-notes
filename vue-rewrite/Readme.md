@@ -67,3 +67,4 @@ This is a rewrite of the Life Notes app in Vue.js.
   - [ ] "DATE"
   - [ ] "SUCCESSFULLY"
   - [ ] "FAILED"
+  - [ ] "NO_ERROR_LOGS"
