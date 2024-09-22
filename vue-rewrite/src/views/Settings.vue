@@ -13,6 +13,8 @@ import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { useRouter } from "vue-router"
 import { Clipboard } from "@capacitor/clipboard"
+import { createToast } from "@/utils"
+import { FilePicker } from "@capawesome/capacitor-file-picker"
 
 // External Components
 const { t } = useI18n()
@@ -107,11 +109,27 @@ function openImportDialog(type: "auto" | "manual" | "web") {
  */
 async function importSave() {
   if (importType.value === "auto") {
-    // TODO: Import last auto save
+    mainStore.loadBackup("auto")
   } else if (importType.value === "manual") {
-    // TODO: Import last manual save
+    mainStore.loadBackup("manual")
   } else {
-    // TODO: Import Save from selected source
+    await FilePicker.pickFiles({
+      limit: 1,
+    })
+      .then(async res => {
+        if (res.files.length === 0) {
+          mainStore.addErrorLog("No file selected")
+          return
+        }
+        const file = res.files[0]
+        if (file.path) {
+          mainStore.loadBackup(file.path)
+        }
+      })
+      .catch(err => {
+        console.error("import save error: ", err)
+        mainStore.addErrorLog(err)
+      })
   }
   importModal.value = false
 }
@@ -120,8 +138,13 @@ async function importSave() {
  * Exports a save
  */
 async function exportSave() {
-  // TODO: Export save
-  exportModal.value = false
+  try {
+    await mainStore.saveBackup("manual")
+    exportModal.value = false
+    createToast(t("DATA_EXPORT_SNACKBAR_SUCCESS"), 2000, "success")
+  } catch (_) {
+    createToast(t("DATA_EXPORT_SNACKBAR_ERROR"), 2000, "error")
+  }
 }
 
 /**
@@ -172,7 +195,7 @@ onBeforeMount(() => {
     <ion-content :fullscreen="true">
       <ion-content>
         <div>
-          {{ mainStore.settings }}
+          {{ errorLogs }}
           <section name="symptoms" class="w-full">
             <v-expansion-panels>
               <v-expansion-panel class="border-y-2 border-gray-600">

@@ -1,4 +1,6 @@
 import { IDay } from "./day"
+import { IMedBasic } from "./med"
+import { INoteBasic } from "./note"
 import { ISymptom } from "./symptom"
 
 export enum Languages {
@@ -20,5 +22,8 @@ export interface ISettings {
 export interface IBackup {
   days: IDay[]
   symptoms: ISymptom[]
+  meds: IMedBasic[]
+  notes: INoteBasic[]
   settings: ISettings
+  version: string
 }

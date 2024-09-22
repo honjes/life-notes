@@ -5,6 +5,10 @@ import { useI18n } from "vue-i18n"
 import { useDayStore } from "./day"
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem"
 import useSymptomStore from "./symptom"
+import { useMedStore } from "./med"
+import { useNoteStore } from "./note"
+import { version } from "../../package.json"
+import { createToast } from "@/utils"
 
 const settingsDefault: ISettings = {
   defaultSymptom: "none",
@@ -14,9 +18,11 @@ const settingsDefault: ISettings = {
 
 export const useMainStore = defineStore("main", () => {
   // External Components
-  const { locale } = useI18n()
+  const { locale, t } = useI18n()
   const dayStore = useDayStore()
   const symptomStore = useSymptomStore()
+  const medStore = useMedStore()
+  const noteStore = useNoteStore()
 
   // Variables
   const db = new PouchDB<ISettings | IBackup>("main")
@@ -90,7 +96,10 @@ export const useMainStore = defineStore("main", () => {
     const backup: IBackup = {
       days: await dayStore.getAllDays(),
       symptoms: await symptomStore.getSymptoms(),
+      meds: await medStore.getMeds(),
+      notes: await noteStore.getNotes(),
       settings: settings.value,
+      version: version,
     }
     db.upsert(backupDocId, () => backup)
     return backup
@@ -99,15 +108,117 @@ export const useMainStore = defineStore("main", () => {
   /**
    * Save the backup to the filesystem
    */
-  async function saveBackup() {
+  async function saveBackup(type: "auto" | "manual" = "auto") {
     const backup = await generateBackup()
     await Filesystem.writeFile({
-      path: "backup.json",
+      path: `${type === "auto" ? "autobackup" : "backup"}.json`,
       data: JSON.stringify(backup),
-      directory: Directory.Documents,
+      directory: Directory.Data,
       encoding: Encoding.UTF8,
+      recursive: true,
     })
+      .then(async res => {
+        errorLogs.value.push(res.uri)
+      })
+      .catch(err => {
+        console.error("save backup error: ", err)
+        errorLogs.value.push(err.message)
+      })
   }
 
-  return { settings, initalised, setDefaultSymptom, setLanguage, setTimeFormat, generateBackup, saveBackup, errorLogs }
+  /**
+   * Imports a backup
+   * @param {IBackup} backup - backup to import
+   */
+  async function importBackup(backup: IBackup) {
+    // TODO: Import backup
+    console.log(backup)
+    addErrorLog("inside importBackup")
+    addErrorLog(backup as unknown as string)
+  }
+
+  /**
+   * Loads a backup from the filesystem
+   * @param {string} type - type of backup to load ("auto" or "manual") or path to backup
+   */
+  async function loadBackup(type: "auto" | "manual" | string) {
+    if (type === "auto") {
+      try {
+        const backup = await Filesystem.readFile({
+          path: "autobackup.json",
+          directory: Directory.Data,
+          encoding: Encoding.UTF8,
+        })
+        if (backup) {
+          const backupJson = JSON.parse(backup.data as string)
+          await importBackup(backupJson)
+          await createToast(t("DATA_IMPORT_SNACKBAR_SUCCESS"), 2000, "success")
+        } else {
+          await createToast(t("DATA_IMPORT_SNACKBAR_ERROR"), 2000, "error")
+        }
+      } catch (err) {
+        //@ts-expect-error - //TODO: make more specific error for log
+        addErrorLog(err)
+        await createToast(t("DATA_IMPORT_SNACKBAR_ERROR"), 2000, "error")
+      }
+    } else if (type === "manual") {
+      try {
+        const backup = await Filesystem.readFile({
+          path: "backup.json",
+          directory: Directory.Data,
+          encoding: Encoding.UTF8,
+        })
+        if (backup) {
+          const backupJson = JSON.parse(backup.data as string)
+          await importBackup(backupJson)
+          await createToast(t("DATA_IMPORT_SNACKBAR_SUCCESS"), 2000, "success")
+        } else {
+          await createToast(t("DATA_IMPORT_SNACKBAR_ERROR"), 2000, "error")
+        }
+      } catch (err) {
+        //@ts-expect-error - //TODO: make more specific error for log
+        addErrorLog(err)
+        await createToast(t("DATA_IMPORT_SNACKBAR_ERROR"), 2000, "error")
+      }
+    } else {
+      try {
+        const backup = await Filesystem.readFile({
+          path: type,
+          encoding: Encoding.UTF8,
+        })
+        if (backup) {
+          const backupJson = JSON.parse(backup.data as string)
+          await importBackup(backupJson)
+          await createToast(t("DATA_IMPORT_SNACKBAR_SUCCESS"), 2000, "success")
+        } else {
+          await createToast(t("DATA_IMPORT_SNACKBAR_ERROR"), 2000, "error")
+        }
+      } catch (err) {
+        //@ts-expect-error - //TODO: make more specific error for log
+        addErrorLog(err)
+        await createToast(t("DATA_IMPORT_SNACKBAR_ERROR"), 2000, "error")
+      }
+    }
+  }
+
+  /**
+   * Add a error log
+   * @param {string} error - error to add
+   */
+  function addErrorLog(error: string) {
+    errorLogs.value.push(error)
+  }
+
+  return {
+    settings,
+    initalised,
+    setDefaultSymptom,
+    setLanguage,
+    setTimeFormat,
+    generateBackup,
+    saveBackup,
+    loadBackup,
+    errorLogs,
+    addErrorLog,
+  }
 })
