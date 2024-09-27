@@ -195,7 +195,6 @@ onBeforeMount(() => {
     <ion-content :fullscreen="true">
       <ion-content>
         <div>
-          {{ errorLogs }}
           <section name="symptoms" class="w-full">
             <v-expansion-panels>
               <v-expansion-panel class="border-y-2 border-gray-600">
@@ -350,7 +349,7 @@ onBeforeMount(() => {
                   </v-list>
                 </v-expansion-panel-text>
               </v-expansion-panel>
-              <v-expansion-panel class="border-y-2 border-gray-600">
+              <v-expansion-panel name="Advanced" class="border-y-2 border-gray-600">
                 <v-expansion-panel-title>
                   <div class="flex flex-row justify-between items-center w-full">
                     <div class="flex flex-row items-center w-full">
@@ -384,7 +383,7 @@ onBeforeMount(() => {
                             <v-button @click="writeBackupToClipboard()"
                               ><v-icon>file_copy</v-icon> {{ copied ? t("COPIED") : t("COPY") }}</v-button
                             >
-                            <div>
+                            <div class="overflow-y-auto h-32">
                               {{ backup }}
                             </div>
                           </div>

@@ -17,6 +17,7 @@ export interface ISettings {
   defaultSymptom: string
   language: Languages
   timeFormat: TimeFormats
+  //TODO: add the settings from the current version
 }
 
 export interface IBackup {
