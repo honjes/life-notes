@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { format, subDays } from "date-fns"
-import { buildMed, dateFormat, getDetailedDate } from "@/utils"
+import { buildMed, dateFormat } from "@/utils"
 import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog, DataTypes } from "@/types"
 import { ref } from "vue"
 import { useNoteStore } from "./note"
@@ -24,7 +24,6 @@ export const useDayStore = defineStore("day", () => {
     return {
       _id: formattedDate,
       date: formattedDate,
-      detailedDate: getDetailedDate(formattedDate),
       symptomOverviews: [],
       symptoms: [],
       logs: [],
