@@ -8,6 +8,10 @@ export interface IMedBasic {
   lastEntry: string
 }
 
+export interface IMedWithId extends IMed {
+  _id: string
+}
+
 export interface IMed extends IMedBasic {
   log: IMedLog[]
 }

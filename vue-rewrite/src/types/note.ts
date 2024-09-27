@@ -33,6 +33,10 @@ export interface INote extends INoteBasic {
   log: INoteLog[]
 }
 
+export interface INoteWithId extends INote {
+  _id: string
+}
+
 export interface INoteLog {
   key: string
   time: string
