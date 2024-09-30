@@ -14,7 +14,7 @@ import { ISymptomOverview } from "@/types/symptom"
 import { IMeal } from "@/types/meal"
 import { IMedOverview } from "@/types/med"
 import DetailedDataDialog from "./DetailedDataDialog.vue"
-import { getDay, getMonth } from "date-fns"
+import { getDay, getMonth, format } from "date-fns"
 import { useDayStore } from "@/store"
 import { createToast } from "@/utils"
 
@@ -138,18 +138,18 @@ async function deleteEvent() {
 
 <template>
   <aside class="flex w-full flex-col border-b-2 border-b-black">
-    <div name="header" class="flex w-full flex-row justify-between bg-gray-400 p-4 dark:bg-gray-700">
+    <div name="header" class="bg-surface-400 dark:bg-surface-700 flex w-full flex-row justify-between p-4">
       <div class="flex flex-row items-center">
-        <PrimeButton icon="arrow_forward_ios" text>
         <h2 class="text-3xl">{{ format(new Date(props.day.date), "iii MMM, dd yyyy") }}</h2>
+        <PrimeButton icon="arrow_forward_ios" link>
           <i class="material-icons">arrow_forward_ios</i>
         </PrimeButton>
       </div>
       <div class="flex flex-row items-center">
-        <PrimeButton @click="showBottomSheet = true" label="Primary" text>
+        <PrimeButton @click="showBottomSheet = true" label="Primary" link>
           <i class="material-icons">playlist_add</i>
         </PrimeButton>
-        <PrimeButton @click="showDeleteIcon = !showDeleteIcon" text>
+        <PrimeButton @click="showDeleteIcon = !showDeleteIcon" link>
           <i class="material-icons">delete_sweep</i>
         </PrimeButton>
       </div>
@@ -211,17 +211,17 @@ async function deleteEvent() {
       </div>
       <div class="group-h-full flex w-1/5 flex-col justify-between">
         <div
-          class="flex h-20 flex-col items-end justify-start gap-2 rounded-bl-full bg-gray-300 pr-2 dark:bg-gray-600"
+          class="bg-surface-300 dark:bg-surface-600 flex h-20 flex-col items-end justify-start gap-2 rounded-bl-full pr-2"
           @click="editWakeUpGoToBed(DataTypes.wakeUp, day.date)"
         >
           <p class="min-h-6">{{ day.wakeUp }}</p>
-          <i class="material-icons">alarm</i>
+          <PrimeButton link><i class="material-icons">alarm</i></PrimeButton>
         </div>
         <div
-          class="flex h-20 flex-col items-end justify-end gap-2 rounded-tl-full bg-gray-300 pr-2 dark:bg-gray-600"
+          class="bg-surface-300 dark:bg-surface-600 flex h-20 flex-col items-end justify-end gap-2 rounded-tl-full pr-2"
           @click="editWakeUpGoToBed(DataTypes.goToBed, day.date)"
         >
-          <i class="material-icons">bedtime</i>
+          <PrimeButton link><i class="material-icons">bedtime</i></PrimeButton>
           <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
       </div>
@@ -244,16 +244,13 @@ async function deleteEvent() {
     </Drawer>
   </div>
   <div name="dialog">
-    <PrimeDialog v-model:visible="showDetailedDialog">
-      <template #container>
-        <DetailedDataDialog
-          :data="{ ...(editData as INoteOverview | IMedOverview | IMeal | ISymptomOverview) }"
-          :date="day.date"
-          @close="closeDialogAndBottomSheet"
-          @edit="editDayData"
-        />
-      </template>
-    </PrimeDialog>
+    <DetailedDataDialog
+      v-model:visible="showDetailedDialog"
+      :data="{ ...(editData as INoteOverview | IMedOverview | IMeal | ISymptomOverview) }"
+      :date="day.date"
+      @close="closeDialogAndBottomSheet"
+      @edit="editDayData"
+    />
     <PrimeDialog v-model:visible="showAddDataDialog">
       <template #container>
         <SymptomFormCard
