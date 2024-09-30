@@ -189,7 +189,7 @@ onBeforeMount(() => {
   <ion-content>
     <ion-header>
       <ion-toolbar>
-        <ion-title class="text-white"><p>Settings</p></ion-title>
+        <ion-title class="dark:text-white"><p>Settings</p></ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
