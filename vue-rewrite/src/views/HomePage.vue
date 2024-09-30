@@ -5,7 +5,7 @@
 import { useDayStore } from "@/store/day"
 import { IDay } from "@/types/day"
 import DayView from "@/components/DayView.vue"
-import { InfiniteScrollCustomEvent } from "@ionic/vue"
+import { InfiniteScrollCustomEvent, IonInfiniteScroll, IonContent, IonInfiniteScrollContent } from "@ionic/vue"
 import { onBeforeMount, ref } from "vue"
 import { buildDayView } from "@/utils"
 
