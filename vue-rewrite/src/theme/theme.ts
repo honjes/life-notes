@@ -19,10 +19,23 @@ export const themePreset = definePreset(Aura, {
     colorScheme: {
       light: {
         primary: {
-          color: "{zinc.950}",
+          color: "{zinc.900}",
           inverseColor: "#ffffff",
           hoverColor: "{zinc.900}",
           activeColor: "{zinc.800}",
+        },
+        surface: {
+          50: "{gray.50}",
+          100: "{gray.100}",
+          200: "{gray.200}",
+          300: "{gray.300}",
+          400: "{gray.400}",
+          500: "{gray.500}",
+          600: "{gray.600}",
+          700: "{gray.700}",
+          800: "{gray.800}",
+          900: "{gray.900}",
+          950: "{gray.950}",
         },
         text: {
           color: "{surface.700}",
@@ -43,6 +56,19 @@ export const themePreset = definePreset(Aura, {
           inverseColor: "{zinc.950}",
           hoverColor: "{zinc.100}",
           activeColor: "{zinc.200}",
+        },
+        surface: {
+          50: "{gray.50}",
+          100: "{gray.100}",
+          200: "{gray.200}",
+          300: "{gray.300}",
+          400: "{gray.400}",
+          500: "{gray.500}",
+          600: "{gray.600}",
+          700: "{gray.700}",
+          800: "{gray.800}",
+          900: "{gray.900}",
+          950: "{gray.950}",
         },
         text: {
           color: "{surface.700}",
