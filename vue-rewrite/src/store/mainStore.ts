@@ -8,7 +8,7 @@ import useSymptomStore from "./symptom"
 import { useMedStore } from "./med"
 import { useNoteStore } from "./note"
 import { version } from "../../package.json"
-import { createToast } from "@/utils"
+import { createToast, generateInsertDataFromBackup } from "@/utils"
 
 const settingsDefault: ISettings = {
   defaultSymptom: "none",
@@ -116,14 +116,11 @@ export const useMainStore = defineStore("main", () => {
       directory: Directory.Data,
       encoding: Encoding.UTF8,
       recursive: true,
+    }).catch(err => {
+      console.error("save backup error: ", err)
+      addErrorLog(err.message)
+      throw err
     })
-      .then(async res => {
-        errorLogs.value.push(res.uri)
-      })
-      .catch(err => {
-        console.error("save backup error: ", err)
-        errorLogs.value.push(err.message)
-      })
   }
 
   /**
@@ -131,10 +128,17 @@ export const useMainStore = defineStore("main", () => {
    * @param {IBackup} backup - backup to import
    */
   async function importBackup(backup: IBackup) {
-    // TODO: Import backup
-    console.log(backup)
-    addErrorLog("inside importBackup")
-    addErrorLog(backup as unknown as string)
+    try {
+      const insertData = generateInsertDataFromBackup(backup)
+      await dayStore.resetDB(insertData.days)
+      await symptomStore.resetDB(insertData.symptoms)
+      await medStore.resetDB(insertData.meds)
+      await noteStore.resetDB(insertData.notes)
+    } catch (err) {
+      console.error("import backup error: ", err)
+      addErrorLog(err as string)
+      throw err
+    }
   }
 
   /**
