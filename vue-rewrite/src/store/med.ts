@@ -1,5 +1,6 @@
 import { IMedBasic } from "@/types/med"
 import { NotFoundError, NotFoundErrors } from "@/utils"
+import { isAfter } from "date-fns"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
@@ -7,12 +8,23 @@ export const useMedStore = defineStore("med", () => {
   /**
    * @TODO make it possible to have 2 meds with diffrent amounts
    */
-  const db = new PouchDB<IMedBasic>("meds")
+  let db = new PouchDB<IMedBasic>("meds")
   // create indexes
   db.createIndex({ index: { fields: ["key"] } })
 
   const updates = ref(0)
   const medUpdate = ref<string[]>([])
+
+  /**
+   * Initalise med DB with given data
+   * !!! This will delete all data in the DB !!!
+   * @param {IMedBasic[]} data - data to initalise DB with
+   */
+  async function resetDB(data: IMedBasic[]): Promise<void> {
+    await db.destroy()
+    db = new PouchDB<IMedBasic>("meds")
+    await db.bulkDocs(data)
+  }
 
   /**
    * returns all meds
@@ -62,5 +74,46 @@ export const useMedStore = defineStore("med", () => {
     }
   }
 
-  return { updates, medUpdate, getMeds, getMed, addMed }
+  /**
+   * Adds a med occurrence
+   * @param {string} key - key of the med
+   * @TODO check if there the current time is realy the last entry
+   */
+  async function addOccurrence(key: string, newTime: string) {
+    try {
+      const med = await db.get(`med-${key}`)
+      const newMed = { ...med }
+      newMed.occurrences++
+      if (isAfter(new Date(newTime), new Date(newMed.lastEntry))) {
+        newMed.lastEntry = newTime
+      }
+
+      await db.upsert(`med-${med.key}`, () => newMed)
+      // update store
+      updates.value++
+      medUpdate.value = [med.key]
+    } catch (err) {
+      console.error("add med occurrence error: ", err)
+      throw err
+    }
+  }
+
+  /**
+   * Removes a med occurrence
+   * @params {string} key - med key
+   * @TODO check for the last occurrence
+   */
+  async function removeOccurrence(key: string) {
+    try {
+      const med = await db.get(`med-${key}`)
+      if (med.occurrences > 1) {
+        await db.upsert(`med-${key}`, () => ({ ...med, occurrences: med.occurrences - 1 }))
+      }
+    } catch (err) {
+      console.error("remove med occurrence error: ", err)
+      throw err
+    }
+  }
+
+  return { resetDB, updates, medUpdate, getMeds, getMed, addMed, addOccurrence, removeOccurrence }
 })

@@ -1,13 +1,30 @@
 import { defineStore } from "pinia"
 import { format, subDays } from "date-fns"
-import { buildMed, dateFormat, getDetailedDate } from "@/utils"
+import { buildMed, dateFormat } from "@/utils"
 import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog, DataTypes } from "@/types"
 import { ref } from "vue"
+import { useNoteStore } from "./note"
+import { useMedStore } from "./med"
 
 export const useDayStore = defineStore("day", () => {
-  const db = new PouchDB("days")
+  let db = new PouchDB<IDay>("days")
   const updates = ref(0)
   const dayUpdate = ref<string[]>([])
+
+  // stores
+  const noteStore = useNoteStore()
+  const medStore = useMedStore()
+
+  /**
+   * Initalise day DB with given data
+   * !!! This will delete all data in the DB !!!
+   * @param {IDay[]} data - data to initalise DB with
+   */
+  async function resetDB(data: IDay[]): Promise<void> {
+    await db.destroy()
+    db = new PouchDB<IDay>("days")
+    await db.bulkDocs(data)
+  }
 
   /**
    * Returns an empty IDay object for a given date
@@ -18,7 +35,6 @@ export const useDayStore = defineStore("day", () => {
     return {
       _id: formattedDate,
       date: formattedDate,
-      detailedDate: getDetailedDate(formattedDate),
       symptomOverviews: [],
       symptoms: [],
       logs: [],
@@ -27,6 +43,13 @@ export const useDayStore = defineStore("day", () => {
       wakeUp: "",
       goToBed: "",
     }
+  }
+
+  /**
+   * gets all days in db
+   */
+  async function getAllDays(): Promise<IDay[]> {
+    return (await db.allDocs({ include_docs: true, descending: true })).rows.map(row => row.doc as IDay)
   }
 
   /**
@@ -187,6 +210,7 @@ export const useDayStore = defineStore("day", () => {
     // update Day
     try {
       await db.put(iDay)
+      await medStore.addOccurrence(med.key, `${day}`)
       // update store
       updates.value++
       dayUpdate.value = [day]
@@ -225,6 +249,7 @@ export const useDayStore = defineStore("day", () => {
     // update Day
     try {
       await db.put(iDay)
+      await noteStore.addOccurrence(note.key, day)
       // update store
       updates.value++
       dayUpdate.value = [day]
@@ -305,6 +330,8 @@ export const useDayStore = defineStore("day", () => {
         if (medIndex != -1) {
           iDay.meds[medIndex].log = iDay.meds[medIndex].log.filter(l => l.key !== logKey)
         }
+        // delete med occurrence
+        medStore.removeOccurrence(key)
         break
       }
       case DataTypes.meals: {
@@ -317,6 +344,8 @@ export const useDayStore = defineStore("day", () => {
         if (noteIndex != -1) {
           iDay.logs[noteIndex].log = iDay.logs[noteIndex].log.filter(l => l.key !== logKey)
         }
+        // delete note
+        noteStore.removeOccurrence(key)
         break
       }
       default:
@@ -334,10 +363,12 @@ export const useDayStore = defineStore("day", () => {
   }
 
   return {
+    resetDB,
     updates,
     dayUpdate,
     getDays,
-    getDay: getDay,
+    getDay,
+    getAllDays,
     addSymptom,
     addMeal,
     addMed,

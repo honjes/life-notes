@@ -36,7 +36,7 @@ const details = ref("")
 // closes Dialog and routes to symptom list
 function goToAddASymptom() {
   emits("close")
-  router.push({ name: "Symptom List" })
+  router.push({ name: "Symptoms" })
 }
 
 /*
@@ -153,7 +153,7 @@ onBeforeMount(() => {
     <v-card-actions props>
       <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
       <v-spacer></v-spacer>
-      <v-btn @click="addSymptomToDay">{{ t(editData ? "ADD" : "EDIT") }}</v-btn>
+      <v-btn @click="addSymptomToDay">{{ t(editData ? "EDIT" : "ADD") }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>

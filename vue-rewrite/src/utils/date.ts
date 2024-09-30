@@ -11,7 +11,7 @@ export function getDetailedDate(formattedDate: string): IDetailedDate {
   const dayOfYear = getDayOfYear(date)
   const dayOfWeek = date.getDay()
 
-  return { day, month, year, week, dayOfWeek, dayOfYear, weekOfMonth, date, formattedDate }
+  return { day, month, year, week, dayOfWeek, dayOfYear, weekOfMonth, date: date.toString(), formattedDate }
 }
 
 export const dateFormat = "yyyy-MM-dd"

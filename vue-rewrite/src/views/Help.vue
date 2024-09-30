@@ -1,20 +1,11 @@
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
+import { IonToolbar, IonTitle, IonContent } from "@ionic/vue"
 </script>
 
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Help</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Help</ion-title>
-        </ion-toolbar>
-      </ion-header>
-    </ion-content>
-  </ion-page>
+  <ion-content :fullscreen="true">
+    <ion-toolbar>
+      <ion-title size="large">Help</ion-title>
+    </ion-toolbar>
+  </ion-content>
 </template>

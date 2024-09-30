@@ -1,6 +1,7 @@
 import { DataTypes } from "@/types"
 import { IMed, IMedBasic, IMedLog, IMedOverview } from "@/types/med"
-import { randomNumber } from "."
+import { dateFormat, randomNumber } from "."
+import { format } from "date-fns"
 
 export function buildMed(key: string, quantity: number, log: IMedLog): IMed & { _id: string } {
   return {
@@ -8,6 +9,8 @@ export function buildMed(key: string, quantity: number, log: IMedLog): IMed & { 
     type: DataTypes.meds,
     key: key,
     quantity: quantity,
+    occurrences: 0,
+    lastEntry: format(new Date("01-01-2000"), dateFormat),
     log: [log],
   }
 }
@@ -23,6 +26,8 @@ export function buildMedForDb(key: string, quantity: number): IMedBasic & { _id:
     _id: `med-${key}`,
     type: DataTypes.meds,
     key: key,
+    occurrences: 0,
+    lastEntry: format(new Date("01-01-2000"), dateFormat),
     quantity: quantity,
   }
 }
@@ -49,6 +54,8 @@ export function buildMedOverview(med: IMed): IMedOverview[] {
     type: DataTypes.meds,
     key: med.key,
     quantity: med.quantity,
+    occurrences: med.occurrences,
+    lastEntry: med.lastEntry,
     logKey: log.key,
     time: log.time,
   }))

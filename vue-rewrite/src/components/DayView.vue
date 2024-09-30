@@ -216,14 +216,14 @@ async function deleteEvent() {
       </div>
       <div class="flex flex-col w-1/5 justify-between group-h-full">
         <div
-          class="h-20 rounded-bl-full bg-gray-500 flex flex-col justify-start gap-2 items-end pr-2 text-white"
+          class="h-20 rounded-bl-full bg-gray-400 flex flex-col justify-start gap-2 items-end pr-2 text-white"
           @click="editWakeUpGoToBed(DataTypes.wakeUp, day.date)"
         >
           <p class="min-h-6">{{ day.wakeUp }}</p>
           <v-icon>alarm</v-icon>
         </div>
         <div
-          class="h-20 rounded-tl-full bg-gray-500 flex flex-col justify-end gap-2 items-end pr-2 text-white"
+          class="h-20 rounded-tl-full bg-gray-400 flex flex-col justify-end gap-2 items-end pr-2 text-white"
           @click="editWakeUpGoToBed(DataTypes.goToBed, day.date)"
         >
           <v-icon>bedtime</v-icon>

@@ -1,15 +1,27 @@
 import { INoteBasic } from "@/types"
 import { NotFoundError, NotFoundErrors } from "@/utils"
+import { isAfter } from "date-fns"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
 export const useNoteStore = defineStore("note", () => {
-  const db = new PouchDB<INoteBasic>("notes")
+  let db = new PouchDB<INoteBasic>("notes")
   // create indexes
   db.createIndex({ index: { fields: ["key"] } })
 
   const updates = ref(0)
   const noteUpdate = ref<string[]>([])
+
+  /**
+   * Initalise note DB with given data
+   * !!! This will delete all data in the DB !!!
+   * @param {INoteBasic[]} data - data to initalise DB with
+   */
+  async function resetDB(data: INoteBasic[]): Promise<void> {
+    await db.destroy()
+    db = new PouchDB<INoteBasic>("notes")
+    await db.bulkDocs(data)
+  }
 
   /**
    * returns all notes
@@ -58,5 +70,51 @@ export const useNoteStore = defineStore("note", () => {
     }
   }
 
-  return { updates, noteUpdate, getNotes, getNote, addNote }
+  /**
+   * Adds a note occurrence
+   * @param {string} key - key of the note
+   * @TODO check if there the current time is realy the last entry
+   */
+  async function addOccurrence(key: string, newTime: string) {
+    try {
+      const note = await db.get(`note-${key}`)
+      const newNote = { ...note }
+      newNote.occurrences++
+      if (isAfter(new Date(newTime), new Date(newNote.lastEntry))) {
+        newNote.lastEntry = newTime
+      }
+
+      await db.upsert(`note-${note.key}`, () => newNote)
+      // update store
+      updates.value++
+      noteUpdate.value = [note.key]
+    } catch (err) {
+      console.error("add note occurrence error: ", err)
+      throw err
+    }
+  }
+
+  /**
+   * Removes a note occurrence
+   * @params {string} key - note key
+   * @TODO check for the last occurrence
+   */
+  async function removeOccurrence(key: string) {
+    try {
+      const note = await db.get(`note-${key}`)
+      if (note.occurrences > 1) {
+        await db.upsert(`note-${key}`, () => ({ ...note, occurrences: note.occurrences - 1 }))
+      } else {
+        await db.remove(note)
+      }
+      // update store
+      updates.value++
+      noteUpdate.value = [key]
+    } catch (err) {
+      console.error("remove note occurrence error: ", err)
+      throw err
+    }
+  }
+
+  return { resetDB, updates, noteUpdate, getNotes, getNote, addNote, addOccurrence, removeOccurrence }
 })

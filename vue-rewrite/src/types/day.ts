@@ -6,7 +6,6 @@ import { ISymptom, ISymptomOverview } from "./symptom"
 export interface IDayOverview {
   /* yyyy-MM-dd */
   date: string
-  detailedDate: IDetailedDate
   symptomOverviews: ISymptomOverview[]
   /* HH:mm */
   wakeUp: string
@@ -40,6 +39,6 @@ export interface IDetailedDate {
   dayOfYear: number
   weekOfMonth: number
   /* JS Date object */
-  date: Date
+  date: string
   formattedDate: string
 }

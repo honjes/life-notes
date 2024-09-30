@@ -118,7 +118,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <card>
+  <v-card>
     <v-card-title>
       <h3 class="text-xl">
         {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("NOTE"), monthShort, day }) }}
@@ -134,7 +134,7 @@ onBeforeMount(() => {
     <v-card-actions props>
       <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
       <v-spacer></v-spacer>
-      <v-btn @click="addNoteToDay">{{ t("ADD") }}</v-btn>
+      <v-btn @click="addNoteToDay">{{ t(editData ? "EDIT" : "ADD") }}</v-btn>
     </v-card-actions>
-  </card>
+  </v-card>
 </template>
