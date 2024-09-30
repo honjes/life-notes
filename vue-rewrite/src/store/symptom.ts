@@ -3,11 +3,22 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 
 export const useSymptomStore = defineStore("symptom", () => {
-  const db = new PouchDB<ISymptom>("symptoms")
+  let db = new PouchDB<ISymptom>("symptoms")
   // create indexes
   db.createIndex({ index: { fields: ["label"] } })
   // number of updates
   const updates = ref(0)
+
+  /**
+   * Initalise symptom DB with given data
+   * !!! This will delete all data in the DB !!!
+   * @param {ISymptom[]} data - data to initalise DB with
+   */
+  async function resetDB(data: ISymptom[]): Promise<void> {
+    await db.destroy()
+    db = new PouchDB<ISymptom>("symptoms")
+    await db.bulkDocs(data)
+  }
 
   /**
    * returns all symptoms
@@ -73,7 +84,7 @@ export const useSymptomStore = defineStore("symptom", () => {
     return await db.remove(symptom)
   }
 
-  return { updates, getSymptoms, getSymptomByLabel, createNewSymptom, editSymptom, deleteSymptom }
+  return { resetDB, updates, getSymptoms, getSymptomByLabel, createNewSymptom, editSymptom, deleteSymptom }
 })
 
 export default useSymptomStore

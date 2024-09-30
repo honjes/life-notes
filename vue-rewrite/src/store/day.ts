@@ -7,13 +7,24 @@ import { useNoteStore } from "./note"
 import { useMedStore } from "./med"
 
 export const useDayStore = defineStore("day", () => {
-  const db = new PouchDB<IDay>("days")
+  let db = new PouchDB<IDay>("days")
   const updates = ref(0)
   const dayUpdate = ref<string[]>([])
 
   // stores
   const noteStore = useNoteStore()
   const medStore = useMedStore()
+
+  /**
+   * Initalise day DB with given data
+   * !!! This will delete all data in the DB !!!
+   * @param {IDay[]} data - data to initalise DB with
+   */
+  async function resetDB(data: IDay[]): Promise<void> {
+    await db.destroy()
+    db = new PouchDB<IDay>("days")
+    await db.bulkDocs(data)
+  }
 
   /**
    * Returns an empty IDay object for a given date
@@ -352,10 +363,11 @@ export const useDayStore = defineStore("day", () => {
   }
 
   return {
+    resetDB,
     updates,
     dayUpdate,
     getDays,
-    getDay: getDay,
+    getDay,
     getAllDays,
     addSymptom,
     addMeal,

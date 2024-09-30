@@ -5,12 +5,23 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 
 export const useNoteStore = defineStore("note", () => {
-  const db = new PouchDB<INoteBasic>("notes")
+  let db = new PouchDB<INoteBasic>("notes")
   // create indexes
   db.createIndex({ index: { fields: ["key"] } })
 
   const updates = ref(0)
   const noteUpdate = ref<string[]>([])
+
+  /**
+   * Initalise note DB with given data
+   * !!! This will delete all data in the DB !!!
+   * @param {INoteBasic[]} data - data to initalise DB with
+   */
+  async function resetDB(data: INoteBasic[]): Promise<void> {
+    await db.destroy()
+    db = new PouchDB<INoteBasic>("notes")
+    await db.bulkDocs(data)
+  }
 
   /**
    * returns all notes
@@ -105,5 +116,5 @@ export const useNoteStore = defineStore("note", () => {
     }
   }
 
-  return { updates, noteUpdate, getNotes, getNote, addNote, addOccurrence, removeOccurrence }
+  return { resetDB, updates, noteUpdate, getNotes, getNote, addNote, addOccurrence, removeOccurrence }
 })

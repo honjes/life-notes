@@ -8,12 +8,23 @@ export const useMedStore = defineStore("med", () => {
   /**
    * @TODO make it possible to have 2 meds with diffrent amounts
    */
-  const db = new PouchDB<IMedBasic>("meds")
+  let db = new PouchDB<IMedBasic>("meds")
   // create indexes
   db.createIndex({ index: { fields: ["key"] } })
 
   const updates = ref(0)
   const medUpdate = ref<string[]>([])
+
+  /**
+   * Initalise med DB with given data
+   * !!! This will delete all data in the DB !!!
+   * @param {IMedBasic[]} data - data to initalise DB with
+   */
+  async function resetDB(data: IMedBasic[]): Promise<void> {
+    await db.destroy()
+    db = new PouchDB<IMedBasic>("meds")
+    await db.bulkDocs(data)
+  }
 
   /**
    * returns all meds
@@ -104,5 +115,5 @@ export const useMedStore = defineStore("med", () => {
     }
   }
 
-  return { updates, medUpdate, getMeds, getMed, addMed, addOccurrence, removeOccurrence }
+  return { resetDB, updates, medUpdate, getMeds, getMed, addMed, addOccurrence, removeOccurrence }
 })
