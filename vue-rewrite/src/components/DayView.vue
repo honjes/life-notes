@@ -137,174 +137,180 @@ async function deleteEvent() {
 </script>
 
 <template>
-  <aside class="flex flex-col w-full">
-    <section name="header" class="flex flex-row pl-4 justify-between w-full dark:bg-gray-700 bg-gray-500 text-white">
+  <aside class="flex w-full flex-col border-b-2 border-b-black">
+    <div name="header" class="flex w-full flex-row justify-between bg-gray-400 p-4 dark:bg-gray-700">
       <div class="flex flex-row items-center">
-        <h2 class="text-xl">{{ props.day.date }}</h2>
-        <v-btn variant="text" icon="arrow_forward_ios" />
+        <h2 class="text-3xl">{{ props.day.date }}</h2>
+        <PrimeButton icon="arrow_forward_ios" text>
+          <i class="material-icons">arrow_forward_ios</i>
+        </PrimeButton>
       </div>
       <div class="flex flex-row items-center">
-        <v-bottom-sheet v-model="showBottomSheet">
-          <template v-slot:activator>
-            <v-btn variant="text" icon="playlist_add" @click="showBottomSheet = true" />
-          </template>
-          <v-card>
-            <v-list>
-              <v-list-item v-for="item in bottomSheetItems" :key="item.title">
-                <div class="flex flex-row justify-left gap-4 ml-4" @click="openAddDataDialog(item.type, day.date)">
-                  <div>
-                    <v-icon>{{ item.props.prependIcon }}</v-icon>
-                  </div>
-                  <div>
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                  </div>
-                </div>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-bottom-sheet>
-        <v-btn variant="text" icon="delete_sweep" @click="showDeleteIcon = !showDeleteIcon" />
+        <PrimeButton @click="showBottomSheet = true" label="Primary" text>
+          <i class="material-icons">playlist_add</i>
+        </PrimeButton>
+        <PrimeButton @click="showDeleteIcon = !showDeleteIcon" text>
+          <i class="material-icons">delete_sweep</i>
+        </PrimeButton>
       </div>
-    </section>
-    <section name="content" class="group flex flex-row w-full justify-between pl-4 min-h-112">
-      <div class="flex flex-col gap-2 w-3/5 py-4">
+    </div>
+    <section name="content" class="min-h-112 group flex w-full flex-row justify-between pl-4">
+      <div name="logs" class="flex w-3/5 flex-col gap-2 py-4">
         <div v-for="log in day.content" :key="log.key">
-          <div v-if="log.type === DataTypes.symptoms" class="flex flex-row gap-2 bg-red-700 p-2 rounded-lg text-white">
-            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+          <div
+            name="symptom"
+            v-if="log.type === DataTypes.symptoms"
+            class="flex flex-row gap-2 rounded-lg bg-red-700 p-2 text-white"
+          >
+            <div class="flex w-full flex-row gap-2" @click="openDetailedDialog(log)">
               <div>{{ log.time }}</div>
               <div class="w-full">{{ (log as ISymptomOverview).label }}</div>
               <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
-              <div><v-icon>spa</v-icon></div>
+              <div><i class="material-icons">spa</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
           <div
+            name="meal"
             v-else-if="log.type === DataTypes.meals"
-            class="flex flex-row gap-2 bg-green-700 p-2 rounded-lg text-white"
+            class="flex flex-row gap-2 rounded-lg bg-green-700 p-2 text-white"
           >
-            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+            <div class="flex w-full flex-row gap-2" @click="openDetailedDialog(log)">
               <div>{{ log.time }}</div>
               <div class="w-full">{{ (log as IMeal).key }}</div>
-              <div><v-icon>dinner_dining</v-icon></div>
+              <div><i class="material-icons">dinner_dining</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
           <div
+            name="med"
             v-else-if="log.type === DataTypes.meds"
-            class="flex flex-row gap-2 bg-blue-700 p-2 rounded-lg text-white"
+            class="flex flex-row gap-2 rounded-lg bg-blue-700 p-2 text-white"
           >
-            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+            <div class="flex w-full flex-row gap-2" @click="openDetailedDialog(log)">
               <div>{{ log.time }}</div>
               <div class="w-full">{{ (log as IMedOverview).key }}</div>
               <div>{{ (log as IMedOverview).quantity }}mg</div>
-              <div><v-icon>medication</v-icon></div>
+              <div><i class="material-icons">medication</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
           <div
+            name="note"
             v-else-if="log.type === DataTypes.note"
-            class="flex flex-row gap-2 w-full bg-gray-600 p-2 rounded-lg text-white"
+            class="flex w-full flex-row gap-2 rounded-lg bg-gray-600 p-2 text-white"
           >
-            <div class="flex flex-row gap-2 w-full" @click="openDetailedDialog(log)">
+            <div class="flex w-full flex-row gap-2" @click="openDetailedDialog(log)">
               <div>{{ log.time }}</div>
               <div class="w-full">{{ (log as INoteOverview).key }}</div>
-              <div><v-icon>event_note</v-icon></div>
+              <div><i class="material-icons">event_note</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><v-icon>delete</v-icon></div>
+            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
         </div>
       </div>
-      <div class="flex flex-col w-1/5 justify-between group-h-full">
+      <div class="group-h-full flex w-1/5 flex-col justify-between">
         <div
-          class="h-20 rounded-bl-full bg-gray-400 flex flex-col justify-start gap-2 items-end pr-2 text-white"
+          class="flex h-20 flex-col items-end justify-start gap-2 rounded-bl-full bg-gray-300 pr-2 dark:bg-gray-600"
           @click="editWakeUpGoToBed(DataTypes.wakeUp, day.date)"
         >
           <p class="min-h-6">{{ day.wakeUp }}</p>
-          <v-icon>alarm</v-icon>
+          <i class="material-icons">alarm</i>
         </div>
         <div
-          class="h-20 rounded-tl-full bg-gray-400 flex flex-col justify-end gap-2 items-end pr-2 text-white"
+          class="flex h-20 flex-col items-end justify-end gap-2 rounded-tl-full bg-gray-300 pr-2 dark:bg-gray-600"
           @click="editWakeUpGoToBed(DataTypes.goToBed, day.date)"
         >
-          <v-icon>bedtime</v-icon>
+          <i class="material-icons">bedtime</i>
           <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
       </div>
     </section>
   </aside>
-  <v-dialog v-model="showDetailedDialog" max-width="auto">
-    <template v-slot:default>
-      <DetailedDataDialog
-        :data="(editData as INoteOverview | IMedOverview | IMeal | ISymptomOverview)"
-        :date="day.date"
-        @close="closeDialogAndBottomSheet"
-        @edit="editDayData"
-      />
-    </template>
-  </v-dialog>
-  <v-dialog v-model="showAddDataDialog" max-width="auto" @after-leave="closeDialogAndBottomSheet">
-    <template v-slot:default>
-      <SymptomFormCard
-        v-if="addDataType === DataTypes.symptoms"
-        :day="addDataDay"
-        :editData="shouldEdit ? (editData as ISymptomOverview): undefined"
-        @close="closeDialogAndBottomSheet"
-      />
-      <MealFormCard
-        v-else-if="addDataType === DataTypes.meals"
-        :day="addDataDay"
-        :editData="shouldEdit ? (editData as IMeal): undefined"
-        @close="closeDialogAndBottomSheet"
-      />
-      <WakeUpGoToBedFormCard
-        v-else-if="addDataType === DataTypes.wakeUp || addDataType === DataTypes.goToBed"
-        :day="addDataDay"
-        :wakeUp="addDataType === DataTypes.wakeUp"
-        :editData="shouldEdit ? (editData as string): undefined"
-        @close="closeDialogAndBottomSheet"
-      />
-      <MedFormCard
-        v-else-if="addDataType === DataTypes.meds"
-        :day="addDataDay"
-        :editData="shouldEdit ? (editData as IMedOverview): undefined"
-        @close="closeDialogAndBottomSheet"
-      />
-      <NoteFormCard
-        v-else-if="addDataType === DataTypes.note"
-        :day="addDataDay"
-        :editData="shouldEdit ? (editData as INoteOverview): undefined"
-        @close="closeDialogAndBottomSheet"
-      />
-    </template>
-  </v-dialog>
-  <v-dialog v-model="showDeleteDialog" max-width="auto">
-    <template v-slot:default>
-      <v-card>
-        <v-card-title>
-          <h3 class="text-xl">
-            {{ t("DELETE_EVENT_DIALOG_TITLE", { type: t(deleteDataType) }) }}
-          </h3>
-        </v-card-title>
-        <v-card-text>
-          <p>
-            {{
-              t("DELETE_EVENT_DIALOG_CONTENT", {
-                type: t(deleteDataType),
-                time: deleteData?.time,
-                month: t("MONTH-" + (getMonth(day.date) + 1)),
-                day: getDay(day.date),
-              })
-            }}
-          </p>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn variant="text" @click="showDeleteDialog = false">{{ t("CANCEL") }}</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="deleteEvent">{{ t("DELETE") }}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
+  <div name="drawer">
+    <Drawer position="bottom" class="!h-auto" v-model:visible="showBottomSheet" header="Hinzufügen">
+      <template #container>
+        <div class="flex flex-col gap-2 py-4">
+          <div v-for="item in bottomSheetItems" :key="item.title">
+            <div class="justify-left ml-4 flex flex-row gap-4" @click="openAddDataDialog(item.type, day.date)">
+              <i class="material-icons">{{ item.props.prependIcon }}</i>
+              <p class="text-base">
+                {{ item.title }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </template>
+    </Drawer>
+  </div>
+  <div name="dialog">
+    <PrimeDialog v-model:visible="showDetailedDialog">
+      <template #container>
+        <DetailedDataDialog
+          :data="{ ...(editData as INoteOverview | IMedOverview | IMeal | ISymptomOverview) }"
+          :date="day.date"
+          @close="closeDialogAndBottomSheet"
+          @edit="editDayData"
+        />
+      </template>
+    </PrimeDialog>
+    <PrimeDialog v-model:visible="showAddDataDialog">
+      <template #container>
+        <SymptomFormCard
+          v-if="addDataType === DataTypes.symptoms"
+          :day="addDataDay"
+          :editData="shouldEdit ? (editData as ISymptomOverview) : undefined"
+          @close="closeDialogAndBottomSheet"
+        />
+        <MealFormCard
+          v-else-if="addDataType === DataTypes.meals"
+          :day="addDataDay"
+          :editData="shouldEdit ? (editData as IMeal) : undefined"
+          @close="closeDialogAndBottomSheet"
+        />
+        <WakeUpGoToBedFormCard
+          v-else-if="addDataType === DataTypes.wakeUp || addDataType === DataTypes.goToBed"
+          :day="addDataDay"
+          :wakeUp="addDataType === DataTypes.wakeUp"
+          :editData="shouldEdit ? (editData as string) : undefined"
+          @close="closeDialogAndBottomSheet"
+        />
+        <MedFormCard
+          v-else-if="addDataType === DataTypes.meds"
+          :day="addDataDay"
+          :editData="shouldEdit ? (editData as IMedOverview) : undefined"
+          @close="closeDialogAndBottomSheet"
+        />
+        <NoteFormCard
+          v-else-if="addDataType === DataTypes.note"
+          :day="addDataDay"
+          :editData="shouldEdit ? (editData as INoteOverview) : undefined"
+          @close="closeDialogAndBottomSheet"
+        />
+      </template>
+    </PrimeDialog>
+    <PrimeDialog v-model:visible="showDeleteDialog">
+      <template #header>
+        <h3 class="text-2xl">
+          {{ t("DELETE_EVENT_DIALOG_TITLE", { type: t(deleteDataType) }) }}
+        </h3>
+      </template>
+      <p>
+        {{
+          t("DELETE_EVENT_DIALOG_CONTENT", {
+            type: t(deleteDataType),
+            time: deleteData?.time,
+            month: t("MONTH-" + (getMonth(day.date) + 1)),
+            day: getDay(day.date),
+          })
+        }}
+      </p>
+      <template #footer>
+        <PrimeButton text @click="showDeleteDialog = false">{{ t("CANCEL") }}</PrimeButton>
+        <PrimeButton text @click="deleteEvent">{{ t("DELETE") }}</PrimeButton>
+      </template>
+    </PrimeDialog>
+  </div>
 </template>
 
 <style lang="scss" scoped>
