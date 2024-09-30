@@ -3,37 +3,24 @@
  * Header on each page
  * @TODO: make icons bigger
  */
-import { IonTabBar, IonTabButton, IonTabs, IonPage, IonRouterOutlet } from "@ionic/vue"
+import { IonHeader, useIonRouter } from "@ionic/vue"
+
+const router = useIonRouter()
 </script>
 
 <template>
-  <!-- eslint-disable vue/no-deprecated-slot-attribute -->
-  <ion-page>
-    <ion-tabs>
-      <ion-router-outlet></ion-router-outlet>
-      <ion-tab-bar slot="top" id="header">
-        <div class="flex flex-row w-full justify-between px-5">
-          <div class="flex flex-row">
-            <ion-tab-button tab="tab1" href="/Home">
-              <v-icon size="large">calendar_view_day</v-icon>
-            </ion-tab-button>
-            <ion-tab-button tab="tab2" href="/calendar">
-              <v-icon size="large">apps</v-icon>
-            </ion-tab-button>
-            <ion-tab-button tab="tab3" href="/symptom-list">
-              <v-icon size="large">spa</v-icon>
-            </ion-tab-button>
-          </div>
-          <div class="flex flex-row">
-            <ion-tab-button tab="tab4" href="/help">
-              <v-icon size="large">help</v-icon>
-            </ion-tab-button>
-            <ion-tab-button tab="tab5" href="/settings">
-              <v-icon size="large">settings</v-icon>
-            </ion-tab-button>
-          </div>
-        </div>
-      </ion-tab-bar>
-    </ion-tabs>
-  </ion-page>
+  <IonHeader>
+    <!-- eslint-disable vue/no-deprecated-slot-attribute -->
+    <div class="flex flex-row w-full justify-between p-5 bg-slate-500">
+      <div class="flex flex-row">
+        <v-icon size="large" @click="router.push({ name: 'Home' })">calendar_view_day</v-icon>
+        <v-icon size="large" @click="router.push({ name: 'Calendar' })">apps</v-icon>
+        <v-icon size="large" @click="router.push({ name: 'Symptoms' })">spa</v-icon>
+      </div>
+      <div class="flex flex-row">
+        <v-icon size="large" @click="router.push({ name: 'Help' })">help</v-icon>
+        <v-icon size="large" @click="router.push({ name: 'Settings' })">settings</v-icon>
+      </div>
+    </div>
+  </IonHeader>
 </template>

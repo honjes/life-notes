@@ -3,7 +3,7 @@ import { SymptomNameForm } from "@/components/Forms"
 import useSymptomStore from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { createToast } from "@/utils/vue"
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
+import { IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
 import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
 
@@ -91,63 +91,61 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ion-page>
+  <ion-content>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title class="flex justify-center" size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
     <ion-content>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title class="flex justify-center" size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <v-list v-if="symptomListItems.length > 0">
-          <v-list-item v-for="symptom in symptomListItems" :key="symptom.key">
-            <div class="flex flex-row justify-between">
-              <div>
-                <v-list-item-title>{{ symptom.label }}</v-list-item-title>
-              </div>
-              <div class="flex flex-row items-center">
-                <v-icon size="large" class="hover:cursor-pointer" @click="showEditSymptom(symptom)">edit</v-icon>
-                <v-icon size="large" class="hover:cursor-pointer" @click="showDeleteSymptom(symptom)">delete</v-icon>
-              </div>
+      <v-list v-if="symptomListItems.length > 0">
+        <v-list-item v-for="symptom in symptomListItems" :key="symptom.key">
+          <div class="flex flex-row justify-between">
+            <div>
+              <v-list-item-title>{{ symptom.label }}</v-list-item-title>
             </div>
-          </v-list-item>
-        </v-list>
-        <div v-else class="flex flex-row justify-center px-4">
-          {{ t("EMPTY_SYMPTOMS_1") }}
-        </div>
-        <div class="flex p-4 justify-center">
-          <v-btn @click="showAddSymptomDialog = true">{{ t("ADD_SYMPTOM") }}</v-btn>
-        </div>
-        <v-dialog v-model="showAddSymptomDialog" max-width="auto">
-          <template v-slot:default>
-            <SymptomNameForm @close="showAddSymptomDialog = false" />
-          </template>
-        </v-dialog>
-        <v-dialog v-model="showEditSymptomDialog" max-width="auto">
-          <template v-slot:default>
-            <SymptomNameForm edit :symptom="symptomToEdit" @close="showEditSymptomDialog = false" />
-          </template>
-        </v-dialog>
-        <v-dialog v-model="showDeleteSymptomDialog" max-width="auto">
-          <template v-slot:default>
-            <v-card>
-              <v-card-title>
-                <h3 class="text-xl">
-                  {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}
-                </h3>
-              </v-card-title>
-              <v-card-text>
-                <p>{{ t("DELETE_SYMPTOM_DIALOG_CONTENT") }}</p>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn variant="text" @click="showDeleteSymptomDialog = false">{{ t("CANCEL") }}</v-btn>
-                <v-spacer></v-spacer>
-                <v-btn variant="text" @click="deleteSymptom(symptomToDelete)">{{ t("DELETE") }}</v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
-      </ion-content>
+            <div class="flex flex-row items-center">
+              <v-icon size="large" class="hover:cursor-pointer" @click="showEditSymptom(symptom)">edit</v-icon>
+              <v-icon size="large" class="hover:cursor-pointer" @click="showDeleteSymptom(symptom)">delete</v-icon>
+            </div>
+          </div>
+        </v-list-item>
+      </v-list>
+      <div v-else class="flex flex-row justify-center px-4">
+        {{ t("EMPTY_SYMPTOMS_1") }}
+      </div>
+      <div class="flex p-4 justify-center">
+        <v-btn @click="showAddSymptomDialog = true">{{ t("ADD_SYMPTOM") }}</v-btn>
+      </div>
+      <v-dialog v-model="showAddSymptomDialog" max-width="auto">
+        <template v-slot:default>
+          <SymptomNameForm @close="showAddSymptomDialog = false" />
+        </template>
+      </v-dialog>
+      <v-dialog v-model="showEditSymptomDialog" max-width="auto">
+        <template v-slot:default>
+          <SymptomNameForm edit :symptom="symptomToEdit" @close="showEditSymptomDialog = false" />
+        </template>
+      </v-dialog>
+      <v-dialog v-model="showDeleteSymptomDialog" max-width="auto">
+        <template v-slot:default>
+          <v-card>
+            <v-card-title>
+              <h3 class="text-xl">
+                {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}
+              </h3>
+            </v-card-title>
+            <v-card-text>
+              <p>{{ t("DELETE_SYMPTOM_DIALOG_CONTENT") }}</p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn variant="text" @click="showDeleteSymptomDialog = false">{{ t("CANCEL") }}</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn variant="text" @click="deleteSymptom(symptomToDelete)">{{ t("DELETE") }}</v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
     </ion-content>
-  </ion-page>
+  </ion-content>
 </template>

@@ -42,16 +42,14 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <IonPage>
-    <IonContent :fullscreen="true">
-      <article>
-        <div v-for="day in days" :key="day.date">
-          <DayView :day="buildDayView(day)" />
-        </div>
-      </article>
-      <IonInfiniteScroll @ionInfinite="getDayBatch">
-        <IonInfiniteScrollContent></IonInfiniteScrollContent>
-      </IonInfiniteScroll>
-    </IonContent>
-  </IonPage>
+  <IonContent :fullscreen="true">
+    <article>
+      <div v-for="day in days" :key="day.date">
+        <DayView :day="buildDayView(day)" />
+      </div>
+    </article>
+    <IonInfiniteScroll @ionInfinite="getDayBatch">
+      <IonInfiniteScrollContent></IonInfiniteScrollContent>
+    </IonInfiniteScroll>
+  </IonContent>
 </template>

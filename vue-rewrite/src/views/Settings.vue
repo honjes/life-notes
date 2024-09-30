@@ -7,7 +7,7 @@
  */
 import { useSymptomStore, useMainStore } from "@/store"
 import { IBackup, ISymptom, Languages, TimeFormats } from "@/types"
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
+import { IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
 import { storeToRefs } from "pinia"
 import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
@@ -186,7 +186,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <ion-page>
+  <ion-content>
     <ion-header>
       <ion-toolbar>
         <ion-title class="text-white"><p>Settings</p></ion-title>
@@ -372,16 +372,12 @@ onBeforeMount(() => {
                       </v-expansion-panel-title>
                       <v-expansion-panel-text>
                         <div class="flex flex-col gap-4">
-                          <v-button
-                            class="text-center py-1 bg-blue-800 rounded"
-                            variant="tonal"
-                            @click="generateBackup()"
-                          >
+                          <v-btn class="text-center py-1 bg-blue-800 rounded" variant="tonal" @click="generateBackup()">
                             {{ t("SETTINGS_MANUAL_SAVE_BUTTON") }}
-                          </v-button>
+                          </v-btn>
                           <div v-if="backup" class="flex flex-col gap-4">
-                            <v-button @click="writeBackupToClipboard()"
-                              ><v-icon>file_copy</v-icon> {{ copied ? t("COPIED") : t("COPY") }}</v-button
+                            <v-btn @click="writeBackupToClipboard()"
+                              ><v-icon>file_copy</v-icon> {{ copied ? t("COPIED") : t("COPY") }}</v-btn
                             >
                             <div class="overflow-y-auto h-32">
                               {{ backup }}
@@ -414,7 +410,7 @@ onBeforeMount(() => {
         </div>
       </ion-content>
     </ion-content>
-  </ion-page>
+  </ion-content>
   <v-dialog v-model="importModal" max-width="auto">
     <template v-slot:default>
       <v-card>
