@@ -17,7 +17,8 @@ export interface ISettings {
   defaultSymptom: string
   language: Languages
   timeFormat: TimeFormats
-  //TODO: add the settings from the current version
+  firstStart: boolean // TODO: make tutorial appear when first start
+  lastInstall: string // TODO: Update on install
 }
 
 export interface IBackup {

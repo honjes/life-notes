@@ -14,6 +14,8 @@ const settingsDefault: ISettings = {
   defaultSymptom: "none",
   language: Languages.EN,
   timeFormat: TimeFormats.h24,
+  firstStart: true,
+  lastInstall: new Date().toISOString(),
 }
 
 export const useMainStore = defineStore("main", () => {
