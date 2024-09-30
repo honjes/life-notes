@@ -7,17 +7,7 @@ import { createPinia } from "pinia"
 
 const pinia = createPinia()
 
-import {
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonicVue,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/vue"
+import { IonicVue } from "@ionic/vue"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/vue/css/core.css"
@@ -62,46 +52,36 @@ const i18n = createI18n({
 })
 
 /**
- * Vuetify
+ * PrimeVue
  */
-import "material-design-icons-iconfont/dist/material-design-icons.css"
-import { createVuetify } from "vuetify"
-import * as components from "vuetify/components"
-import { VTimePicker } from "vuetify/labs/VTimePicker"
-import * as directives from "vuetify/directives"
-import { aliases, md } from "vuetify/iconsets/md"
-import { darkTheme, lightTheme } from "./theme"
+import PrimeVue from "primevue/config"
+import "primeicons/primeicons.css"
+import Button from "primevue/button"
+import Drawer from "primevue/drawer"
+import { themePreset } from "./theme/theme"
+import Dialog from "primevue/dialog"
 
-const vuetify = createVuetify({
-  components: { VTimePicker, ...components },
-  directives,
-  icons: {
-    defaultSet: "md",
-    aliases,
-    sets: {
-      md,
+const app = createApp(App)
+  .use(PrimeVue, {
+    theme: {
+      preset: themePreset,
+      options: {
+        cssLayer: {
+          name: "primevue",
+          order: "tailwind-base, primevue, tailwind-components",
+        },
+      },
     },
-  },
-  theme: {
-    defaultTheme: "dark",
-    themes: {
-      light: lightTheme,
-      dark: darkTheme,
-    },
-  },
-})
+  })
+  .use(IonicVue)
+  .use(router)
+  .use(i18n)
+  .use(pinia)
 
-const app = createApp(App).use(vuetify).use(IonicVue).use(router).use(i18n).use(pinia)
-
-/* Ionic Components */
-app.component("IonInfiniteScroll", IonInfiniteScroll)
-app.component("IonInfiniteScrollContent", IonInfiniteScrollContent)
-app.component("IonHeader", IonHeader)
-app.component("IonToolbar", IonToolbar)
-app.component("IonTitle", IonTitle)
-app.component("IonContent", IonContent)
-app.component("IonPage", IonPage)
-app.component("IonIcon", IonIcon)
+// PrimeVue Components
+app.component("PrimeButton", Button)
+app.component("Drawer", Drawer)
+app.component("PrimeDialog", Dialog)
 
 router.isReady().then(() => {
   app.mount("#app")

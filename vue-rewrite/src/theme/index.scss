@@ -1,7 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer tailwind-base, primevue, tailwind-utilities;
 
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+@import "@/theme/normalize.css";
 @import "@/theme/variables.css";
 @import "@/theme/ionic.scss";
 @import "@/theme/vuetify.css";
+
+// Material Icons
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
