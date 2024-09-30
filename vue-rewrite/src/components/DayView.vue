@@ -140,8 +140,8 @@ async function deleteEvent() {
   <aside class="flex w-full flex-col border-b-2 border-b-black">
     <div name="header" class="flex w-full flex-row justify-between bg-gray-400 p-4 dark:bg-gray-700">
       <div class="flex flex-row items-center">
-        <h2 class="text-3xl">{{ props.day.date }}</h2>
         <PrimeButton icon="arrow_forward_ios" text>
+        <h2 class="text-3xl">{{ format(new Date(props.day.date), "iii MMM, dd yyyy") }}</h2>
           <i class="material-icons">arrow_forward_ios</i>
         </PrimeButton>
       </div>
