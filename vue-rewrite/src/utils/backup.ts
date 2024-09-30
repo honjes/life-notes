@@ -12,6 +12,7 @@ import {
   ISymptom,
 } from "@/types"
 import { isAfter } from "date-fns"
+import { BackupError, BackupErrors } from "./error"
 
 export interface GenerateInsertDataFromBackupReturn {
   days: IDay[]
@@ -43,11 +44,11 @@ export function generateInsertDataFromBackup(backup: IBackup): GenerateInsertDat
         settings = backup.settings
         break
       default:
-        throw new Error("Unknown backup version")
+        throw new BackupError(BackupErrors.UnknownVersion)
     }
   } else {
     if (backup.days == undefined) {
-      throw new Error("Unknown backup version")
+      throw new BackupError(BackupErrors.MissingDays)
     }
     // generate data from backup version 0.0.0
     days = backup.days

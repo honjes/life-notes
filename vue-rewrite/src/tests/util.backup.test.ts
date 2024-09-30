@@ -1,5 +1,5 @@
 import { IBackup, IDay, IMedBasic, INoteBasic, ISymptom, Languages, TimeFormats } from "@/types"
-import { generateInsertDataFromBackup } from "@/utils"
+import { BackupErrors, generateInsertDataFromBackup } from "@/utils"
 import { expect } from "vitest"
 import {
   v000backup,
@@ -58,11 +58,11 @@ describe("generateInsertDataFromBackup", () => {
     expect(notes).toEqual(v000ExpectedData.notes)
   })
   test("throw when backup is from unkown format", () => {
-    expect(() => generateInsertDataFromBackup({} as unknown as IBackup)).toThrowError("Unknown backup version")
+    expect(() => generateInsertDataFromBackup({} as unknown as IBackup)).toThrowError(BackupErrors.MissingDays)
   })
   test("throw when backup has unknown version", () => {
     expect(() => generateInsertDataFromBackup({ version: "keineVersionsnummer" } as unknown as IBackup)).toThrowError(
-      "Unknown backup version"
+      BackupErrors.UnknownVersion
     )
   })
   test("generate data from backup version 0.0.0 when multiple meds and notes are in the same day", () => {
