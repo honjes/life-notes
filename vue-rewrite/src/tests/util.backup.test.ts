@@ -30,6 +30,8 @@ describe("generateInsertDataFromBackup", () => {
         defaultSymptom: "none",
         language: Languages.EN,
         timeFormat: TimeFormats.h24,
+        firstStart: true,
+        lastInstall: new Date().toISOString(),
       },
       version: "0.0.1",
     }

@@ -52,7 +52,7 @@ This is a rewrite of the Life Notes app in Vue.js.
 3. Run `ionic cap open android`
 4. Build the app with android studio
 
-## TODO
+## ToDo's
 
 - [ ] make the data items more similar to each other (make label on all items ...)
 - [ ] use the time format from the settings
