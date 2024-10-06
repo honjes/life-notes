@@ -59,6 +59,12 @@ import Button from "primevue/button"
 import Drawer from "primevue/drawer"
 import { themePreset } from "./theme"
 import Dialog from "primevue/dialog"
+import DatePicker from "primevue/datepicker"
+import Select from "primevue/select"
+import FloatLabel from "primevue/floatlabel"
+import Slider from "primevue/slider"
+import Divider from "primevue/divider"
+import InputText from "primevue/inputtext"
 
 const app = createApp(App)
   .use(PrimeVue, {
@@ -81,6 +87,12 @@ const app = createApp(App)
 app.component("PrimeButton", Button)
 app.component("Drawer", Drawer)
 app.component("PrimeDialog", Dialog)
+app.component("DatePicker", DatePicker)
+app.component("PrimeSelect", Select)
+app.component("FloatLabel", FloatLabel)
+app.component("Slider", Slider)
+app.component("Divider", Divider)
+app.component("InputText", InputText)
 
 router.isReady().then(() => {
   app.mount("#app")

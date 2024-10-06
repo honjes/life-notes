@@ -6,12 +6,13 @@ import { ISymptom, ISymptomLog, ISymptomOverview } from "@/types/symptom"
 import { useRouter } from "vue-router"
 import { useDayStore, useSymptomStore } from "@/store"
 import { buildISymptomLog, createToast } from "@/utils"
-import { TimePicker } from "./Fields"
+import DatePicker from "primevue/datepicker"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
 const props = defineProps<{
   day: string
+  visible: boolean
   editData?: ISymptomOverview
 }>()
 
@@ -22,8 +23,9 @@ const dayStore = useDayStore()
 const router = useRouter()
 
 // Variables
-const monthShort = ref(format(new Date(props.day), "MMM"))
-const day = ref(format(new Date(props.day), "dd"))
+const propDay = ref(props.day === "" ? new Date() : new Date(props.day))
+const monthShort = ref(format(propDay.value, "MMM"))
+const formatedDay = ref(format(propDay.value, "dd"))
 const symptomList = ref<ISymptom[]>([])
 
 // Form values
@@ -31,6 +33,7 @@ const time = ref(format(new Date(), "HH:mm"))
 const symptomLabel = ref<string>("")
 const pain = ref(0)
 const details = ref("")
+const visible = ref(props.visible)
 
 // Functions
 // closes Dialog and routes to symptom list
@@ -97,6 +100,12 @@ async function updateSymptomList() {
   symptomList.value = symptoms
 }
 
+// Function to close the dialog
+function closeDialog() {
+  emits("close")
+  visible.value = false
+}
+
 // Init
 onBeforeMount(() => {
   updateSymptomList()
@@ -116,44 +125,57 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <v-card>
-    <v-card-title>
+  <PrimeDialog v-model:visible="visible" :draggable="false">
+    <template #header>
       <h3 class="text-xl">
         {{
-          t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("SYMPTOM"), monthShort, day })
+          t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", {
+            type: t("SYMPTOM"),
+            monthShort,
+            day: formatedDay,
+          })
         }}
       </h3>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="flex flex-col gap-4">
-        <TimePicker v-model="time" />
-        <div class="flex flex-row gap-4">
-          <v-select
+    </template>
+    <form class="flex flex-col gap-8">
+      <FloatLabel class="mt-6 w-full">
+        <DatePicker v-model="time" id="datePicker" time-only fluid />
+        <label for="datePicker">{{ t("TIME") }}</label>
+      </FloatLabel>
+      <div class="flex flex-row gap-2">
+        <FloatLabel class="w-full">
+          <PrimeSelect
+            class="w-full"
             v-model="symptomLabel"
-            :items="symptomList"
-            item-value="label"
+            :options="symptomList"
+            optionLabel="label"
             item-title="label"
-            :label="t('SYMPTOM')"
-          >
-            <template v-slot:no-data>
-              <v-list-item>
-                {{ t("EMPTY_SYMPTOMS_1") }}
-              </v-list-item>
-            </template>
-          </v-select>
-          <v-btn density="compact" size="large" icon="add" class="mt-3 h-fit" @click="goToAddASymptom" />
-        </div>
-        <div class="flex flex-row gap-4">
-          <v-slider :label="t('PAIN')" v-model="pain" min="0" max="5" step="1" thumb-label hide-details />
+            id="symptomSelect"
+            :emptySelectionMessage="t('EMPTY_SYMPTOMS_1')"
+          />
+          <label for="symptomSelect">{{ t("SYMPTOM") }}</label>
+        </FloatLabel>
+        <PrimeButton text @click="goToAddASymptom">
+          <i class="material-icons">add</i>
+        </PrimeButton>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label>{{ t("PAIN") }}</label>
+        <div class="flex flex-row items-center gap-4">
+          <Slider class="ml-4 w-full" v-model="pain" :min="0" :max="5" :step="1" />
           {{ pain }}
         </div>
-        <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
-      </v-form>
-    </v-card-text>
-    <v-card-actions props>
-      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn @click="addSymptomToDay">{{ t(editData ? "EDIT" : "ADD") }}</v-btn>
-    </v-card-actions>
-  </v-card>
+      </div>
+      <FloatLabel class="w-full">
+        <InputText class="w-full" v-model="details" hide-details id="details" />
+        <label for="details">{{ t("DETAIL") }}</label>
+      </FloatLabel>
+    </form>
+    <template #footer>
+      <div class="flex w-full flex-row justify-between">
+        <PrimeButton @click="closeDialog">{{ t("CANCEL") }}</PrimeButton>
+        <PrimeButton @click="addSymptomToDay">{{ t(editData ? "EDIT" : "ADD") }}</PrimeButton>
+      </div>
+    </template>
+  </PrimeDialog>
 </template>
