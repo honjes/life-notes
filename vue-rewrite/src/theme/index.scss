@@ -1,4 +1,8 @@
-@layer tailwind-base, primevue, tailwind-utilities;
+@layer tailwind-base, primevue, tailwind-utilities, normalize;
+
+@layer normalize {
+  @import "@ionic/vue/css/normalize.css";
+}
 
 @layer tailwind-base {
   @tailwind base;
