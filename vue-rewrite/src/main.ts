@@ -58,7 +58,7 @@ import PrimeVue from "primevue/config"
 import "primeicons/primeicons.css"
 import Button from "primevue/button"
 import Drawer from "primevue/drawer"
-import { themePreset } from "./theme/theme"
+import { themePreset } from "./theme"
 import Dialog from "primevue/dialog"
 
 const app = createApp(App)
