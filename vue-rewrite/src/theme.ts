@@ -21,9 +21,11 @@ export const themePreset = definePreset(Aura, {
       colorScheme: {
         light: {
           overlayColor: "{surface.700}",
+          optionColor: "{surface.700}",
         },
         dark: {
           overlayColor: "{surface.300}",
+          optionColor: "{surface.300}",
         },
       },
     },

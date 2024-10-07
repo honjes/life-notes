@@ -2,11 +2,9 @@
 import { useI18n } from "vue-i18n"
 import { format } from "date-fns"
 import { useDayStore } from "@/store"
-import { buildNote, createToast, NotFoundError, randomNumber } from "@/utils"
+import { buildNote, createToast, randomNumber } from "@/utils"
 import { onBeforeMount, ref } from "vue"
-import { TimePicker } from "./Fields"
 import { INoteBasic, INoteLog, INoteOverview } from "@/types/note"
-import AutoComplete from "./Fields/AutoComplete.vue"
 import { useNoteStore } from "@/store/note"
 
 // Vue Definitions
@@ -15,6 +13,7 @@ const props = defineProps<{
   day: string
   editData?: INoteOverview
 }>()
+const visible = defineModel<boolean>("visible")
 
 // external components
 const { t } = useI18n()
@@ -25,51 +24,56 @@ const noteStore = useNoteStore()
 const monthShort = ref(format(new Date(props.day), "MMM"))
 const day = ref(format(new Date(props.day), "dd"))
 const noteListItems = ref<INoteBasic[]>([])
+const noteSuggestions = ref<INoteBasic[]>([])
 
 // Form values
-const time = ref(format(new Date(), "HH:mm"))
-const noteLabel = ref<string>("")
+const time = ref(new Date())
+const selectedNote = ref<INoteBasic>()
 const details = ref("")
 
 // Functions
 /**
+ * Searches for notes in the note list and updates the suggestions
+ * @param event - event given by the autocomplete
+ */
+function searchNotes(event: { originalEvent: Event; query: string }): void {
+  noteSuggestions.value = noteListItems.value.filter(note => note.key.toLowerCase().includes(event.query.toLowerCase()))
+}
+
+/**
  * Adds a note to the db
  */
 async function addNoteToDay() {
-  if (noteLabel.value == undefined || noteLabel.value === "") {
+  if (selectedNote.value == undefined) {
     await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("NOTE") }), 2000, "error")
     return
   }
 
-  // check if note already exists
-  let iLogBasic: INoteBasic
-  try {
-    iLogBasic = await noteStore.getNote(noteLabel.value)
-  } catch (err: unknown) {
-    // if it doesn't exist, add it
-    if (err instanceof NotFoundError) {
-      iLogBasic = buildNote(noteLabel.value)
-      await noteStore.addNote(iLogBasic)
-    } else {
-      throw err
-    }
+  // Create not if it doesn't exist
+  let iNoteBasic: INoteBasic = selectedNote.value
+  if (typeof selectedNote.value === "string") {
+    iNoteBasic = buildNote(selectedNote.value)
+    await noteStore.addNote(iNoteBasic)
   }
-  let iLogLog: INoteLog
+
+  let iNoteLog: INoteLog
+  console.log("props.editData: ", props.editData)
   if (props.editData) {
-    iLogLog = { key: props.editData.logKey, time: time.value, detail: details.value }
+    iNoteLog = { key: props.editData.logKey, time: format(time.value, "HH:mm"), detail: details.value }
+    console.log("iNoteLog: ", iNoteLog)
   } else {
-    iLogLog = { key: randomNumber(), time: time.value, detail: details.value }
+    iNoteLog = { key: randomNumber(), time: format(time.value, "HH:mm"), detail: details.value }
   }
 
   dayStore
-    .addNote(props.day, iLogBasic, iLogLog)
+    .addNote(props.day, iNoteBasic, iNoteLog)
     .then(async () => {
       await createToast(
         t("ACTION_TOAST", {
           action: t("ADD"),
           successfully_failuar: t("SUCCESSFULLY"),
           data_type: t("NOTE"),
-          name: noteLabel.value,
+          name: iNoteBasic.key,
         }),
         2000,
         "success"
@@ -82,7 +86,7 @@ async function addNoteToDay() {
           action: t("ADD"),
           successfully_failuar: t("FAILED"),
           data_type: t("NOTE"),
-          name: noteLabel.value,
+          name: iNoteBasic.key,
         }),
         2000,
         "error"
@@ -109,32 +113,51 @@ onBeforeMount(() => {
   })
 
   // When editing a note, set the values
-  if (props.editData) {
-    time.value = props.editData.time
-    noteLabel.value = props.editData.key
+  if (props.editData !== undefined) {
+    time.value = new Date(props.editData.time)
+    // @ts-expect-error - Giving the note key to the autocomplete also works
+    selectedNote.value = props.editData.key
     details.value = props.editData.detail
   }
 })
 </script>
 
 <template>
-  <v-card>
-    <v-card-title>
-      <h3 class="text-xl">
+  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false">
+    <template #header>
+      <h3 class="text-2xl">
         {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("NOTE"), monthShort, day }) }}
       </h3>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="flex flex-col gap-4">
-        <TimePicker v-model="time" />
-        <AutoComplete v-model="noteLabel" :label="t('NOTE')" :items="noteListItems" selectKey="key" selectValue="key" />
-        <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
-      </v-form>
-    </v-card-text>
-    <v-card-actions props>
-      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn @click="addNoteToDay">{{ t(editData ? "EDIT" : "ADD") }}</v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+    <form class="flex flex-col gap-8">
+      <FloatLabel class="mt-6">
+        <DatePicker v-model="time" time-only id="time" />
+        <label for="time">{{ t("TIME") }}</label>
+      </FloatLabel>
+      <FloatLabel>
+        <AutoComplete
+          id="noteLabel"
+          v-model="selectedNote"
+          :suggestions="noteSuggestions"
+          option-label="key"
+          :label="t('NOTE')"
+          empty-search-message=""
+          @complete="searchNotes"
+        >
+          <template #empty><div></div></template>
+        </AutoComplete>
+        <label for="noteLabel">{{ t("NOTE") }}</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText v-model="details" id="details" />
+        <label for="details">{{ t("DETAIL") }}</label>
+      </FloatLabel>
+    </form>
+    <template #footer>
+      <div class="flex w-full flex-row justify-between">
+        <PrimeButton @click="emits('close')">{{ t("CANCEL") }}</PrimeButton>
+        <PrimeButton @click="addNoteToDay">{{ t(editData ? "EDIT" : "ADD") }}</PrimeButton>
+      </div>
+    </template>
+  </PrimeDialog>
 </template>
