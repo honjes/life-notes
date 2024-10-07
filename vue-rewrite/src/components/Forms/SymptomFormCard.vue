@@ -125,7 +125,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <PrimeDialog v-model:visible="visible" :draggable="false">
+  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false">
     <template #header>
       <h3 class="text-xl">
         {{
