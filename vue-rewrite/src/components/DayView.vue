@@ -73,6 +73,24 @@ function editDayData(data: INoteOverview | IMedOverview | IMeal | ISymptomOvervi
   addDataType.value = data.type
 }
 
+/**
+ * Edit wake up or go to bed
+ * @param {DataType} type - wakeup or go to bed
+ * @param {string} data - data to edit
+ */
+function editWakeUpGoToBed(type: DataTypes, data: string) {
+  showDetailedDialog.value = false
+  editData.value = data
+  showAddDataDialog.value = true
+  addDataDay.value = props.day.date
+  addDataType.value = type
+  if (type === DataTypes.wakeUp && props.day.wakeUp !== "") {
+    shouldEdit.value = true
+  } else if (type === DataTypes.goToBed && props.day.goToBed !== "") {
+    shouldEdit.value = true
+  }
+}
+
 // Function to close the dialog and the bottom sheet
 function closeDialogAndBottomSheet() {
   editData.value = undefined
@@ -91,24 +109,6 @@ function openAddDataDialog(type: DataTypes, day: string) {
   addDataType.value = type
   addDataDay.value = day
   showAddDataDialog.value = true
-}
-
-/**
- * Edit wake up or go to bed
- * @param {DataType} type - wakeup or go to bed
- * @param {string} data - data to edit
- */
-function editWakeUpGoToBed(type: DataTypes, data: string) {
-  showDetailedDialog.value = false
-  editData.value = data
-  showAddDataDialog.value = true
-  addDataDay.value = props.day.date
-  addDataType.value = type
-  if (type === DataTypes.wakeUp && props.day.wakeUp !== "") {
-    shouldEdit.value = true
-  } else if (type === DataTypes.goToBed && props.day.goToBed !== "") {
-    shouldEdit.value = true
-  }
 }
 
 /**
@@ -141,7 +141,7 @@ async function deleteEvent() {
     <div name="header" class="bg-surface-400 dark:bg-surface-700 flex w-full flex-row justify-between p-4">
       <div class="flex flex-row items-center">
         <h2 class="text-3xl">{{ format(new Date(props.day.date), "iii MMM, dd yyyy") }}</h2>
-        <PrimeButton icon="arrow_forward_ios" link>
+        <PrimeButton link>
           <i class="material-icons">arrow_forward_ios</i>
         </PrimeButton>
       </div>
@@ -209,26 +209,32 @@ async function deleteEvent() {
           </div>
         </div>
       </div>
-      <div class="group-h-full flex w-1/5 flex-col justify-between">
+      <div name="wakeup-sleep-container" class="group-h-full flex w-1/5 flex-col justify-between">
         <div
           class="bg-surface-300 dark:bg-surface-600 flex h-20 flex-col items-end justify-start gap-2 rounded-bl-full pr-2"
-          @click="editWakeUpGoToBed(DataTypes.wakeUp, day.date)"
+          @click="editWakeUpGoToBed(DataTypes.wakeUp, day.wakeUp)"
         >
           <p class="min-h-6">{{ day.wakeUp }}</p>
-          <PrimeButton link><i class="material-icons">alarm</i></PrimeButton>
+          <PrimeButton class="p-0" link><i class="material-icons">alarm</i></PrimeButton>
         </div>
         <div
           class="bg-surface-300 dark:bg-surface-600 flex h-20 flex-col items-end justify-end gap-2 rounded-tl-full pr-2"
-          @click="editWakeUpGoToBed(DataTypes.goToBed, day.date)"
+          @click="editWakeUpGoToBed(DataTypes.goToBed, day.goToBed)"
         >
-          <PrimeButton link><i class="material-icons">bedtime</i></PrimeButton>
+          <PrimeButton class="p-0" link><i class="material-icons">bedtime</i></PrimeButton>
           <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
       </div>
     </section>
   </aside>
   <div name="drawer">
-    <Drawer position="bottom" class="!h-auto" v-model:visible="showBottomSheet" header="Hinzufügen">
+    <Drawer
+      position="bottom"
+      class="!h-auto"
+      v-model:visible="showBottomSheet"
+      header="Hinzufügen"
+      :dismissable="false"
+    >
       <template #container>
         <div class="flex flex-col gap-2 py-4">
           <div v-for="item in bottomSheetItems" :key="item.title">
@@ -245,48 +251,52 @@ async function deleteEvent() {
   </div>
   <div name="dialog">
     <DetailedDataDialog
+      v-if="showDetailedDialog"
       v-model:visible="showDetailedDialog"
       :data="{ ...(editData as INoteOverview | IMedOverview | IMeal | ISymptomOverview) }"
       :date="day.date"
       @close="closeDialogAndBottomSheet"
       @edit="editDayData"
     />
-    <PrimeDialog v-model:visible="showAddDataDialog">
-      <template #container>
-        <SymptomFormCard
-          v-if="addDataType === DataTypes.symptoms"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as ISymptomOverview) : undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <MealFormCard
-          v-else-if="addDataType === DataTypes.meals"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as IMeal) : undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <WakeUpGoToBedFormCard
-          v-else-if="addDataType === DataTypes.wakeUp || addDataType === DataTypes.goToBed"
-          :day="addDataDay"
-          :wakeUp="addDataType === DataTypes.wakeUp"
-          :editData="shouldEdit ? (editData as string) : undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <MedFormCard
-          v-else-if="addDataType === DataTypes.meds"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as IMedOverview) : undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-        <NoteFormCard
-          v-else-if="addDataType === DataTypes.note"
-          :day="addDataDay"
-          :editData="shouldEdit ? (editData as INoteOverview) : undefined"
-          @close="closeDialogAndBottomSheet"
-        />
-      </template>
-    </PrimeDialog>
-    <PrimeDialog v-model:visible="showDeleteDialog">
+    <div v-if="showAddDataDialog">
+      <SymptomFormCard
+        v-if="addDataType === DataTypes.symptoms"
+        v-model:visible="showAddDataDialog"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as ISymptomOverview) : undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <MealFormCard
+        v-else-if="addDataType === DataTypes.meals"
+        v-model:visible="showAddDataDialog"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as IMeal) : undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <MedFormCard
+        v-else-if="addDataType === DataTypes.meds"
+        v-model:visible="showAddDataDialog"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as IMedOverview) : undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <NoteFormCard
+        v-else-if="addDataType === DataTypes.note"
+        v-model:visible="showAddDataDialog"
+        :day="addDataDay"
+        :editData="shouldEdit ? (editData as INoteOverview) : undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+      <WakeUpGoToBedFormCard
+        v-else-if="addDataType === DataTypes.wakeUp || addDataType === DataTypes.goToBed"
+        v-model:visible="showAddDataDialog"
+        :day="addDataDay"
+        :wakeUp="addDataType === DataTypes.wakeUp"
+        :editData="shouldEdit ? (editData as string) : undefined"
+        @close="closeDialogAndBottomSheet"
+      />
+    </div>
+    <PrimeDialog v-model:visible="showDeleteDialog" :draggable="false" :closable="false" modal>
       <template #header>
         <h3 class="text-2xl">
           {{ t("DELETE_EVENT_DIALOG_TITLE", { type: t(deleteDataType) }) }}
@@ -303,8 +313,10 @@ async function deleteEvent() {
         }}
       </p>
       <template #footer>
-        <PrimeButton text @click="showDeleteDialog = false">{{ t("CANCEL") }}</PrimeButton>
-        <PrimeButton text @click="deleteEvent">{{ t("DELETE") }}</PrimeButton>
+        <div class="flex w-full flex-row justify-between">
+          <PrimeButton @click="showDeleteDialog = false">{{ t("CANCEL") }}</PrimeButton>
+          <PrimeButton @click="deleteEvent">{{ t("DELETE") }}</PrimeButton>
+        </div>
       </template>
     </PrimeDialog>
   </div>

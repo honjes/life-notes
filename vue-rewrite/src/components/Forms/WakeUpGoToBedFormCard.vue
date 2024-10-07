@@ -102,7 +102,6 @@ async function addWakeUpGoToBedToDay() {
 onBeforeMount(() => {
   // When editing a wake up or go to bed, set the values
   if (props.editData) {
-    console.log(props.editData)
     time.value = parse(props.editData, "HH:mm", new Date())
   }
 })

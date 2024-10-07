@@ -57,10 +57,8 @@ async function addNoteToDay() {
   }
 
   let iNoteLog: INoteLog
-  console.log("props.editData: ", props.editData)
   if (props.editData) {
     iNoteLog = { key: props.editData.logKey, time: format(time.value, "HH:mm"), detail: details.value }
-    console.log("iNoteLog: ", iNoteLog)
   } else {
     iNoteLog = { key: randomNumber(), time: format(time.value, "HH:mm"), detail: details.value }
   }
