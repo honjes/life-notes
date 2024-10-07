@@ -67,6 +67,8 @@ import Divider from "primevue/divider"
 import InputText from "primevue/inputtext"
 import InputNumber from "primevue/inputnumber"
 import AutoComplete from "primevue/autocomplete"
+import Column from "primevue/column"
+import DataTable from "primevue/datatable"
 
 const app = createApp(App)
   .use(PrimeVue, {
@@ -97,6 +99,8 @@ app.component("Divider", Divider)
 app.component("InputText", InputText)
 app.component("InputNumber", InputNumber)
 app.component("AutoComplete", AutoComplete)
+app.component("DataTable", DataTable)
+app.component("Column", Column)
 
 router.isReady().then(() => {
   app.mount("#app")

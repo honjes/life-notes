@@ -141,7 +141,7 @@ onBeforeMount(() => {
         <DatePicker v-model="time" id="datePicker" time-only fluid />
         <label for="datePicker">{{ t("TIME") }}</label>
       </FloatLabel>
-      <div class="flex flex-row gap-2">
+      <div name="symptom-select" class="flex flex-row gap-2">
         <FloatLabel class="w-full">
           <PrimeSelect
             class="w-full"

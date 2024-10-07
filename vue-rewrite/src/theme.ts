@@ -7,6 +7,20 @@ export const themePreset = definePreset(Aura, {
       paddingX: "0.75rem",
       paddingY: "0.5rem",
     },
+    datatable: {
+      colorScheme: {
+        light: {
+          headerColor: "{surface.700}",
+          headerCellColor: "{surface.700}",
+          rowColor: "{surface.700}",
+        },
+        dark: {
+          headerColor: "{surface.300}",
+          headerCellColor: "{surface.300}",
+          rowColor: "{surface.300}",
+        },
+      },
+    },
     datepicker: {
       colorScheme: {
         light: {

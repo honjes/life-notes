@@ -14,7 +14,7 @@ const { t } = useI18n()
 // Variables
 const symptomListItems = ref<ISymptom[]>([])
 const showAddSymptomDialog = ref(false)
-const showEditSymptomDialog = ref(false)
+const shouldEdit = ref(false)
 const showDeleteSymptomDialog = ref(false)
 const symptomToEdit = ref<ISymptom>()
 const symptomToDelete = ref<ISymptom>()
@@ -23,7 +23,8 @@ const symptomToDelete = ref<ISymptom>()
 // Function to show edit symptom dialog
 function showEditSymptom(symptom: ISymptom) {
   symptomToEdit.value = symptom
-  showEditSymptomDialog.value = true
+  shouldEdit.value = true
+  showAddSymptomDialog.value = true
 }
 
 // Function to show delete symptom dialog
@@ -79,6 +80,14 @@ async function updateSymptomList() {
   symptomListItems.value = symptoms
 }
 
+/**
+ * Closes the dialog
+ */
+function closeDialog() {
+  showAddSymptomDialog.value = false
+  shouldEdit.value = false
+}
+
 // Initalise symptom list
 onBeforeMount(() => {
   updateSymptomList()
@@ -97,55 +106,54 @@ onBeforeMount(() => {
         <ion-title class="flex justify-center" size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
-      <v-list v-if="symptomListItems.length > 0">
-        <v-list-item v-for="symptom in symptomListItems" :key="symptom.key">
-          <div class="flex flex-row justify-between">
-            <div>
-              <v-list-item-title>{{ symptom.label }}</v-list-item-title>
+    <ion-content class="symptom-list">
+      <DataTable :value="symptomListItems" v-if="symptomListItems.length > 0">
+        <Column field="label" :header="t('NAME')" :style="{ width: '70%' }" />
+        <Column>
+          <template #body="{ data }">
+            <div class="w-full text-right">
+              <i class="material-icons" @click="showEditSymptom(data)">edit</i>
+              <i class="material-icons" @click="showDeleteSymptom(data)">delete</i>
             </div>
-            <div class="flex flex-row items-center">
-              <v-icon size="large" class="hover:cursor-pointer" @click="showEditSymptom(symptom)">edit</v-icon>
-              <v-icon size="large" class="hover:cursor-pointer" @click="showDeleteSymptom(symptom)">delete</v-icon>
-            </div>
-          </div>
-        </v-list-item>
-      </v-list>
+          </template>
+        </Column>
+      </DataTable>
       <div v-else class="flex flex-row justify-center px-4">
         {{ t("EMPTY_SYMPTOMS_1") }}
       </div>
-      <div class="flex p-4 justify-center">
-        <v-btn @click="showAddSymptomDialog = true">{{ t("ADD_SYMPTOM") }}</v-btn>
+      <div class="flex justify-center p-4">
+        <PrimeButton @click="showAddSymptomDialog = true">{{ t("ADD_SYMPTOM") }}</PrimeButton>
       </div>
-      <v-dialog v-model="showAddSymptomDialog" max-width="auto">
-        <template v-slot:default>
-          <SymptomNameForm @close="showAddSymptomDialog = false" />
+      <SymptomNameForm
+        v-if="showAddSymptomDialog"
+        v-model:visible="showAddSymptomDialog"
+        @close="closeDialog"
+        :edit="shouldEdit"
+        :symptom="symptomToEdit"
+      />
+      <PrimeDialog v-model:visible="showDeleteSymptomDialog" max-width="auto" :closable="false">
+        <template #header>
+          <h3 class="text-xl">
+            {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}
+          </h3>
         </template>
-      </v-dialog>
-      <v-dialog v-model="showEditSymptomDialog" max-width="auto">
-        <template v-slot:default>
-          <SymptomNameForm edit :symptom="symptomToEdit" @close="showEditSymptomDialog = false" />
+        <p>{{ t("DELETE_SYMPTOM_DIALOG_CONTENT") }}</p>
+        <template #footer>
+          <div class="flex w-full flex-row justify-between">
+            <PrimeButton @click="showDeleteSymptomDialog = false">{{ t("CANCEL") }}</PrimeButton>
+            <PrimeButton @click="deleteSymptom(symptomToDelete)">{{ t("DELETE") }}</PrimeButton>
+          </div>
         </template>
-      </v-dialog>
-      <v-dialog v-model="showDeleteSymptomDialog" max-width="auto">
-        <template v-slot:default>
-          <v-card>
-            <v-card-title>
-              <h3 class="text-xl">
-                {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}
-              </h3>
-            </v-card-title>
-            <v-card-text>
-              <p>{{ t("DELETE_SYMPTOM_DIALOG_CONTENT") }}</p>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn variant="text" @click="showDeleteSymptomDialog = false">{{ t("CANCEL") }}</v-btn>
-              <v-spacer></v-spacer>
-              <v-btn variant="text" @click="deleteSymptom(symptomToDelete)">{{ t("DELETE") }}</v-btn>
-            </v-card-actions>
-          </v-card>
-        </template>
-      </v-dialog>
+      </PrimeDialog>
     </ion-content>
   </ion-content>
 </template>
+
+<style lang="scss">
+.symptom-list {
+  .p-datatable-header-cell,
+  .p-datatable-tbody > tr {
+    background-color: transparent;
+  }
+}
+</style>
