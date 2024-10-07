@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { useDayStore } from "@/store"
 import { createToast } from "@/utils"
 import { onBeforeMount, ref } from "vue"
-import { TimePicker } from "./Fields"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
@@ -13,17 +12,19 @@ const props = defineProps<{
   wakeUp?: boolean
   editData?: string
 }>()
+const visible = defineModel<boolean>("visible")
 
 // external components
 const { t } = useI18n()
 const dayStore = useDayStore()
 
 // Variables
-const monthShort = ref(format(new Date(props.day), "MMM"))
-const day = ref(format(new Date(props.day), "dd"))
+const propDay = ref(props.day ? new Date(props.day) : new Date())
+const monthShort = ref(format(propDay.value, "MMM"))
+const formattedDay = ref(format(propDay.value, "dd"))
 
 // Form values
-const time = ref(format(new Date(), "HH:mm"))
+const time = ref<Date>(new Date())
 
 // Functions
 /**
@@ -40,14 +41,14 @@ async function addWakeUpGoToBedToDay() {
   }
   if (props.wakeUp) {
     dayStore
-      .addWakeUp(props.day, time.value)
+      .addWakeUp(props.day, format(time.value, "HH:mm"))
       .then(async () => {
         await createToast(
           t("ACTION_TOAST", {
             action: t("ADD"),
             successfully_failuar: t("SUCCESSFULLY"),
             data_type: t("WAKE_UP"),
-            name: time.value,
+            name: format(time.value, "HH:mm"),
           }),
           2000,
           "success"
@@ -60,7 +61,7 @@ async function addWakeUpGoToBedToDay() {
             action: t("ADD"),
             successfully_failuar: t("FAILED"),
             data_type: t("WAKE_UP"),
-            name: time.value,
+            name: format(time.value, "HH:mm"),
           }),
           2000,
           "error"
@@ -68,14 +69,14 @@ async function addWakeUpGoToBedToDay() {
       })
   } else {
     dayStore
-      .addGoToBed(props.day, time.value)
+      .addGoToBed(props.day, format(time.value, "HH:mm"))
       .then(async () => {
         await createToast(
           t("ACTION_TOAST", {
             action: t("ADD"),
             successfully_failuar: t("SUCCESSFULLY"),
             data_type: t("GO_TO_BED"),
-            name: time.value,
+            name: format(time.value, "HH:mm"),
           }),
           2000,
           "success"
@@ -88,7 +89,7 @@ async function addWakeUpGoToBedToDay() {
             action: t("ADD"),
             successfully_failuar: t("FAILED"),
             data_type: t("GO_TO_BED"),
-            name: time.value,
+            name: format(time.value, "HH:mm"),
           }),
           2000,
           "error"
@@ -101,33 +102,33 @@ async function addWakeUpGoToBedToDay() {
 onBeforeMount(() => {
   // When editing a wake up or go to bed, set the values
   if (props.editData) {
-    time.value = props.editData
+    console.log(props.editData)
+    time.value = parse(props.editData, "HH:mm", new Date())
   }
 })
 </script>
 
 <template>
-  <v-card>
-    <v-card-title>
+  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false" modal>
+    <template #header>
       <h3 class="text-xl">
         {{
           t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", {
             type: props.wakeUp ? t("WAKE_UP") : t("GO_TO_BED"),
             monthShort,
-            day,
+            day: formattedDay,
           })
         }}
       </h3>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="flex flex-col gap-4">
-        <TimePicker v-model="time" />
-      </v-form>
-    </v-card-text>
-    <v-card-actions props>
-      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn @click="addWakeUpGoToBedToDay">{{ t(editData ? "EDIT" : "ADD") }}</v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+    <form class="flex flex-col gap-4">
+      <DatePicker v-model="time" time-only />
+    </form>
+    <template #footer>
+      <div class="flex w-full flex-row justify-between">
+        <PrimeButton @click="emits('close')">{{ t("CANCEL") }}</PrimeButton>
+        <PrimeButton @click="addWakeUpGoToBedToDay">{{ t(editData ? "EDIT" : "ADD") }}</PrimeButton>
+      </div>
+    </template>
+  </PrimeDialog>
 </template>
