@@ -7,6 +7,26 @@ export const themePreset = definePreset(Aura, {
       paddingX: "0.75rem",
       paddingY: "0.5rem",
     },
+    datepicker: {
+      colorScheme: {
+        light: {
+          panelColor: "{surface.700}",
+        },
+        dark: {
+          panelColor: "{surface.300}",
+        },
+      },
+    },
+    autocomplete: {
+      colorScheme: {
+        light: {
+          overlayColor: "{surface.700}",
+        },
+        dark: {
+          overlayColor: "{surface.300}",
+        },
+      },
+    },
     select: {
       colorScheme: {
         light: {

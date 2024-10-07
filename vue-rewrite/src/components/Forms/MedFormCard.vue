@@ -4,7 +4,6 @@ import { format } from "date-fns"
 import { useDayStore } from "@/store"
 import { createToast, NotFoundError } from "@/utils"
 import { onBeforeMount, ref } from "vue"
-import { TimePicker, AutoComplete } from "./Fields"
 import { IMed, IMedBasic, IMedLog, IMedOverview } from "@/types/med"
 import { useMedStore } from "@/store/med"
 import { buildMed, buildMedForDb, buildMedLog } from "@/utils/med"
@@ -15,6 +14,7 @@ const props = defineProps<{
   day: string
   editData?: IMedOverview
 }>()
+const visible = defineModel<boolean>("visible")
 
 // external components
 const { t } = useI18n()
@@ -22,16 +22,26 @@ const dayStore = useDayStore()
 const medStore = useMedStore()
 
 // Variables
-const monthShort = ref(format(new Date(props.day), "MMM"))
-const day = ref(format(new Date(props.day), "dd"))
+const propDay = ref(props.day ? new Date(props.day) : new Date())
+const monthShort = ref(format(propDay.value, "MMM"))
+const formattedDay = ref(format(propDay.value, "dd"))
 const medListItems = ref<IMedBasic[]>([])
+const medSuggestions = ref<IMedBasic[]>([])
 
 // Form values
-const time = ref(format(new Date(), "HH:mm"))
+const time = ref(new Date())
 const medLabel = ref<string>("")
 const quantity = ref<number>(0)
 
 // Functions
+/**
+ * Searches for meds in the med list and updates the suggestions
+ * @param {string} value - value to search for
+ */
+function searchMeds(event: { originalEvent: Event; query: string }): void {
+  medSuggestions.value = medListItems.value.filter(med => med.key.toLowerCase().includes(event.query.toLowerCase()))
+}
+
 /**
  * Adds a med to the db
  */
@@ -122,30 +132,46 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <v-card>
-    <v-card-title>
-      <h3 class="text-xl">
-        {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("MED"), monthShort, day }) }}
+  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false">
+    <template #header>
+      <h3 class="text-2xl">
+        {{
+          t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", {
+            type: t("MED"),
+            monthShort,
+            day: formattedDay,
+          })
+        }}
       </h3>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="flex flex-col gap-4">
-        <TimePicker v-model="time" />
+    </template>
+    <form class="flex flex-col gap-8">
+      <FloatLabel class="mt-6">
+        <DatePicker v-model="time" time-only id="time" />
+        <label for="time">{{ t("TIME") }}</label>
+      </FloatLabel>
+      <FloatLabel>
         <AutoComplete
+          id="medLabel"
           v-model="medLabel"
+          :suggestions="medSuggestions"
+          option-label="key"
           :label="t('MED')"
-          :items="medListItems"
-          selectKey="key"
-          selectValue="key"
-          @update:value="(value) => (quantity = (value as unknown as IMedBasic).quantity)"
+          :empty-search-message="t('NO_MEDS_FOUND')"
+          @complete="searchMeds"
+          @item-select="value => (quantity = (value as unknown as IMedBasic).quantity)"
         />
-        <v-text-field type="number" v-model="quantity" :label="t('QUANTITY')" hideDetails />
-      </v-form>
-    </v-card-text>
-    <v-card-actions props>
-      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn @click="addMedToDay">{{ t(editData ? "EDIT" : "ADD") }}</v-btn>
-    </v-card-actions>
-  </v-card>
+        <label for="medLabel">{{ t("MED") }}</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputNumber v-model="quantity" />
+        <label for="details">{{ t("QUANTITY") }}</label>
+      </FloatLabel>
+    </form>
+    <template #footer>
+      <div class="flex w-full flex-row justify-between">
+        <PrimeButton @click="emits('close')">{{ t("CANCEL") }}</PrimeButton>
+        <PrimeButton @click="addMedToDay">{{ t(editData ? "EDIT" : "ADD") }}</PrimeButton>
+      </div>
+    </template>
+  </PrimeDialog>
 </template>

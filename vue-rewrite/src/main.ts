@@ -65,6 +65,8 @@ import FloatLabel from "primevue/floatlabel"
 import Slider from "primevue/slider"
 import Divider from "primevue/divider"
 import InputText from "primevue/inputtext"
+import InputNumber from "primevue/inputnumber"
+import AutoComplete from "primevue/autocomplete"
 
 const app = createApp(App)
   .use(PrimeVue, {
@@ -85,14 +87,16 @@ const app = createApp(App)
 
 // PrimeVue Components
 app.component("PrimeButton", Button)
+app.component("PrimeSelect", Select)
 app.component("Drawer", Drawer)
 app.component("PrimeDialog", Dialog)
 app.component("DatePicker", DatePicker)
-app.component("PrimeSelect", Select)
 app.component("FloatLabel", FloatLabel)
 app.component("Slider", Slider)
 app.component("Divider", Divider)
 app.component("InputText", InputText)
+app.component("InputNumber", InputNumber)
+app.component("AutoComplete", AutoComplete)
 
 router.isReady().then(() => {
   app.mount("#app")
