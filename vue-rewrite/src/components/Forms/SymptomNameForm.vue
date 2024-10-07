@@ -11,6 +11,7 @@ const props = defineProps<{
   edit?: boolean
   symptom?: ISymptom
 }>()
+const visible = defineModel<boolean>("visible")
 
 // external components
 const { t } = useI18n()
@@ -21,72 +22,72 @@ const symptomStore = useSymptomStore()
 const name = ref<string>()
 
 // Functions
-async function createNewSymptom() {
+/**
+ * Creates or updates a symptom and emits the close event
+ */
+async function createUpdateSymptom() {
   if (name.value == null || name.value === "") {
     await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("SYMPTOM") }), 2000, "error")
     return
   }
-  symptomStore
-    .createNewSymptom(name.value)
-    .then(async () => {
-      await createToast(
-        t("ACTION_TOAST", {
-          action: t("ADD"),
-          successfully_failuar: t("SUCCESSFULLY"),
-          data_type: t("SYMPTOM"),
-          name: name.value,
-        }),
-        2000,
-        "success"
-      )
-      emits("close")
-    })
-    .catch(async () => {
-      await createToast(
-        t("ACTION_TOAST", {
-          action: t("ADD"),
-          successfully_failuar: t("FAILED"),
-          data_type: t("SYMPTOM"),
-          name: name.value,
-        }),
-        2000,
-        "error"
-      )
-    })
-}
 
-async function editSymptom() {
-  if (name.value == null || name.value === "") {
-    await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("SYMPTOM") }), 2000, "error")
-    return
+  if (props.edit) {
+    symptomStore
+      .editSymptom(props.symptom?.key || "", name.value)
+      .then(async () => {
+        await createToast(
+          t("ACTION_TOAST", {
+            action: t("EDIT"),
+            successfully_failuar: t("SUCCESSFULLY"),
+            data_type: t("SYMPTOM"),
+            name: name.value,
+          }),
+          2000,
+          "success"
+        )
+        emits("close")
+      })
+      .catch(async () => {
+        await createToast(
+          t("ACTION_TOAST", {
+            action: t("EDIT"),
+            successfully_failuar: t("FAILED"),
+            data_type: t("SYMPTOM"),
+            name: name.value,
+          }),
+          2000,
+          "error"
+        )
+      })
+  } else {
+    symptomStore
+      .createNewSymptom(name.value)
+      .then(async () => {
+        await createToast(
+          t("ACTION_TOAST", {
+            action: t("ADD"),
+            successfully_failuar: t("SUCCESSFULLY"),
+            data_type: t("SYMPTOM"),
+            name: name.value,
+          }),
+          2000,
+          "success"
+        )
+        emits("close")
+      })
+      .catch(async () => {
+        await createToast(
+          t("ACTION_TOAST", {
+            action: t("ADD"),
+            successfully_failuar: t("FAILED"),
+            data_type: t("SYMPTOM"),
+            name: name.value,
+          }),
+          2000,
+          "error"
+        )
+      })
   }
-  symptomStore
-    .editSymptom(props.symptom?.key || "", name.value)
-    .then(async () => {
-      await createToast(
-        t("ACTION_TOAST", {
-          action: t("EDIT"),
-          successfully_failuar: t("SUCCESSFULLY"),
-          data_type: t("SYMPTOM"),
-          name: name.value,
-        }),
-        2000,
-        "success"
-      )
-      emits("close")
-    })
-    .catch(async () => {
-      await createToast(
-        t("ACTION_TOAST", {
-          action: t("EDIT"),
-          successfully_failuar: t("FAILED"),
-          data_type: t("SYMPTOM"),
-          name: name.value,
-        }),
-        2000,
-        "error"
-      )
-    })
 }
 
 // init name
@@ -96,40 +97,25 @@ if (props.edit) {
 </script>
 
 <template>
-  <v-card>
-    <div v-if="!edit">
-      <v-card-title>
-        <h3 class="text-xl">
-          {{ t("ADD_SYMPTOM") }}
-        </h3>
-      </v-card-title>
-      <v-card-text>
-        <v-form class="flex flex-col gap-4">
-          <v-text-field v-model="name" :label="t('SYMPTOM')" required hide-details />
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn variant="text" @click="createNewSymptom">{{ t("SAVE") }}</v-btn>
-      </v-card-actions>
-    </div>
-    <div v-else>
-      <v-card-title>
-        <h3 class="text-xl">
-          {{ t("EDIT_SYMPTOM") }}
-        </h3>
-      </v-card-title>
-      <v-card-text>
-        <v-form>
-          <v-text-field v-model="name" :label="t('SYMPTOM')" required></v-text-field>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn variant="text" @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn variant="text" @click="editSymptom">{{ t("SAVE") }}</v-btn>
-      </v-card-actions>
-    </div>
-  </v-card>
+  <PrimeDialog v-model:visible="visible" :closable="false">
+    <template #header>
+      <h3 class="text-xl">
+        {{ edit ? t("EDIT_SYMPTOM") : t("ADD_SYMPTOM") }}
+      </h3>
+    </template>
+    <template #default>
+      <form class="flex flex-col">
+        <FloatLabel class="mt-6">
+          <InputText v-model="name" id="name" />
+          <label for="name">{{ t("SYMPTOM") }}</label>
+        </FloatLabel>
+      </form>
+    </template>
+    <template #footer>
+      <div class="mt-2 flex w-full flex-row justify-between">
+        <PrimeButton @click="emits('close')">{{ t("CANCEL") }}</PrimeButton>
+        <PrimeButton @click="createUpdateSymptom">{{ t("SAVE") }}</PrimeButton>
+      </div>
+    </template>
+  </PrimeDialog>
 </template>
