@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { useDayStore } from "@/store"
 import { createToast } from "@/utils"
 import { onBeforeMount, ref } from "vue"
@@ -110,7 +110,7 @@ async function updateMedList() {
   medListItems.value = meds
   // When editing a med, set the values
   if (props.editData) {
-    time.value = new Date(props.editData.time)
+    time.value = parse(props.editData.time, "HH:mm", new Date())
     selectedMed.value = props.editData.key
     quantity.value = props.editData.quantity
   }

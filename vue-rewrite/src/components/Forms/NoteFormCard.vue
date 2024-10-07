@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { useDayStore } from "@/store"
 import { buildNote, createToast, randomNumber } from "@/utils"
 import { onBeforeMount, ref } from "vue"
@@ -114,7 +114,7 @@ onBeforeMount(() => {
 
   // When editing a note, set the values
   if (props.editData !== undefined) {
-    time.value = new Date(props.editData.time)
+    time.value = parse(props.editData.time, "HH:mm", new Date())
     // @ts-expect-error - Giving the note key to the autocomplete also works
     selectedNote.value = props.editData.key
     details.value = props.editData.detail
