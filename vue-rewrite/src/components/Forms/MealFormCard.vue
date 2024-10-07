@@ -106,11 +106,11 @@ onBeforeMount(() => {
         <label for="time">{{ t("TIME") }}</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText v-model="details" :label="t('MEAL')" />
-        <label for="details">{{ t("MEAL") }}</label>
+        <InputText v-model="mealLabel" id="mealLabel" />
+        <label for="mealLabel">{{ t("MEAL") }}</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText v-model="details" :label="t('DETAIL')" />
+        <InputText v-model="details" id="details" />
         <label for="details">{{ t("DETAIL") }}</label>
       </FloatLabel>
     </form>
