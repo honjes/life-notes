@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n"
 import { format } from "date-fns"
 import { useDayStore } from "@/store"
-import { createToast, NotFoundError } from "@/utils"
+import { createToast } from "@/utils"
 import { onBeforeMount, ref } from "vue"
 import { IMed, IMedBasic, IMedLog, IMedOverview } from "@/types/med"
 import { useMedStore } from "@/store/med"
@@ -30,7 +30,7 @@ const medSuggestions = ref<IMedBasic[]>([])
 
 // Form values
 const time = ref(new Date())
-const medLabel = ref<string>("")
+const selectedMed = ref<IMed | string>("")
 const quantity = ref<number>(0)
 
 // Functions
@@ -47,7 +47,7 @@ function searchMeds(event: { originalEvent: Event; query: string }): void {
  */
 async function addMedToDay() {
   // validation
-  if (medLabel.value == undefined || medLabel.value === "") {
+  if (selectedMed.value == undefined || selectedMed.value === "") {
     await createToast(t("FORM_REQUIRED", { field_name: t("Name"), data_type: t("MED") }), 2000, "error")
     return
   }
@@ -62,17 +62,13 @@ async function addMedToDay() {
   } else {
     iMedLog = buildMedLog(format(time.value, "HH:mm"))
   }
-  const iMed: IMed = buildMed(medLabel.value, quantity.value, iMedLog)
+  let iMed: IMed
   // check if med already exists
-  try {
-    await medStore.getMed(medLabel.value)
-  } catch (err: unknown) {
-    // if it doesn't exist, add it
-    if (err instanceof NotFoundError) {
-      await medStore.addMed(buildMedForDb(medLabel.value, quantity.value))
-    } else {
-      throw err
-    }
+  if (typeof selectedMed.value === "string") {
+    await medStore.addMed(buildMedForDb(selectedMed.value, quantity.value))
+    iMed = buildMed(selectedMed.value, quantity.value, iMedLog)
+  } else {
+    iMed = selectedMed.value
   }
 
   // add med to day
@@ -84,7 +80,7 @@ async function addMedToDay() {
           action: t("ADD"),
           successfully_failuar: t("SUCCESSFULLY"),
           data_type: t("MED"),
-          name: medLabel.value,
+          name: iMed.key,
         }),
         2000,
         "success"
@@ -97,7 +93,7 @@ async function addMedToDay() {
           action: t("ADD"),
           successfully_failuar: t("FAILED"),
           data_type: t("MED"),
-          name: medLabel.value,
+          name: iMed.key,
         }),
         2000,
         "error"
@@ -115,7 +111,7 @@ async function updateMedList() {
   // When editing a med, set the values
   if (props.editData) {
     time.value = new Date(props.editData.time)
-    medLabel.value = props.editData.key
+    selectedMed.value = props.editData.key
     quantity.value = props.editData.quantity
   }
 }
@@ -152,13 +148,13 @@ onBeforeMount(() => {
       <FloatLabel>
         <AutoComplete
           id="medLabel"
-          v-model="medLabel"
+          v-model="selectedMed"
           :suggestions="medSuggestions"
           option-label="key"
           :label="t('MED')"
           :empty-search-message="t('NO_MEDS_FOUND')"
           @complete="searchMeds"
-          @item-select="value => (quantity = (value as unknown as IMedBasic).quantity)"
+          @item-select="value => (quantity = value.value.quantity)"
         />
         <label for="medLabel">{{ t("MED") }}</label>
       </FloatLabel>
