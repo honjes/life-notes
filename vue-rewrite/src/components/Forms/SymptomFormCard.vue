@@ -30,7 +30,7 @@ const symptomList = ref<ISymptom[]>([])
 
 // Form values
 const time = ref(format(new Date(), "HH:mm"))
-const symptomLabel = ref<string>("")
+const selectedSymptom = ref<ISymptom | string>()
 const pain = ref(0)
 const details = ref("")
 
@@ -45,11 +45,11 @@ function goToAddASymptom() {
  * Adds a symptom to the db
  */
 async function addSymptomToDay() {
-  if (symptomLabel.value == undefined) {
+  if (selectedSymptom.value == undefined) {
     await createToast(t("FORM_REQUIRED", { field_name: t("NAME"), data_type: t("SYMPTOM") }), 2000, "error")
     return
   }
-  const symptom = await symptomStore.getSymptomByLabel(symptomLabel.value)
+  const symptom = selectedSymptom.value as ISymptom
   let symptomLog: ISymptomLog
   if (props.editData) {
     symptomLog = {
@@ -69,7 +69,7 @@ async function addSymptomToDay() {
           action: t("ADD"),
           successfully_failuar: t("SUCCESSFULLY"),
           data_type: t("SYMPTOM"),
-          name: symptomLabel.value,
+          name: symptom.label,
         }),
         2000,
         "success"
@@ -82,7 +82,7 @@ async function addSymptomToDay() {
           action: t("ADD"),
           successfully_failuar: t("FAILED"),
           data_type: t("SYMPTOM"),
-          name: symptomLabel.value,
+          name: symptom.label,
         }),
         2000,
         "error"
@@ -115,7 +115,7 @@ onBeforeMount(() => {
   })
   // When editing a symptom, set the values
   if (props.editData) {
-    symptomLabel.value = props.editData.label
+    selectedSymptom.value = props.editData.label
     time.value = props.editData.time
     pain.value = props.editData.pain
     details.value = props.editData.detail
@@ -124,7 +124,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false">
+  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false" modal>
     <template #header>
       <h3 class="text-xl">
         {{
@@ -145,7 +145,7 @@ onBeforeMount(() => {
         <FloatLabel class="w-full">
           <PrimeSelect
             class="w-full"
-            v-model="symptomLabel"
+            v-model="selectedSymptom"
             :options="symptomList"
             optionLabel="label"
             item-title="label"
