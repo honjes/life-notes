@@ -12,9 +12,9 @@ import DatePicker from "primevue/datepicker"
 const emits = defineEmits(["close"])
 const props = defineProps<{
   day: string
-  visible: boolean
   editData?: ISymptomOverview
 }>()
+const visible = defineModel<boolean>("visible")
 
 // external components
 const { t } = useI18n()
@@ -33,7 +33,6 @@ const time = ref(format(new Date(), "HH:mm"))
 const symptomLabel = ref<string>("")
 const pain = ref(0)
 const details = ref("")
-const visible = ref(props.visible)
 
 // Functions
 // closes Dialog and routes to symptom list
