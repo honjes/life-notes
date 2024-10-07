@@ -1,6 +1,0 @@
-.v-btn {
-  &.v-btn--active {
-    background-color: var(--v-theme-active-background);
-    color: var(--v-theme-active-color);
-  }
-}

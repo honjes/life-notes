@@ -131,7 +131,7 @@ onBeforeMount(() => {
         :edit="shouldEdit"
         :symptom="symptomToEdit"
       />
-      <PrimeDialog v-model:visible="showDeleteSymptomDialog" max-width="auto" :closable="false">
+      <PrimeDialog v-model:visible="showDeleteSymptomDialog" :closable="false" modal>
         <template #header>
           <h3 class="text-xl">
             {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}

@@ -97,7 +97,7 @@ if (props.edit) {
 </script>
 
 <template>
-  <PrimeDialog v-model:visible="visible" :closable="false">
+  <PrimeDialog v-model:visible="visible" :closable="false" modal>
     <template #header>
       <h3 class="text-xl">
         {{ edit ? t("EDIT_SYMPTOM") : t("ADD_SYMPTOM") }}

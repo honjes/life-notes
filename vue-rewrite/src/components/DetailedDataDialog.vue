@@ -41,7 +41,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false">
+  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false" modal>
     <template #header>
       <h3 class="capitalised text-2xl">{{ header }}</h3>
     </template>
