@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
 import { onBeforeMount, ref } from "vue"
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { ISymptom, ISymptomLog, ISymptomOverview } from "@/types/symptom"
 import { useRouter } from "vue-router"
 import { useDayStore, useSymptomStore } from "@/store"
 import { buildISymptomLog, createToast } from "@/utils"
-import DatePicker from "primevue/datepicker"
 
 // Vue Definitions
 const emits = defineEmits(["close"])
@@ -29,7 +28,7 @@ const formatedDay = ref(format(propDay.value, "dd"))
 const symptomList = ref<ISymptom[]>([])
 
 // Form values
-const time = ref(format(new Date(), "HH:mm"))
+const time = ref(new Date())
 const selectedSymptom = ref<ISymptom | string>()
 const pain = ref(0)
 const details = ref("")
@@ -54,12 +53,12 @@ async function addSymptomToDay() {
   if (props.editData) {
     symptomLog = {
       key: props.editData.logKey,
-      time: time.value,
+      time: format(time.value, "HH:mm"),
       pain: pain.value,
       detail: details.value,
     }
   } else {
-    symptomLog = buildISymptomLog(time.value, pain.value, details.value)
+    symptomLog = buildISymptomLog(format(time.value, "HH:mm"), pain.value, details.value)
   }
   dayStore
     .addSymptom(props.day, symptom, symptomLog)
@@ -107,19 +106,21 @@ function closeDialog() {
 
 // Init
 onBeforeMount(() => {
-  updateSymptomList()
+  updateSymptomList().then(() => {
+    // When editing a symptom, set the values
+    if (props.editData) {
+      const symptom = symptomList.value.find(symptom => symptom.label === props.editData?.label)
+      selectedSymptom.value = symptom
+      time.value = parse(props.editData.time, "HH:mm", new Date())
+      pain.value = props.editData.pain
+      details.value = props.editData.detail
+    }
+  })
 
   // Subscribe to store changes
   symptomStore.$subscribe(() => {
     updateSymptomList()
   })
-  // When editing a symptom, set the values
-  if (props.editData) {
-    selectedSymptom.value = props.editData.label
-    time.value = props.editData.time
-    pain.value = props.editData.pain
-    details.value = props.editData.detail
-  }
 })
 </script>
 
@@ -158,10 +159,10 @@ onBeforeMount(() => {
           <i class="material-icons">add</i>
         </PrimeButton>
       </div>
-      <div class="flex flex-col gap-2">
+      <div name="pain" class="p-floatlabel flex flex-col gap-2">
         <label>{{ t("PAIN") }}</label>
-        <div class="flex flex-row items-center gap-4">
-          <Slider class="ml-4 w-full" v-model="pain" :min="0" :max="5" :step="1" />
+        <div class="p-inputwrapper-filled flex flex-row items-center gap-4">
+          <Slider class="ml-3 w-full" v-model="pain" :min="0" :max="5" :step="1" />
           {{ pain }}
         </div>
       </div>
