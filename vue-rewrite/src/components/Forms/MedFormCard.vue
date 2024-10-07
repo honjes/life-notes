@@ -58,9 +58,9 @@ async function addMedToDay() {
 
   let iMedLog: IMedLog
   if (props.editData) {
-    iMedLog = { key: props.editData.logKey, time: time.value }
+    iMedLog = { key: props.editData.logKey, time: format(time.value, "HH:mm") }
   } else {
-    iMedLog = buildMedLog(time.value)
+    iMedLog = buildMedLog(format(time.value, "HH:mm"))
   }
   const iMed: IMed = buildMed(medLabel.value, quantity.value, iMedLog)
   // check if med already exists
@@ -114,7 +114,7 @@ async function updateMedList() {
   medListItems.value = meds
   // When editing a med, set the values
   if (props.editData) {
-    time.value = props.editData.time
+    time.value = new Date(props.editData.time)
     medLabel.value = props.editData.key
     quantity.value = props.editData.quantity
   }
