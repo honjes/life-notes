@@ -3,7 +3,7 @@ import { SymptomNameForm } from "@/components/Forms"
 import useSymptomStore from "@/store/symptom"
 import { ISymptom } from "@/types/symptom"
 import { createToast } from "@/utils/vue"
-import { IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
+import { IonContent } from "@ionic/vue"
 import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
 
@@ -101,12 +101,8 @@ onBeforeMount(() => {
 
 <template>
   <ion-content>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title class="flex justify-center" size="large">{{ t("SYMPTOMS_TITLE") }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="symptom-list">
+    <div class="flex flex-col gap-6 px-4">
+      <h1 class="my-4 flex text-3xl" size="large">{{ t("SYMPTOMS_TITLE") }}</h1>
       <DataTable :value="symptomListItems" v-if="symptomListItems.length > 0">
         <Column field="label" :header="t('NAME')" :style="{ width: '70%' }" />
         <Column>
@@ -118,34 +114,36 @@ onBeforeMount(() => {
           </template>
         </Column>
       </DataTable>
-      <div v-else class="flex flex-row justify-center px-4">
+      <div v-else class="flex flex-row justify-center">
         {{ t("EMPTY_SYMPTOMS_1") }}
       </div>
-      <div class="flex justify-center p-4">
+      <div class="flex justify-center">
         <PrimeButton @click="showAddSymptomDialog = true">{{ t("ADD_SYMPTOM") }}</PrimeButton>
       </div>
-      <SymptomNameForm
-        v-if="showAddSymptomDialog"
-        v-model:visible="showAddSymptomDialog"
-        @close="closeDialog"
-        :edit="shouldEdit"
-        :symptom="symptomToEdit"
-      />
-      <PrimeDialog v-model:visible="showDeleteSymptomDialog" :closable="false" modal>
-        <template #header>
-          <h3 class="text-xl">
-            {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}
-          </h3>
-        </template>
-        <p>{{ t("DELETE_SYMPTOM_DIALOG_CONTENT") }}</p>
-        <template #footer>
-          <div class="flex w-full flex-row justify-between">
-            <PrimeButton @click="showDeleteSymptomDialog = false">{{ t("CANCEL") }}</PrimeButton>
-            <PrimeButton @click="deleteSymptom(symptomToDelete)">{{ t("DELETE") }}</PrimeButton>
-          </div>
-        </template>
-      </PrimeDialog>
-    </ion-content>
+      <div name="Dialogs">
+        <SymptomNameForm
+          v-if="showAddSymptomDialog"
+          v-model:visible="showAddSymptomDialog"
+          @close="closeDialog"
+          :edit="shouldEdit"
+          :symptom="symptomToEdit"
+        />
+        <PrimeDialog v-model:visible="showDeleteSymptomDialog" :closable="false" modal>
+          <template #header>
+            <h3 class="text-xl">
+              {{ t("DELETE_SYMPTOM_DIALOG_TITLE", { symptom: symptomToDelete?.label || "" }) }}
+            </h3>
+          </template>
+          <p>{{ t("DELETE_SYMPTOM_DIALOG_CONTENT") }}</p>
+          <template #footer>
+            <div class="flex w-full flex-row justify-between">
+              <PrimeButton @click="showDeleteSymptomDialog = false">{{ t("CANCEL") }}</PrimeButton>
+              <PrimeButton @click="deleteSymptom(symptomToDelete)">{{ t("DELETE") }}</PrimeButton>
+            </div>
+          </template>
+        </PrimeDialog>
+      </div>
+    </div>
   </ion-content>
 </template>
 
