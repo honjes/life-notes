@@ -2,58 +2,6 @@ import { definePreset } from "@primevue/themes"
 import Aura from "@primevue/themes/aura"
 
 export const themePreset = definePreset(Aura, {
-  components: {
-    button: {
-      paddingX: "0.75rem",
-      paddingY: "0.5rem",
-    },
-    datatable: {
-      colorScheme: {
-        light: {
-          headerColor: "{surface.700}",
-          headerCellColor: "{surface.700}",
-          rowColor: "{surface.700}",
-        },
-        dark: {
-          headerColor: "{surface.300}",
-          headerCellColor: "{surface.300}",
-          rowColor: "{surface.300}",
-        },
-      },
-    },
-    datepicker: {
-      colorScheme: {
-        light: {
-          panelColor: "{surface.700}",
-        },
-        dark: {
-          panelColor: "{surface.300}",
-        },
-      },
-    },
-    autocomplete: {
-      colorScheme: {
-        light: {
-          overlayColor: "{surface.700}",
-          optionColor: "{surface.700}",
-        },
-        dark: {
-          overlayColor: "{surface.300}",
-          optionColor: "{surface.300}",
-        },
-      },
-    },
-    select: {
-      colorScheme: {
-        light: {
-          optionColor: "{surface.700}",
-        },
-        dark: {
-          optionColor: "{surface.300}",
-        },
-      },
-    },
-  },
   semantic: {
     primary: {
       50: "{zinc.50}",
@@ -123,10 +71,10 @@ export const themePreset = definePreset(Aura, {
           950: "{gray.950}",
         },
         text: {
-          color: "{surface.700}",
-          hoverColor: "{surface.800}",
-          mutedColor: "{surface.500}",
-          hoverMutedColor: "{surface.600}",
+          color: "{surface.200}",
+          hoverColor: "{surface.300}",
+          mutedColor: "{surface.400}",
+          hoverMutedColor: "{surface.00}",
         },
         highlight: {
           background: "rgba(250, 250, 250, .16)",
