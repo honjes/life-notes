@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useNoteStore } from "@/store"
 import { INoteBasic } from "@/types"
-import { IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
+import { IonContent } from "@ionic/vue"
 import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
 
@@ -33,26 +33,13 @@ onBeforeMount(() => {
 
 <template>
   <ion-content>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title class="flex justify-center" size="large">{{ t("NOTES_TITLE") }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content>
-      <v-table>
-        <thead>
-          <th class="p-4 text-left">{{ t("TABLE_NOTE") }}</th>
-          <th class="p-4 text-left">{{ t("TABLE_OCCURRENCES") }}</th>
-          <th class="p-4 text-left">{{ t("TABLE_LAST_ENTRY") }}</th>
-        </thead>
-        <tbody>
-          <tr v-for="note in notesListItems" :key="note.key">
-            <td class="px-4 text-left">{{ note.key }}</td>
-            <td class="px-4 text-left">{{ note.occurrences }}</td>
-            <td class="px-4 text-left">{{ note.lastEntry }}</td>
-          </tr>
-        </tbody>
-      </v-table>
-    </ion-content>
+    <div class="flex flex-col gap-6 px-4">
+      <h1 class="my-4 text-3xl">{{ t("NOTES_TITLE") }}</h1>
+      <DataTable :value="notesListItems">
+        <Column field="key" :header="t('TABLE_NOTE')" />
+        <Column field="occurrences" :header="t('TABLE_OCCURRENCES')" />
+        <Column field="lastEntry" :header="t('TABLE_LAST_ENTRY')" />
+      </DataTable>
+    </div>
   </ion-content>
 </template>
