@@ -7,7 +7,7 @@
  */
 import { useSymptomStore, useMainStore } from "@/store"
 import { IBackup, ISymptom, Languages, TimeFormats } from "@/types"
-import { IonHeader, IonToolbar, IonTitle, IonContent } from "@ionic/vue"
+import { IonContent } from "@ionic/vue"
 import { storeToRefs } from "pinia"
 import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
@@ -24,11 +24,21 @@ const mainStore = useMainStore()
 const { errorLogs } = storeToRefs(mainStore)
 
 // Variables
-const defaultSymptom = ref<string>(mainStore.settings.defaultSymptom)
+const defaultSymptom = ref<ISymptom>()
 const symptomList = ref<ISymptom[]>([])
-const selectedLanguage = ref<string>(mainStore.settings.language)
-const languageList = ref<{ lang: Languages; label: string }[]>([])
-const selectedTimeFormat = ref<string>(mainStore.settings.timeFormat)
+const languageList = ref<{ lang: Languages; label: string }[]>([
+  {
+    lang: Languages.EN,
+    label: t("ENGLISH"),
+  },
+  {
+    lang: Languages.FR,
+    label: t("FRENCH"),
+  },
+])
+const selectedLanguage = ref<{ lang: Languages; label: string }>(
+  languageList.value.find(l => l.lang === mainStore.settings.language) || languageList.value[0]
+)
 const timeFormatList = ref<{ timeFormat: TimeFormats; label: string }[]>([
   {
     timeFormat: TimeFormats.h24,
@@ -39,6 +49,9 @@ const timeFormatList = ref<{ timeFormat: TimeFormats; label: string }[]>([
     label: t("12H"),
   },
 ])
+const selectedTimeFormat = ref<{ timeFormat: TimeFormats; label: string }>(
+  timeFormatList.value.find(t => t.timeFormat === mainStore.settings.timeFormat) || timeFormatList.value[0]
+)
 const backup = ref<IBackup>()
 const copied = ref(false)
 // Modals
@@ -47,19 +60,16 @@ const importType = ref<"auto" | "manual" | "web">("auto")
 const exportModal = ref(false)
 
 // Functions
-async function setDefaultSymptom(symptomKey: string) {
-  const newDefaultSymptom = symptomList.value.find(s => s.key === symptomKey)
-  if (newDefaultSymptom) {
-    await mainStore.setDefaultSymptom(newDefaultSymptom)
-  }
+async function setDefaultSymptom(newDefaultSymptom: ISymptom) {
+  await mainStore.setDefaultSymptom(newDefaultSymptom)
 }
 
 /**
  * Update the app language
  * @param {string} language - language to set
  */
-async function setLanguage(language: string) {
-  await mainStore.setLanguage(language as Languages)
+async function setLanguage(language: { lang: string; label: string }) {
+  await mainStore.setLanguage(language.lang as Languages)
   updateLanguageList()
 }
 
@@ -75,6 +85,7 @@ async function setTimeFormat(timeFormat: string) {
  * Update the language list
  */
 function updateLanguageList() {
+  const newLanguage = mainStore.settings.language
   languageList.value = [
     {
       lang: Languages.FR,
@@ -85,14 +96,17 @@ function updateLanguageList() {
       label: t("ENGLISH"),
     },
   ]
+  selectedLanguage.value = languageList.value.find(l => l.lang === newLanguage) || languageList.value[0]
 }
 
 /**
  * Update the symptom list
  */
 async function updateSymptomList() {
+  const currentDefaultSymptom = mainStore.settings.defaultSymptom
   const symptoms = await symptomStore.getSymptoms()
   symptomList.value = symptoms
+  defaultSymptom.value = symptoms.find(s => s.key === currentDefaultSymptom)
 }
 
 /**
@@ -175,10 +189,13 @@ onBeforeMount(() => {
   })
   // only subscribe until initalised
   const unsubscribe = mainStore.$subscribe(() => {
+    // update settings on initalisation
     if (mainStore.initalised) {
-      defaultSymptom.value = mainStore.settings.defaultSymptom
-      selectedLanguage.value = mainStore.settings.language
-      selectedTimeFormat.value = mainStore.settings.timeFormat
+      selectedLanguage.value =
+        languageList.value.find(l => l.lang === mainStore.settings.language) || languageList.value[0]
+      selectedTimeFormat.value =
+        timeFormatList.value.find(t => t.timeFormat === mainStore.settings.timeFormat) || timeFormatList.value[0]
+      defaultSymptom.value = symptomList.value.find(s => s.key === mainStore.settings.defaultSymptom)
       unsubscribe()
     }
   })
@@ -187,277 +204,237 @@ onBeforeMount(() => {
 
 <template>
   <ion-content>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title class="dark:text-white"><p>Settings</p></ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-content>
-        <div>
-          <section name="symptoms" class="w-full">
-            <v-expansion-panels>
-              <v-expansion-panel class="border-y-2 border-gray-600">
-                <v-expansion-panel-title>
-                  <div class="flex flex-row items-center w-full">
-                    <div class="w-full flex flex-row items-center">
-                      <div class="w-2/5">{{ t("SETTINGS_SYMPTOMS_TITLE") }}</div>
-                      <div>{{ t("SETTINGS_SYMPTOMS_SUBTITLE") }}</div>
-                    </div>
-                    <v-icon>spa</v-icon>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <div class="flex flex-col gap-4">
-                    <v-select
-                      :items="symptomList"
-                      item-value="key"
-                      item-title="label"
-                      v-model="defaultSymptom"
-                      :label="t('DEFAULT_SYMPTOM_LABEL')"
-                      hide-details
-                      @update:model-value="setDefaultSymptom"
-                    />
-                    <v-btn variant="text" @click="router.push({ name: 'Symptoms' })">{{
-                      t("SYMPTOM_MANAGE_LINK")
-                    }}</v-btn>
-                  </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <v-expansion-panel class="border-y-2 border-gray-600">
-                <v-expansion-panel-title>
-                  <div class="flex flex-row items-center w-full">
-                    <div class="flex flex-row w-full">
-                      <div class="w-2/5">{{ t("SETTINGS_MEDS_TITLE") }}</div>
-                      <div>{{ t("SETTINGS_MEDS_SUBTITLE") }}</div>
-                    </div>
-                    <v-icon>medication</v-icon>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <div class="flex flex-col gap-4">
-                    <v-btn variant="text" @click="router.push({ name: 'Meds' })">{{ t("MEDS_MANAGE_LINK") }}</v-btn>
-                  </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <v-expansion-panel class="border-y-2 border-gray-600">
-                <v-expansion-panel-title>
-                  <div class="flex flex-row items-center w-full">
-                    <div class="flex flex-row items-center w-full">
-                      <div class="w-2/5">{{ t("SETTINGS_NOTES_TITLE") }}</div>
-                      <div>{{ t("SETTINGS_NOTES_SUBTITLE") }}</div>
-                    </div>
-                    <v-icon>event_note</v-icon>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <div class="flex flex-col gap-4">
-                    <v-btn variant="text" @click="router.push({ name: 'Notes' })">{{ t("NOTES_MANAGE_LINK") }}</v-btn>
-                  </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <v-expansion-panel class="border-y-2 border-gray-600">
-                <v-expansion-panel-title>
-                  <div class="flex flex-row justify-between items-center w-full">
-                    <div class="flex flex-row items-center w-full">
-                      <div class="w-2/5">{{ t("SETTINGS_LANGUAGE_TITLE") }}</div>
-                      <div>{{ t("SETTINGS_LANGUAGE_SUBTITLE") }}</div>
-                    </div>
-                    <v-icon>language</v-icon>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <div class="flex flex-col gap-4">
-                    <v-select
-                      :items="languageList"
-                      item-value="lang"
-                      item-title="label"
-                      v-model="selectedLanguage"
-                      :label="t('LANGUAGE')"
-                      hide-details
-                      @update:model-value="setLanguage"
-                    />
-                  </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <v-expansion-panel name="Time" class="border-y-2 border-gray-600">
-                <v-expansion-panel-title>
-                  <div class="flex flex-row justify-between items-center w-full">
-                    <div class="flex flex-row items-center w-full">
-                      <div class="w-2/5">{{ t("SETTINGS_TIME_TITLE") }}</div>
-                      <div>{{ t("SETTINGS_TIME_SUBTITLE") }}</div>
-                    </div>
-                    <v-icon>access_time</v-icon>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <div class="flex flex-col gap-4">
-                    <v-select
-                      :items="timeFormatList"
-                      item-value="timeFormat"
-                      item-title="label"
-                      v-model="selectedTimeFormat"
-                      :label="t('TIME_FORMAT')"
-                      hide-details
-                      @update:model-value="setTimeFormat"
-                    />
-                  </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <v-expansion-panel name="Import / Export" class="border-y-2 border-gray-600">
-                <v-expansion-panel-title>
-                  <div class="flex flex-row justify-between items-center w-full">
-                    <div class="flex flex-row items-center w-full">
-                      <div class="w-2/5">{{ t("SETTINGS_IMPORT_EXPORT_TITLE") }}</div>
-                      <div>{{ t("SETTINGS_IMPORT_EXPORT_SUBTITLE") }}</div>
-                    </div>
-                    <v-icon>swap_vert</v-icon>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-list>
-                    <v-list-item>
-                      <v-expansion-panels>
-                        <v-expansion-panel>
-                          <v-expansion-panel-title>
-                            <div class="flex flex-row items-center gap-2">
-                              <v-icon>library_add</v-icon>
-                              {{ t("IMPORT") }}
-                            </div>
-                          </v-expansion-panel-title>
-                          <v-expansion-panel-text>
-                            <v-list>
-                              <v-list-item @click="openImportDialog('auto')">
-                                {{ t("LOAD_AUTO_SAVE") }}
-                              </v-list-item>
-                              <v-list-item @click="openImportDialog('manual')">
-                                {{ t("LOAD_MANUAL_SAVE") }}
-                              </v-list-item>
-                              <v-list-item @click="openImportDialog('web')">
-                                {{ t("LOAD_WEB_SAVE") }}
-                              </v-list-item>
-                            </v-list>
-                          </v-expansion-panel-text>
-                        </v-expansion-panel>
-                      </v-expansion-panels>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-title class="flex flex-row items-center gap-2" @click="exportModal = true">
-                        <v-icon>save_alt</v-icon>{{ t("SAVE") }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-              <v-expansion-panel name="Advanced" class="border-y-2 border-gray-600">
-                <v-expansion-panel-title>
-                  <div class="flex flex-row justify-between items-center w-full">
-                    <div class="flex flex-row items-center w-full">
-                      <div class="flex flex-row items-center w-full">
-                        <div class="w-2/5">{{ t("SETTINGS_ADVANCED_TITLE") }}</div>
-                        <div>{{ t("SETTINGS_ADVANCED_SUBTITLE") }}</div>
+    <div class="flex flex-col gap-6 px-4">
+      <h1 class="my-4 text-3xl"><p>Settings</p></h1>
+      <section name="symptoms" class="w-full">
+        <Accordion value="0">
+          <AccordionPanel name="symptoms" value="0">
+            <AccordionHeader>
+              <div class="flex w-full flex-row items-center">
+                <div class="w-2/5">{{ t("SETTINGS_SYMPTOMS_TITLE") }}</div>
+                <div>{{ t("SETTINGS_SYMPTOMS_SUBTITLE") }}</div>
+              </div>
+            </AccordionHeader>
+            <AccordionContent>
+              <div class="flex flex-col gap-4">
+                <FloatLabel class="width-full mt-6">
+                  <PrimeSelect
+                    v-model="defaultSymptom"
+                    :options="symptomList"
+                    option-label="label"
+                    @update:model-value="setDefaultSymptom"
+                    class="w-full"
+                  />
+                  <label for="defaultSymptom">{{ t("DEFAULT_SYMPTOM_LABEL") }}</label>
+                </FloatLabel>
+                <PrimeButton @click="router.push({ name: 'Symptoms' })">{{ t("SYMPTOM_MANAGE_LINK") }}</PrimeButton>
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel name="meds" value="1">
+            <AccordionHeader>
+              <div class="flex w-full flex-row">
+                <div class="w-2/5">{{ t("SETTINGS_MEDS_TITLE") }}</div>
+                <div>{{ t("SETTINGS_MEDS_SUBTITLE") }}</div>
+              </div>
+            </AccordionHeader>
+            <AccordionContent>
+              <div class="flex flex-col gap-4">
+                <PrimeButton @click="router.push({ name: 'Meds' })">{{ t("MEDS_MANAGE_LINK") }}</PrimeButton>
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel name="notes" value="2">
+            <AccordionHeader>
+              <div class="flex w-full flex-row items-center">
+                <div class="w-2/5">{{ t("SETTINGS_NOTES_TITLE") }}</div>
+                <div>{{ t("SETTINGS_NOTES_SUBTITLE") }}</div>
+              </div>
+            </AccordionHeader>
+            <AccordionContent>
+              <div class="flex flex-col gap-4">
+                <PrimeButton @click="router.push({ name: 'Notes' })">{{ t("NOTES_MANAGE_LINK") }}</PrimeButton>
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel name="language" value="3">
+            <AccordionHeader>
+              <div class="flex w-full flex-row items-center">
+                <div class="w-2/5">{{ t("SETTINGS_LANGUAGE_TITLE") }}</div>
+                <div>{{ t("SETTINGS_LANGUAGE_SUBTITLE") }}</div>
+              </div>
+            </AccordionHeader>
+            <AccordionContent>
+              <div class="flex flex-col gap-4">
+                <FloatLabel class="mt-6">
+                  <PrimeSelect
+                    id="language"
+                    class="w-full"
+                    :options="languageList"
+                    option-label="label"
+                    v-model="selectedLanguage"
+                    @update:model-value="setLanguage"
+                  />
+                  <label for="language">{{ t("LANGUAGE") }}</label>
+                </FloatLabel>
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel name="Time" value="4">
+            <AccordionHeader>
+              <div class="flex w-full flex-row items-center">
+                <div class="w-2/5">{{ t("SETTINGS_TIME_TITLE") }}</div>
+                <div>{{ t("SETTINGS_TIME_SUBTITLE") }}</div>
+              </div>
+            </AccordionHeader>
+            <AccordionContent>
+              <div class="flex flex-col gap-4">
+                <FloatLabel class="mt-6">
+                  <PrimeSelect
+                    id="timeFormat"
+                    class="w-full"
+                    :options="timeFormatList"
+                    option-label="timeFormat"
+                    v-model="selectedTimeFormat"
+                    @update:model-value="setTimeFormat"
+                  />
+                  <label for="timeFormat">{{ t("TIME_FORMAT") }}</label>
+                </FloatLabel>
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel name="Import / Export" value="5">
+            <AccordionHeader>
+              <div class="flex w-full flex-row items-center">
+                <div class="w-2/5">{{ t("SETTINGS_IMPORT_EXPORT_TITLE") }}</div>
+                <div>{{ t("SETTINGS_IMPORT_EXPORT_SUBTITLE") }}</div>
+              </div>
+            </AccordionHeader>
+            <AccordionContent>
+              <div class="flex flex-col gap-4">
+                <div>
+                  <Panel toggleable collapsed>
+                    <template #header>
+                      <div class="flex flex-row items-center gap-2">
+                        <i class="material-icons !text-2xl">library_add</i>
+                        {{ t("IMPORT") }}
                       </div>
-                      <v-icon>expand</v-icon>
+                    </template>
+                    <div class="flex flex-col gap-4">
+                      <PrimeButton @click="openImportDialog('auto')">
+                        {{ t("LOAD_AUTO_SAVE") }}
+                      </PrimeButton>
+                      <PrimeButton @click="openImportDialog('manual')">
+                        {{ t("LOAD_MANUAL_SAVE") }}
+                      </PrimeButton>
+                      <PrimeButton @click="openImportDialog('web')">
+                        {{ t("LOAD_WEB_SAVE") }}
+                      </PrimeButton>
                     </div>
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-expansion-panels>
-                    <v-expansion-panel class="border-y-2 border-gray-600">
-                      <v-expansion-panel-title>
-                        <div class="flex flex-row items-center w-full">
-                          <div class="w-2/5">{{ t("SETTINGS_MANUAL_SAVE_TITLE") }}</div>
-                          <div>{{ t("SETTINGS_MANUAL_SAVE_SUBTITLE") }}</div>
+                  </Panel>
+                </div>
+                <PrimeButton class="w-full" @click="exportModal = true">
+                  <i class="material-icons !text-2xl">save_alt</i>{{ t("SAVE") }}
+                </PrimeButton>
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
+          <AccordionPanel name="Advanced" value="6">
+            <AccordionHeader>
+              <div class="flex w-full flex-row items-center">
+                <div class="flex w-full flex-row items-center">
+                  <div class="w-2/5">{{ t("SETTINGS_ADVANCED_TITLE") }}</div>
+                  <div>{{ t("SETTINGS_ADVANCED_SUBTITLE") }}</div>
+                </div>
+              </div>
+            </AccordionHeader>
+            <AccordionContent>
+              <Accordion value="0">
+                <AccordionPanel value="0">
+                  <AccordionHeader>
+                    <div class="flex w-full flex-row items-center">
+                      <div class="w-2/5">{{ t("SETTINGS_MANUAL_SAVE_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_MANUAL_SAVE_SUBTITLE") }}</div>
+                    </div>
+                  </AccordionHeader>
+                  <AccordionContent>
+                    <div class="flex flex-col gap-4">
+                      <PrimeButton @click="generateBackup()">
+                        {{ t("SETTINGS_MANUAL_SAVE_BUTTON") }}
+                      </PrimeButton>
+                      <div v-if="backup" class="flex flex-col gap-4">
+                        <PrimeButton @click="writeBackupToClipboard()">
+                          <i class="material-icons">file_copy</i> {{ copied ? t("COPIED") : t("COPY") }}
+                        </PrimeButton>
+                        <div class="h-48 overflow-y-auto">
+                          {{ backup }}
                         </div>
-                      </v-expansion-panel-title>
-                      <v-expansion-panel-text>
-                        <div class="flex flex-col gap-4">
-                          <v-btn class="text-center py-1 bg-blue-800 rounded" variant="tonal" @click="generateBackup()">
-                            {{ t("SETTINGS_MANUAL_SAVE_BUTTON") }}
-                          </v-btn>
-                          <div v-if="backup" class="flex flex-col gap-4">
-                            <v-btn @click="writeBackupToClipboard()"
-                              ><v-icon>file_copy</v-icon> {{ copied ? t("COPIED") : t("COPY") }}</v-btn
-                            >
-                            <div class="overflow-y-auto h-32">
-                              {{ backup }}
-                            </div>
-                          </div>
-                        </div>
-                      </v-expansion-panel-text>
-                    </v-expansion-panel>
-                    <v-expansion-panel class="border-y-2 border-gray-600">
-                      <v-expansion-panel-title>
-                        <div class="flex flex-row items-center w-full">
-                          <div class="w-2/5">{{ t("SETTINGS_ERROR_LOGS_TITLE") }}</div>
-                          <div>{{ t("SETTINGS_ERROR_LOGS_SUBTITLE") }}</div>
-                        </div>
-                      </v-expansion-panel-title>
-                      <v-expansion-panel-text>
-                        <div v-if="errorLogs.length === 0" class="flex flex-row justify-center px-4">
-                          {{ t("NO_ERROR_LOGS") }}
-                        </div>
-                        <div v-else class="flex flex-col gap-4">
-                          <div v-for="error in errorLogs" :key="error">{{ error }}</div>
-                        </div>
-                      </v-expansion-panel-text>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </section>
-        </div>
-      </ion-content>
-    </ion-content>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionPanel>
+                <AccordionPanel value="1">
+                  <AccordionHeader>
+                    <div class="flex w-full flex-row items-center">
+                      <div class="w-2/5">{{ t("SETTINGS_ERROR_LOGS_TITLE") }}</div>
+                      <div>{{ t("SETTINGS_ERROR_LOGS_SUBTITLE") }}</div>
+                    </div>
+                  </AccordionHeader>
+                  <AccordionContent>
+                    <div v-if="errorLogs.length === 0" class="flex flex-row justify-center px-4">
+                      {{ t("NO_ERROR_LOGS") }}
+                    </div>
+                    <div v-else class="flex flex-col gap-4">
+                      <div v-for="error in errorLogs" :key="error">{{ error }}</div>
+                    </div>
+                  </AccordionContent>
+                </AccordionPanel>
+              </Accordion>
+            </AccordionContent>
+          </AccordionPanel>
+        </Accordion>
+      </section>
+    </div>
   </ion-content>
-  <v-dialog v-model="importModal" max-width="auto">
-    <template v-slot:default>
-      <v-card>
-        <v-card-title>{{ t("IMPORT_DIALOG_TITLE") }}</v-card-title>
-        <v-card-text class="flex flex-col gap-4">
-          <p>{{ t("IMPORT_DIALOG_CONTENT_1") }}</p>
-          <p>{{ t("IMPORT_DIALOG_CONTENT_2") }}</p>
-          <p>{{ t("IMPORT_DIALOG_CONTENT_3") }}</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn variant="text" @click="importModal = false">{{ t("NO") }}</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="importSave">{{ t("YES") }}</v-btn>
-        </v-card-actions>
-      </v-card>
+  <PrimeDialog v-model:visible="importModal" :closable="false" :draggable="false" modal>
+    <template #header>
+      <h3 class="text-xl">
+        {{ t("IMPORT_DIALOG_TITLE") }}
+      </h3>
     </template>
-  </v-dialog>
-  <v-dialog v-model="exportModal" max-width="auto">
-    <template v-slot:default>
-      <v-card>
-        <v-card-title>
-          <h3 class="text-xl">
-            {{ t("EXPORT_DIALOG_TITLE", { data_type: t("SYMPTOMS") }) }}
-          </h3>
-        </v-card-title>
-        <v-card-text class="flex flex-col gap-4">
-          <p>{{ t("EXPORT_DIALOG_CONTENT_1") }}</p>
-          <p>{{ t("EXPORT_DIALOG_CONTENT_2") }}</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn variant="text" @click="exportModal = false">{{ t("NO") }}</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="exportSave">{{ t("YES") }}</v-btn>
-        </v-card-actions>
-      </v-card>
+    <p>{{ t("IMPORT_DIALOG_CONTENT_1") }}</p>
+    <p>{{ t("IMPORT_DIALOG_CONTENT_2") }}</p>
+    <p>{{ t("IMPORT_DIALOG_CONTENT_3") }}</p>
+    <template #footer>
+      <div class="flex w-full flex-row justify-between">
+        <PrimeButton @click="importModal = false">{{ t("NO") }}</PrimeButton>
+        <PrimeButton @click="importSave">{{ t("YES") }}</PrimeButton>
+      </div>
     </template>
-  </v-dialog>
+  </PrimeDialog>
+  <PrimeDialog v-model:visible="exportModal" :closable="false" :draggable="false" modal>
+    <template #header>
+      <h3 class="text-xl">
+        {{ t("EXPORT_DIALOG_TITLE", { data_type: t("SYMPTOMS") }) }}
+      </h3>
+    </template>
+    <p>{{ t("EXPORT_DIALOG_CONTENT_1") }}</p>
+    <p>{{ t("EXPORT_DIALOG_CONTENT_2") }}</p>
+    <template #footer>
+      <div class="flex w-full flex-row justify-between">
+        <PrimeButton @click="exportModal = false">{{ t("NO") }}</PrimeButton>
+        <PrimeButton @click="exportSave">{{ t("YES") }}</PrimeButton>
+      </div>
+    </template>
+  </PrimeDialog>
 </template>
 
 <style lang="scss">
-.v-expansion-panel[name="Import / Export"] {
-  .v-expansion-panel-text .v-expansion-panel-title {
-    padding: 0;
-  }
-}
-
-.v-expansion-panel-title__icon {
-  display: none;
+.pannel-style {
+  padding: var(--p-panel-toggleable-header-padding);
+  border-style: solid;
+  border: 1px solid var(--p-panel-border-color);
+  border-color: var(--p-panel-header-border-color);
+  border-radius: var(--p-panel-border-radius);
 }
 </style>

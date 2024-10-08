@@ -189,6 +189,7 @@
   "TABLE_DOSAGE": "Dose",
   "TABLE_OCCURRENCES": "Occurrences",
   "TABLE_LAST_ENTRY": "Dernière entrée",
+  "NO_MEDS_FOUND": "No medication found",
   "EMPTY_SYMPTOMS_1": "Il n'y a pas de symptôme enregistré ici. Ils apparaîtront lorsque vous en aurez saisis dans votre timeline.",
   "EMPTY_MEDS_1": "Il n'y a pas de médicament enregistré ici. Ils apparaîtront lorsque vous en aurez saisis dans votre timeline.",
   "EMPTY_MEDS_2": "Si vous avez déjà des saisies de médicaments mais qui ne sont pas encore enregistrées ici, vous pouvez rafraîchir la liste en cliquant sur le bouton de rafraîchissement.",

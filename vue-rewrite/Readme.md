@@ -68,3 +68,4 @@ This is a rewrite of the Life Notes app in Vue.js.
   - [ ] "SUCCESSFULLY"
   - [ ] "FAILED"
   - [ ] "NO_ERROR_LOGS"
+  - [ ] "NO_MEDS_FOUND"

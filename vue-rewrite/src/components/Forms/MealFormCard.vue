@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n"
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { useDayStore } from "@/store"
 import { buildMeal, createToast } from "@/utils"
 import { onBeforeMount, ref } from "vue"
-import { TimePicker } from "./Fields"
 import { IMeal } from "@/types"
 
 // Vue Definitions
@@ -13,17 +12,19 @@ const props = defineProps<{
   day: string
   editData?: IMeal
 }>()
+const visible = defineModel("visible")
 
 // external components
 const { t } = useI18n()
 const dayStore = useDayStore()
 
 // Variables
-const monthShort = ref(format(new Date(props.day), "MMM"))
-const day = ref(format(new Date(props.day), "dd"))
+const propDay = ref(props.day ? new Date(props.day) : new Date())
+const monthShort = ref(format(propDay.value, "MMM"))
+const dayFormatted = ref(format(propDay.value, "dd"))
 
 // Form values
-const time = ref(format(new Date(), "HH:mm"))
+const time = ref(new Date())
 const mealLabel = ref<string>("")
 const details = ref("")
 
@@ -40,11 +41,11 @@ async function addMealToDay() {
   if (props.editData) {
     IMealBasic = {
       ...props.editData,
-      time: time.value,
+      time: format(time.value, "HH:mm"),
       detail: details.value,
     }
   } else {
-    IMealBasic = buildMeal(mealLabel.value, time.value, details.value)
+    IMealBasic = buildMeal(mealLabel.value, format(time.value, "HH:mm"), details.value)
   }
   dayStore
     .addMeal(props.day, IMealBasic)
@@ -80,30 +81,44 @@ onBeforeMount(() => {
   // When editing a meal, set the values
   if (props.editData) {
     mealLabel.value = props.editData.key
-    time.value = props.editData.time
+    time.value = parse(props.editData.time, "HH:mm", new Date())
     details.value = props.editData.detail
   }
 })
 </script>
 
 <template>
-  <v-card>
-    <v-card-title>
-      <h3 class="text-xl">
-        {{ t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", { type: t("MEAL"), monthShort, day }) }}
+  <PrimeDialog v-model:visible="visible" :closable="false" :draggable="false" modal>
+    <template #header>
+      <h3 class="text-2xl">
+        {{
+          t(editData ? "EDIT_EVENT_DIALOG_TITLE" : "ADD_EVENT_DIALOG_TITLE", {
+            type: t("MEAL"),
+            monthShort,
+            day: dayFormatted,
+          })
+        }}
       </h3>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="flex flex-col gap-4">
-        <TimePicker v-model="time" />
-        <v-text-field v-model="mealLabel" :label="t('MEAL')" hide-details />
-        <v-text-field v-model="details" :label="t('DETAIL')" hide-details />
-      </v-form>
-    </v-card-text>
-    <v-card-actions props>
-      <v-btn @click="emits('close')">{{ t("CANCEL") }}</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn @click="addMealToDay">{{ t(editData ? "EDIT" : "ADD") }}</v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+    <form class="flex flex-col gap-8">
+      <FloatLabel class="mt-6">
+        <DatePicker v-model="time" time-only id="time" />
+        <label for="time">{{ t("TIME") }}</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText v-model="mealLabel" id="mealLabel" />
+        <label for="mealLabel">{{ t("MEAL") }}</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText v-model="details" id="details" />
+        <label for="details">{{ t("DETAIL") }}</label>
+      </FloatLabel>
+    </form>
+    <template #footer>
+      <div class="flex w-full flex-row justify-between">
+        <PrimeButton @click="emits('close')">{{ t("CANCEL") }}</PrimeButton>
+        <PrimeButton @click="addMealToDay">{{ t(editData ? "EDIT" : "ADD") }}</PrimeButton>
+      </div>
+    </template>
+  </PrimeDialog>
 </template>

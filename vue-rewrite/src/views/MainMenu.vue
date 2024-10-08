@@ -11,15 +11,21 @@ const router = useIonRouter()
 <template>
   <IonHeader>
     <!-- eslint-disable vue/no-deprecated-slot-attribute -->
-    <div class="flex flex-row w-full justify-between p-5 bg-slate-500">
+    <div class="bg-surface-50 dark:bg-surface-700 flex w-full flex-row justify-between p-5">
       <div class="flex flex-row">
-        <v-icon size="large" @click="router.push({ name: 'Home' })">calendar_view_day</v-icon>
-        <v-icon size="large" @click="router.push({ name: 'Calendar' })">apps</v-icon>
-        <v-icon size="large" @click="router.push({ name: 'Symptoms' })">spa</v-icon>
+        <PrimeButton link>
+          <i class="material-icons" @click="router.push({ name: 'Home' })"> calendar_view_day </i>
+        </PrimeButton>
+        <PrimeButton link>
+          <i class="material-icons" @click="router.push({ name: 'Calendar' })"> apps </i>
+        </PrimeButton>
+        <PrimeButton link><i class="material-icons" @click="router.push({ name: 'Symptoms' })"> spa </i></PrimeButton>
       </div>
       <div class="flex flex-row">
-        <v-icon size="large" @click="router.push({ name: 'Help' })">help</v-icon>
-        <v-icon size="large" @click="router.push({ name: 'Settings' })">settings</v-icon>
+        <PrimeButton link><i class="material-icons" @click="router.push({ name: 'Help' })">help</i></PrimeButton>
+        <PrimeButton link>
+          <i class="material-icons" @click="router.push({ name: 'Settings' })">settings</i>
+        </PrimeButton>
       </div>
     </div>
   </IonHeader>

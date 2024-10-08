@@ -7,33 +7,10 @@ import { createPinia } from "pinia"
 
 const pinia = createPinia()
 
-import {
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonicVue,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/vue"
+import { IonicVue } from "@ionic/vue"
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/vue/css/core.css"
-
-/* Basic CSS for apps built with Ionic */
-import "@ionic/vue/css/normalize.css"
-import "@ionic/vue/css/structure.css"
-import "@ionic/vue/css/typography.css"
-
-/* Optional CSS utils that can be commented out */
-import "@ionic/vue/css/padding.css"
-import "@ionic/vue/css/float-elements.css"
-import "@ionic/vue/css/text-alignment.css"
-import "@ionic/vue/css/text-transformation.css"
-import "@ionic/vue/css/flex-utils.css"
-import "@ionic/vue/css/display.css"
 
 /**
  * Ionic Dark Mode
@@ -62,46 +39,66 @@ const i18n = createI18n({
 })
 
 /**
- * Vuetify
+ * PrimeVue
  */
-import "material-design-icons-iconfont/dist/material-design-icons.css"
-import { createVuetify } from "vuetify"
-import * as components from "vuetify/components"
-import { VTimePicker } from "vuetify/labs/VTimePicker"
-import * as directives from "vuetify/directives"
-import { aliases, md } from "vuetify/iconsets/md"
-import { darkTheme, lightTheme } from "./theme"
+import PrimeVue from "primevue/config"
+import "primeicons/primeicons.css"
+import Button from "primevue/button"
+import Drawer from "primevue/drawer"
+import { themePreset } from "./theme"
+import Dialog from "primevue/dialog"
+import DatePicker from "primevue/datepicker"
+import Select from "primevue/select"
+import FloatLabel from "primevue/floatlabel"
+import Slider from "primevue/slider"
+import Divider from "primevue/divider"
+import InputText from "primevue/inputtext"
+import InputNumber from "primevue/inputnumber"
+import AutoComplete from "primevue/autocomplete"
+import Column from "primevue/column"
+import DataTable from "primevue/datatable"
+import Accordion from "primevue/accordion"
+import AccordionContent from "primevue/accordioncontent"
+import AccordionHeader from "primevue/accordionheader"
+import AccordionPanel from "primevue/accordionpanel"
+import Panel from "primevue/panel"
 
-const vuetify = createVuetify({
-  components: { VTimePicker, ...components },
-  directives,
-  icons: {
-    defaultSet: "md",
-    aliases,
-    sets: {
-      md,
+const app = createApp(App)
+  .use(PrimeVue, {
+    theme: {
+      preset: themePreset,
+      options: {
+        cssLayer: {
+          name: "primevue",
+          order: "tailwind-base, primevue, tailwind-components",
+        },
+      },
     },
-  },
-  theme: {
-    defaultTheme: "dark",
-    themes: {
-      light: lightTheme,
-      dark: darkTheme,
-    },
-  },
-})
+  })
+  .use(IonicVue)
+  .use(router)
+  .use(i18n)
+  .use(pinia)
 
-const app = createApp(App).use(vuetify).use(IonicVue).use(router).use(i18n).use(pinia)
-
-/* Ionic Components */
-app.component("IonInfiniteScroll", IonInfiniteScroll)
-app.component("IonInfiniteScrollContent", IonInfiniteScrollContent)
-app.component("IonHeader", IonHeader)
-app.component("IonToolbar", IonToolbar)
-app.component("IonTitle", IonTitle)
-app.component("IonContent", IonContent)
-app.component("IonPage", IonPage)
-app.component("IonIcon", IonIcon)
+// PrimeVue Components
+app.component("PrimeButton", Button)
+app.component("PrimeSelect", Select)
+app.component("Drawer", Drawer)
+app.component("PrimeDialog", Dialog)
+app.component("DatePicker", DatePicker)
+app.component("FloatLabel", FloatLabel)
+app.component("Slider", Slider)
+app.component("Divider", Divider)
+app.component("InputText", InputText)
+app.component("InputNumber", InputNumber)
+app.component("AutoComplete", AutoComplete)
+app.component("DataTable", DataTable)
+app.component("Column", Column)
+app.component("Accordion", Accordion)
+app.component("AccordionPanel", AccordionPanel)
+app.component("AccordionHeader", AccordionHeader)
+app.component("AccordionContent", AccordionContent)
+app.component("Panel", Panel)
 
 router.isReady().then(() => {
   app.mount("#app")
