@@ -2,6 +2,7 @@
 
 @layer normalize {
   @import "@ionic/vue/css/normalize.css";
+  @import "@/theme/normalize.css";
 }
 
 @layer tailwind-base {
@@ -13,7 +14,6 @@
   @tailwind utilities;
 }
 
-@import "@/theme/normalize.css";
 @import "@/theme/variables.css";
 @import "@/theme/ionic.scss";
 @import "@/theme/primeVue.css";
