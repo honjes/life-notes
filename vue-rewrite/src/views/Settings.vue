@@ -187,16 +187,20 @@ onBeforeMount(() => {
   symptomStore.$subscribe(() => {
     updateSymptomList()
   })
+  let firstMainStoreUpdate = true
   // only subscribe until initalised
-  const unsubscribe = mainStore.$subscribe(() => {
+  mainStore.$subscribe(() => {
     // update settings on initalisation
     if (mainStore.initalised) {
-      selectedLanguage.value =
-        languageList.value.find(l => l.lang === mainStore.settings.language) || languageList.value[0]
-      selectedTimeFormat.value =
-        timeFormatList.value.find(t => t.timeFormat === mainStore.settings.timeFormat) || timeFormatList.value[0]
+      if (firstMainStoreUpdate) {
+        selectedLanguage.value =
+          languageList.value.find(l => l.lang === mainStore.settings.language) || languageList.value[0]
+        selectedTimeFormat.value =
+          timeFormatList.value.find(t => t.timeFormat === mainStore.settings.timeFormat) || timeFormatList.value[0]
+        defaultSymptom.value = symptomList.value.find(s => s.key === mainStore.settings.defaultSymptom)
+        firstMainStoreUpdate = false
+      }
       defaultSymptom.value = symptomList.value.find(s => s.key === mainStore.settings.defaultSymptom)
-      unsubscribe()
     }
   })
 })
