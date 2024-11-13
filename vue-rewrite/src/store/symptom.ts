@@ -34,6 +34,17 @@ export const useSymptomStore = defineStore("symptom", () => {
   }
 
   /**
+   * returns a symptom by key
+   * @param key - symptom key
+   * @returns Promise<ISymptom>
+   */
+  async function getSymptom(key: string): Promise<ISymptom> {
+    const symptomReturn = await db.get(key)
+    if (symptomReturn == null) throw new Error("Symptom not found")
+    return symptomReturn
+  }
+
+  /**
    * returns a symptom by labe
    * @param label - symptom label
    * @returns Promise<ISymptom>
@@ -84,7 +95,7 @@ export const useSymptomStore = defineStore("symptom", () => {
     return await db.remove(symptom)
   }
 
-  return { resetDB, updates, getSymptoms, getSymptomByLabel, createNewSymptom, editSymptom, deleteSymptom }
+  return { resetDB, updates, getSymptoms, getSymptom, getSymptomByLabel, createNewSymptom, editSymptom, deleteSymptom }
 })
 
 export default useSymptomStore
