@@ -1,10 +1,23 @@
-import { defineStore } from "pinia"
-import { format, subDays } from "date-fns"
+import { defineStore, storeToRefs } from "pinia"
+import { format, subDays, set as setDate } from "date-fns"
 import { buildMed, dateFormat } from "@/utils"
-import { IDay, IMeal, ISymptom, ISymptomLog, IMed, IMedLog, INoteBasic, INoteLog, DataTypes } from "@/types"
+import {
+  IDay,
+  IMeal,
+  ISymptom,
+  ISymptomLog,
+  IMed,
+  IMedLog,
+  INoteBasic,
+  INoteLog,
+  DataTypes,
+  IShortSymptomOverview,
+} from "@/types"
 import { ref } from "vue"
 import { useNoteStore } from "./note"
 import { useMedStore } from "./med"
+import { useMainStore } from "./mainStore"
+import useSymptomStore from "./symptom"
 
 export const useDayStore = defineStore("day", () => {
   let db = new PouchDB<IDay>("days")
@@ -14,6 +27,9 @@ export const useDayStore = defineStore("day", () => {
   // stores
   const noteStore = useNoteStore()
   const medStore = useMedStore()
+  const mainStore = useMainStore()
+  const symptomStore = useSymptomStore()
+  const { settings } = storeToRefs(mainStore)
 
   /**
    * Initalise day DB with given data
@@ -96,6 +112,33 @@ export const useDayStore = defineStore("day", () => {
         throw err
       }
     }
+  }
+
+  /**
+   * get the main Symptom overview for a month
+   * @param {Date} month - month to get overview for
+   * @returns {Promise<ISymptomOverview[]>}
+   */
+  async function getMonthSymptomOverview(month: Date): Promise<IShortSymptomOverview[]> {
+    const mainSymptom = settings.value.defaultSymptom
+    if (mainSymptom === "none") return []
+    else {
+      const symptom = await symptomStore.getSymptom(mainSymptom)
+      const days = await getDays(31, 0, setDate(month, { date: 1 }))
+      const mainSymptomOverview: ISymptom[] = days.map(day => {
+        const mainSymptom = day.symptoms.filter(v => v.key === symptom.key)
+        if (mainSymptom.length > 0) return mainSymptom[0]
+        else
+          return {
+            ...symptom,
+            pain: "0",
+          }
+      })
+
+      return mainSymptomOverview.map(overview => ({ ...overview, pain: Number(overview.pain) }))
+    }
+
+    // get symptoms for the month
   }
 
   /**
@@ -368,6 +411,7 @@ export const useDayStore = defineStore("day", () => {
     dayUpdate,
     getDays,
     getDay,
+    getMonthSymptomOverview,
     getAllDays,
     addSymptom,
     addMeal,
