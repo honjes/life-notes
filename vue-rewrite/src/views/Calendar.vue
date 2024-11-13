@@ -42,7 +42,6 @@ async function updateDayColors() {
     5: "var(--p-red-950)",
   }
 
-  console.log("dayOverview", dayOverview)
   dayOverview.forEach((day, index) => {
     theme.value[index + 1] = painColors[day.pain]
   })

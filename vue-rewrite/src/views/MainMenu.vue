@@ -45,11 +45,17 @@ async function updateDefaultSymptom() {
 
 // initalisation
 onMounted(async () => {
-  mainSymptom.value = await symptomStore.getSymptom(settings.value.defaultSymptom)
+  const initMainSymptom = await symptomStore.getSymptom(settings.value.defaultSymptom)
+  if (initMainSymptom) {
+    mainSymptom.value = initMainSymptom
+  }
   symptomList.value = await symptomStore.getSymptoms()
 
   mainStore.$subscribe(async () => {
-    mainSymptom.value = await symptomStore.getSymptom(settings.value.defaultSymptom)
+    const newMainSymptom = await symptomStore.getSymptom(settings.value.defaultSymptom)
+    if (newMainSymptom) {
+      mainSymptom.value = newMainSymptom
+    }
   })
 })
 </script>
