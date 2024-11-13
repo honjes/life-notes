@@ -1,4 +1,4 @@
-import { defineStore, storeToRefs } from "pinia"
+import { defineStore } from "pinia"
 import { format, subDays, set as setDate } from "date-fns"
 import { buildMed, dateFormat } from "@/utils"
 import {
@@ -17,7 +17,6 @@ import { ref } from "vue"
 import { useNoteStore } from "./note"
 import { useMedStore } from "./med"
 import { useMainStore } from "./mainStore"
-import useSymptomStore from "./symptom"
 
 export const useDayStore = defineStore("day", () => {
   let db = new PouchDB<IDay>("days")
@@ -28,8 +27,6 @@ export const useDayStore = defineStore("day", () => {
   const noteStore = useNoteStore()
   const medStore = useMedStore()
   const mainStore = useMainStore()
-  const symptomStore = useSymptomStore()
-  const { settings } = storeToRefs(mainStore)
 
   /**
    * Initalise day DB with given data
@@ -120,22 +117,19 @@ export const useDayStore = defineStore("day", () => {
    * @returns {Promise<ISymptomOverview[]>}
    */
   async function getMonthSymptomOverview(month: Date): Promise<IShortSymptomOverview[]> {
-    const mainSymptom = settings.value.defaultSymptom
-    if (mainSymptom === "none") return []
+    const mainSymptomKey = mainStore.settings.defaultSymptom
+    if (mainSymptomKey === "none") return []
     else {
-      const symptom = await symptomStore.getSymptom(mainSymptom)
       const days = await getDays(31, 0, setDate(month, { date: 1 }))
-      const mainSymptomOverview: ISymptom[] = days.map(day => {
-        const mainSymptom = day.symptoms.filter(v => v.key === symptom.key)
-        if (mainSymptom.length > 0) return mainSymptom[0]
+      return days.map(day => {
+        const mainSymptom = day.symptoms.filter(v => v.key === mainSymptomKey)
+        if (mainSymptom.length > 0) return { ...mainSymptom[0], pain: Number(mainSymptom[0].pain) }
         else
           return {
-            ...symptom,
-            pain: "0",
+            key: mainSymptomKey,
+            pain: 0,
           }
       })
-
-      return mainSymptomOverview.map(overview => ({ ...overview, pain: Number(overview.pain) }))
     }
 
     // get symptoms for the month
