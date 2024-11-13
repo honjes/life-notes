@@ -8,8 +8,8 @@ import { buildMedOverview, buildNoteOverview, randomNumber } from "."
  * @param detail - details
  * @returns ISymptomLog
  */
-export function buildISymptomLog(time: string, pain: number, detail: string): ISymptomLog {
-  return { key: randomNumber(), time, pain, detail }
+export function buildISymptomLog(time: string, pain: number, detail: string, main = false): ISymptomLog {
+  return { key: randomNumber(), time, pain, detail, main }
 }
 
 /**
@@ -39,14 +39,16 @@ export function buildDayView(day: IDay): DayView {
  * @returns SymptomOverview
  */
 export function buildSymptomOverview(symptom: ISymptom): ISymptomOverview[] {
-  const returnArray: ISymptomOverview[] = symptom.logs.map(log => ({
-    type: DataTypes.symptoms,
-    label: symptom.label,
-    key: symptom.key,
-    logKey: log.key,
-    time: log.time,
-    pain: log.pain,
-    detail: log.detail,
-  }))
+  const returnArray: ISymptomOverview[] = symptom.logs
+    .filter(l => !l.main)
+    .map(log => ({
+      type: DataTypes.symptoms,
+      label: symptom.label,
+      key: symptom.key,
+      logKey: log.key,
+      time: log.time,
+      pain: log.pain,
+      detail: log.detail,
+    }))
   return returnArray
 }

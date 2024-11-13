@@ -117,18 +117,22 @@ export const useDayStore = defineStore("day", () => {
    * @returns {Promise<ISymptomOverview[]>}
    */
   async function getMonthSymptomOverview(month: Date): Promise<IShortSymptomOverview[]> {
-    const mainSymptomKey = mainStore.settings.defaultSymptom
-    if (mainSymptomKey === "none") return []
+    const mainSymptom = mainStore.settings.defaultSymptom
+    if (!mainSymptom) return []
     else {
       const days = await getDays(31, 0, setDate(month, { date: 1 }))
       return days.map(day => {
-        const mainSymptom = day.symptoms.filter(v => v.key === mainSymptomKey)
-        if (mainSymptom.length > 0) return { ...mainSymptom[0], pain: Number(mainSymptom[0].pain) }
-        else
-          return {
-            key: mainSymptomKey,
-            pain: 0,
+        const dayMainSymptom = day.symptoms.filter(v => v.key === mainSymptom.key)
+        if (dayMainSymptom.length > 0) {
+          const mainSymptomLog = dayMainSymptom[0].logs.find(l => l.main)
+          if (mainSymptomLog != null) {
+            return { key: mainSymptom.key, pain: Number(mainSymptomLog.pain) }
           }
+        }
+        return {
+          key: mainSymptom.key,
+          pain: 0,
+        }
       })
     }
 
@@ -148,7 +152,14 @@ export const useDayStore = defineStore("day", () => {
     const symptomIndex = iDay.symptoms.findIndex(s => s.key === symptom.key)
     // add log to symptom if it exists
     if (symptomIndex != -1) {
-      // check if log already exists
+      // check if is main symptom and remove old main symptom
+      if (log.main) {
+        const mainLogIndex = iDay.symptoms[symptomIndex].logs.findIndex(l => l.main)
+        if (mainLogIndex != -1) {
+          iDay.symptoms[symptomIndex].logs.splice(mainLogIndex, 1)
+        }
+      }
+      // check if log already exists and update it
       const logIndex = iDay.symptoms[symptomIndex].logs.findIndex(l => l.key === log.key)
       if (logIndex != -1) {
         // update log

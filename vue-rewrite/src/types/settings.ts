@@ -14,7 +14,7 @@ export enum TimeFormats {
 }
 
 export interface ISettings {
-  defaultSymptom: string
+  defaultSymptom: ISymptom | null
   language: Languages
   timeFormat: TimeFormats
   firstStart: boolean // TODO: make tutorial appear when first start

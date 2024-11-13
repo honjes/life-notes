@@ -2,10 +2,11 @@
 /*
  * DayView component displays a day and the symptoms of that day also has possability to add data to a day
  * It also has a bottom sheet to add data to a day
+ * //TODO: make the default symptom DOT react to change of the default symptom
  */
 import { DayView } from "@/types/day"
 import { DataTypes, INoteOverview } from "@/types/note"
-import { ref } from "vue"
+import { onBeforeMount, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { SymptomFormCard, MealFormCard, WakeUpGoToBedFormCard, MedFormCard, NoteFormCard } from "@/components/Forms"
 import { ISymptomOverview } from "@/types/symptom"
@@ -13,8 +14,9 @@ import { IMeal } from "@/types/meal"
 import { IMedOverview } from "@/types/med"
 import DetailedDataDialog from "./DetailedDataDialog.vue"
 import { getDay, getMonth, format } from "date-fns"
-import { useDayStore } from "@/store"
-import { createToast } from "@/utils"
+import { useDayStore, useMainStore } from "@/store"
+import { buildISymptomLog, createToast } from "@/utils"
+import { storeToRefs } from "pinia"
 
 // Vue Defenitions
 const props = defineProps<{
@@ -24,6 +26,8 @@ const props = defineProps<{
 // External Components
 const { t } = useI18n()
 const dayStore = useDayStore()
+const mainStore = useMainStore()
+const { settings } = storeToRefs(mainStore)
 
 // Variables
 // Bottom sheet variables
@@ -46,6 +50,9 @@ const deleteData = ref<INoteOverview | IMedOverview | IMeal | ISymptomOverview>(
 const showDeleteDialog = ref(false)
 const deleteDataType = ref<DataTypes>(DataTypes.symptoms)
 const showDeleteIcon = ref(false)
+// Main Symptom
+const mainSymptomPain = ref(0)
+const showMainSymptomDialog = ref(false)
 
 // Functions
 /**
@@ -110,10 +117,18 @@ function openAddDataDialog(type: DataTypes, day: string) {
 }
 
 /**
+ * opens a dialog to edit the main symptom
+ */
+function openMainSymptomDialog() {
+  if (!settings.value.defaultSymptom) return
+  showMainSymptomDialog.value = true
+}
+
+/**
  * Opens a dialog to delete a data
  * @param {INoteOverview | IMedOverview | IMeal | ISymptomOverview} data - data to delete
  */
-function showDeleteDilog(data: INoteOverview | IMedOverview | IMeal | ISymptomOverview) {
+function openDeleteDilog(data: INoteOverview | IMedOverview | IMeal | ISymptomOverview) {
   deleteData.value = data
   showDeleteDialog.value = true
   deleteDataType.value = data.type
@@ -132,6 +147,44 @@ async function deleteEvent() {
     deleteDataType.value === DataTypes.meals ? undefined : (deleteData.value as ISymptomOverview).logKey
   )
 }
+
+/**
+ * Sets the main symptom
+ */
+async function setMainSymptom() {
+  if (!settings.value.defaultSymptom) return
+  await dayStore.addSymptom(
+    props.day.date,
+    settings.value.defaultSymptom,
+    buildISymptomLog(format(new Date(), "HH:mm"), mainSymptomPain.value, "", true)
+  )
+  createToast(
+    t("ACTION_TOAST", {
+      action: t("SET"),
+      successfully_failuar: t("SUCCESSFULLY"),
+      data_type: t("SYMPTOM"),
+      name: settings.value.defaultSymptom.label,
+    }),
+    2000,
+    "success"
+  )
+  showMainSymptomDialog.value = false
+}
+
+// INIT
+onBeforeMount(() => {
+  // setting the pain level of the main symptom
+  if (settings.value.defaultSymptom) {
+    const mainSymptom = props.day.symptoms.filter(s => s.key === settings.value.defaultSymptom?.key)[0]
+    if (mainSymptom) {
+      const mainSymptomLog = mainSymptom.logs.filter(l => l.main)[0]
+      console.log("mainSymptom: ", mainSymptom)
+      console.log("mainSymptomLog: ", mainSymptomLog)
+      if (!mainSymptomLog) return
+      mainSymptomPain.value = mainSymptomLog.pain
+    }
+  }
+})
 </script>
 
 <template>
@@ -152,7 +205,7 @@ async function deleteEvent() {
         </PrimeButton>
       </div>
     </div>
-    <section name="content" class="min-h-112 group flex w-full flex-row justify-between pl-4">
+    <section name="content" class="min-h-112 group relative flex w-full flex-row justify-between pl-4">
       <div name="logs" class="flex w-3/5 flex-col gap-2 py-4">
         <div v-for="log in day.content" :key="log.key">
           <div
@@ -166,7 +219,7 @@ async function deleteEvent() {
               <div>[{{ (log as ISymptomOverview).pain }}/5]</div>
               <div><i class="material-icons">spa</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
+            <div v-if="showDeleteIcon" @click="openDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
           <div
             name="meal"
@@ -178,7 +231,7 @@ async function deleteEvent() {
               <div class="w-full">{{ (log as IMeal).key }}</div>
               <div><i class="material-icons">dinner_dining</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
+            <div v-if="showDeleteIcon" @click="openDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
           <div
             name="med"
@@ -191,7 +244,7 @@ async function deleteEvent() {
               <div>{{ (log as IMedOverview).quantity }}mg</div>
               <div><i class="material-icons">medication</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
+            <div v-if="showDeleteIcon" @click="openDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
           <div
             name="note"
@@ -203,7 +256,7 @@ async function deleteEvent() {
               <div class="w-full">{{ (log as INoteOverview).key }}</div>
               <div><i class="material-icons">event_note</i></div>
             </div>
-            <div v-if="showDeleteIcon" @click="showDeleteDilog(log)"><i class="material-icons">delete</i></div>
+            <div v-if="showDeleteIcon" @click="openDeleteDilog(log)"><i class="material-icons">delete</i></div>
           </div>
         </div>
       </div>
@@ -222,6 +275,13 @@ async function deleteEvent() {
           <PrimeButton class="p-0" link><i class="material-icons">bedtime</i></PrimeButton>
           <p class="min-h-6">{{ day.goToBed }}</p>
         </div>
+      </div>
+      <div class="absolute left-0 top-0 flex h-full w-full items-center justify-end">
+        <PrimeButton
+          class="mr-12 h-9 w-9 rounded-full border-none p-0"
+          :style="{ backgroundColor: settings.painColors[mainSymptomPain] }"
+          @click="openMainSymptomDialog"
+        ></PrimeButton>
       </div>
     </section>
   </aside>
@@ -314,6 +374,26 @@ async function deleteEvent() {
         <div class="flex w-full flex-row justify-between">
           <PrimeButton @click="showDeleteDialog = false">{{ t("CANCEL") }}</PrimeButton>
           <PrimeButton @click="deleteEvent">{{ t("DELETE") }}</PrimeButton>
+        </div>
+      </template>
+    </PrimeDialog>
+    <PrimeDialog v-model:visible="showMainSymptomDialog" :draggable="false" :closable="false" modal>
+      <template #header>
+        <h3 class="text-2xl">
+          {{ t("EDIT_SYMPTOM_OVERVIEW_DIALOG_TITLE", { symptom: settings.defaultSymptom?.label }) }}
+        </h3>
+      </template>
+      <div name="pain" class="p-floatlabel flex flex-col gap-2">
+        <label>{{ t("PAIN") }}</label>
+        <div class="p-inputwrapper-filled flex flex-row items-center gap-4">
+          <Slider class="ml-3 w-full" v-model="mainSymptomPain" :min="0" :max="5" :step="1" />
+          {{ mainSymptomPain }}
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex w-full flex-row justify-between">
+          <PrimeButton @click="showMainSymptomDialog = false">{{ t("CANCEL") }}</PrimeButton>
+          <PrimeButton @click="setMainSymptom">{{ t("SET") }}</PrimeButton>
         </div>
       </template>
     </PrimeDialog>

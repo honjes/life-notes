@@ -23,6 +23,7 @@ export interface ISymptomLog {
   time: string
   pain: number
   detail: string
+  main?: boolean
 }
 
 export interface ISymptom {

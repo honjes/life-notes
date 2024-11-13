@@ -39,22 +39,20 @@ const router = useIonRouter()
 /**
  * update the default symptom in store
  */
-async function updateDefaultSymptom() {
-  mainStore.settings.defaultSymptom = mainSymptom.value?.key as string
+async function setDefaultSymptom() {
+  mainStore.setDefaultSymptom(mainSymptom.value as ISymptom)
 }
 
 // initalisation
 onMounted(async () => {
-  const initMainSymptom = await symptomStore.getSymptom(settings.value.defaultSymptom)
-  if (initMainSymptom) {
-    mainSymptom.value = initMainSymptom
+  if (settings.value.defaultSymptom) {
+    mainSymptom.value = settings.value.defaultSymptom
   }
   symptomList.value = await symptomStore.getSymptoms()
 
   mainStore.$subscribe(async () => {
-    const newMainSymptom = await symptomStore.getSymptom(settings.value.defaultSymptom)
-    if (newMainSymptom) {
-      mainSymptom.value = newMainSymptom
+    if (settings.value.defaultSymptom) {
+      mainSymptom.value = settings.value.defaultSymptom
     }
   })
 })
@@ -79,7 +77,7 @@ onMounted(async () => {
           optionLabel="label"
           labelClass="max-w-28"
           :placeholder="t('NO_DEFAULT_SYMPTOM')"
-          @change="updateDefaultSymptom"
+          @change="setDefaultSymptom"
         >
           <template #dropdownicon>
             <i class="material-icons"> spa </i>
