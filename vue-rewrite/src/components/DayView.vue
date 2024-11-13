@@ -2,8 +2,6 @@
 /*
  * DayView component displays a day and the symptoms of that day also has possability to add data to a day
  * It also has a bottom sheet to add data to a day
- * @TODO: add posability to delete data
- * @TODO: add posability to edit data/View data
  */
 import { DayView } from "@/types/day"
 import { DataTypes, INoteOverview } from "@/types/note"

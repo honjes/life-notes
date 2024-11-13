@@ -74,8 +74,8 @@ export const useDayStore = defineStore("day", () => {
    * @param offset - number of days to skip
    * @returns return array of IDays
    */
-  async function getDays(limit: number, offset: number): Promise<IDay[]> {
-    const firstDay = subDays(new Date(), offset)
+  async function getDays(limit: number, offset: number, startDate = new Date()): Promise<IDay[]> {
+    const firstDay = subDays(startDate, offset)
     const expectedDates = new Array<string>()
     for (let i = 0; i < limit; i++) {
       expectedDates.push(format(subDays(firstDay, i), dateFormat))
