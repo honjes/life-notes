@@ -1,17 +1,20 @@
 import { DataTypes } from "./note"
 
+export interface IShortSymptomOverview {
+  key: string
+  pain: number
+}
+
 /**
  * All needed information to display a symptom Badge
  */
-export interface ISymptomOverview {
+export interface ISymptomOverview extends IShortSymptomOverview {
   type: DataTypes
-  key: string
   /* key of the log */
   logKey: string
   label: string
   /* HH:mm */
   time: string
-  pain: number
   detail: string
 }
 
