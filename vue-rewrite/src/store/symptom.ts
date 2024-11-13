@@ -25,8 +25,9 @@ export const useSymptomStore = defineStore("symptom", () => {
    * @returns Promise<ISymptom[]>
    */
   async function getSymptoms(): Promise<ISymptom[]> {
+    const symptoms = await db.allDocs({ include_docs: true, descending: true })
     return (
-      (await db.allDocs({ include_docs: true, descending: true })).rows
+      symptoms.rows
         .map(row => row.doc as ISymptom)
         // @ts-expect-error - ignore rows that include language (probably the index reference of the db)
         .filter(s => s.language !== "query")
@@ -38,10 +39,13 @@ export const useSymptomStore = defineStore("symptom", () => {
    * @param key - symptom key
    * @returns Promise<ISymptom>
    */
-  async function getSymptom(key: string): Promise<ISymptom> {
-    const symptomReturn = await db.get(key)
-    if (symptomReturn == null) throw new Error("Symptom not found")
-    return symptomReturn
+  async function getSymptom(key: string): Promise<ISymptom | null> {
+    try {
+      const symptomReturn = await db.get(key)
+      return symptomReturn
+    } catch (_) {
+      return null
+    }
   }
 
   /**
