@@ -62,6 +62,7 @@ import AccordionContent from "primevue/accordioncontent"
 import AccordionHeader from "primevue/accordionheader"
 import AccordionPanel from "primevue/accordionpanel"
 import Panel from "primevue/panel"
+import { ProgressSpinner } from "primevue"
 
 const app = createApp(App)
   .use(PrimeVue, {
@@ -81,6 +82,7 @@ const app = createApp(App)
   .use(pinia)
 
 // PrimeVue Components
+app.component("ProgressSpinner", ProgressSpinner)
 app.component("PrimeButton", Button)
 app.component("PrimeSelect", Select)
 app.component("Drawer", Drawer)
