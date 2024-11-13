@@ -24,10 +24,12 @@ if (!mainStore.initalised) {
 </script>
 
 <template>
-  <IonApp>
+  <IonApp v-if="initalised">
     <MainMenu />
-    <router-view v-if="initalised" />
-    <IonContent v-else>
+    <router-view />
+  </IonApp>
+  <IonApp v-else>
+    <IonContent>
       <div class="mt-8 flex flex-row items-center">
         <ProgressSpinner
           style="width: 50px; height: 50px"
