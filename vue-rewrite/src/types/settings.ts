@@ -19,6 +19,7 @@ export interface ISettings {
   timeFormat: TimeFormats
   firstStart: boolean // TODO: make tutorial appear when first start
   lastInstall: string // TODO: Update on install
+  painColors: Record<number, string>
 }
 
 export interface IBackup {

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { useDayStore } from "@/store"
+import { useDayStore, useMainStore } from "@/store"
 import { IonContent } from "@ionic/vue"
 import { onMounted, ref } from "vue"
 
 // Store
 const daystore = useDayStore()
+const mainStore = useMainStore()
 
 // variables
 const selectedMonth = ref<Date>(new Date())
@@ -33,17 +34,9 @@ const theme = ref<Record<number, string>>({})
  */
 async function updateDayColors() {
   const dayOverview = await daystore.getMonthSymptomOverview(selectedMonth.value)
-  const painColors: Record<number, string> = {
-    0: "var(--p-green-800)",
-    1: "var(--p-green-500)",
-    2: "var(--p-yellow-500)",
-    3: "var(--p-yellow-800){yellow.800}",
-    4: "var(--p-red-500)",
-    5: "var(--p-red-950)",
-  }
 
   dayOverview.forEach((day, index) => {
-    theme.value[index + 1] = painColors[day.pain]
+    theme.value[index + 1] = mainStore.settings.painColors[day.pain]
   })
 }
 

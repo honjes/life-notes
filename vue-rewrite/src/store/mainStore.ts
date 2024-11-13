@@ -16,6 +16,14 @@ const settingsDefault: ISettings = {
   timeFormat: TimeFormats.h24,
   firstStart: true,
   lastInstall: new Date().toISOString(),
+  painColors: {
+    0: "var(--p-green-800)",
+    1: "var(--p-green-500)",
+    2: "var(--p-yellow-500)",
+    3: "var(--p-yellow-800){yellow.800}",
+    4: "var(--p-red-500)",
+    5: "var(--p-red-950)",
+  },
 }
 
 export const useMainStore = defineStore("main", () => {
