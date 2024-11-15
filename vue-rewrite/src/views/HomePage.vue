@@ -2,14 +2,15 @@
 /*
  * Home page displays a list of all days and the symptoms of that day also has possability to add data to a day
  */
-import { useDayStore } from "@/store/day"
 import { IDay } from "@/types/day"
 import DayView from "@/components/DayView.vue"
 import { InfiniteScrollCustomEvent, IonInfiniteScroll, IonContent, IonInfiniteScrollContent } from "@ionic/vue"
 import { onBeforeMount, ref } from "vue"
 import { buildDayView } from "@/utils"
+import { useMainStore, useDayStore } from "@/store"
 
 const dayStore = useDayStore()
+const mainStore = useMainStore()
 
 const days = ref<IDay[]>([])
 const batchSize = ref(10)
@@ -37,6 +38,12 @@ onBeforeMount(() => {
         days.value[dayIndex] = await dayStore.getDay(day)
       }
     })
+  })
+  mainStore.$subscribe(() => {
+    // update all days when main Symptom changes
+    days.value = []
+    offset.value = 0
+    getDayBatch()
   })
 })
 </script>

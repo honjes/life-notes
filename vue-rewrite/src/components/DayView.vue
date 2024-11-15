@@ -2,7 +2,6 @@
 /*
  * DayView component displays a day and the symptoms of that day also has possability to add data to a day
  * It also has a bottom sheet to add data to a day
- * //TODO: make the default symptom DOT react to change of the default symptom
  */
 import { DayView } from "@/types/day"
 import { DataTypes, INoteOverview } from "@/types/note"
@@ -178,8 +177,6 @@ onBeforeMount(() => {
     const mainSymptom = props.day.symptoms.filter(s => s.key === settings.value.defaultSymptom?.key)[0]
     if (mainSymptom) {
       const mainSymptomLog = mainSymptom.logs.filter(l => l.main)[0]
-      console.log("mainSymptom: ", mainSymptom)
-      console.log("mainSymptomLog: ", mainSymptomLog)
       if (!mainSymptomLog) return
       mainSymptomPain.value = mainSymptomLog.pain
     }
